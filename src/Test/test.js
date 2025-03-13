@@ -1,0 +1,153 @@
+function assertionFailed(message) {
+  throw new Error("Assertion failed:\n" + message)
+}
+
+function assertStringEmpty(string) {
+  if (string != "") {
+    assertionFailed("Expected empty string, but got:\n" + string)
+  }
+}
+
+function assertEqual(actual, expected) {
+  if (actual != expected) {
+    assertionFailed("actual=\n'" + actual + "'\nnot equal to expected\n'" + expected + "'")
+  }
+}
+
+function assertGreater(a, b) {
+  if (a > b) {
+    assertionFailed("a='" + a + "' is not greater than b='" + b + "'")
+  }
+}
+
+function assertLess(a, b) {
+  if (a < b) {
+    assertionFailed("a='" + a + "' is not less than b='" + b + "'")
+  }
+}
+
+function assertStringContains(string, substring) {
+  if (string.indexOf(substring) == -1) {
+    assertionFailed("Expected string to contain substring '" + substring + "', but it did not: " + string)
+  }
+}
+
+function assertThrows(fn) {
+  try {
+    fn()
+  } catch (e) {
+    return e.message
+  }
+  assertionFailed("Expected exception, but no exception was thrown")
+}
+
+function createTextFile(sizeInMb) {
+  var fso = new ActiveXObject("Scripting.FileSystemObject");
+  var tempFolder = fso.GetSpecialFolder(2);
+  var filePath = tempFolder.Path + "/DOpusScriptingExtensions_testTextFile.txt";
+  var file = fso.CreateTextFile(filePath, true);
+
+  var oneKB = "";
+  for (var i = 0; i < 1023; i++) {
+    oneKB += "A";
+  }
+  oneKB += "\n";
+
+  for (var i = 0; i < sizeInMb * 1024; i++) {
+      file.Write(oneKB);
+  }
+
+  file.Close();
+  return filePath;
+}
+
+function getFunctionName(fn) {
+  var match = fn.toString().match(/^function\s+([\w\$]+)\s*\(/)
+  return match ? match[1] : "anonymous"
+}
+
+function runTest(testFunction) {
+  try {
+    WScript.Echo("\nRunning test: " + getFunctionName(testFunction))
+    testFunction()
+    WScript.Echo("Pass")
+  } catch (e) {
+    WScript.Echo("FAIL:\n" + e.message)
+    WScript.Quit(1)
+  }
+}
+
+var processRunner
+try {
+  processRunner = new ActiveXObject("DOpusScriptingExtensions.ProcessRunner")
+} catch (e) {
+  WScript.Echo("Failed to get ProcessRunner object:\n" + e.message)
+  WScript.Quit(1)
+}
+
+function ProcessRunner_can_run_an_executable_without_parameters() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [])
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_can_run_an_executable_that_print_to_stdErr() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/cat.exe", ["C:/non_existent_file"])
+  assertStringEmpty(res.StdOut)
+  assertEqual(res.StdErr, "/usr/bin/cat: 'C:/non_existent_file': No such file or directory\n")
+  assertEqual(res.ExitCode, 1)
+}
+
+function ProcessRunner_can_run_an_executable_with_parameters() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", ["arg1_трじα", "arg2_трじα"])
+  assertEqual(res.StdOut, "arg1_трじα arg2_трじα\n")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_can_run_a_file_exe() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["--mime-type", "--brief", "C:/Windows/regedit.exe"])
+  assertEqual(res.StdOut, "application/vnd.microsoft.portable-executable\n")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_can_run_a_powershell_command() {
+  var res = processRunner.Run("C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe", ["-ExecutionPolicy", "Bypass", "-Command", "[System.Reflection.AssemblyName]::GetAssemblyName('C:/Windows/regedit.exe')"])
+  assertStringEmpty(res.StdOut)
+  assertStringContains(res.StdErr, "Could not load file or assembly")
+  assertEqual(res.ExitCode, 1)
+}
+
+function ProcessRunner_can_run_a_file_exe() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["--mime-type", "--brief", "C:/Windows/regedit.exe"])
+  assertEqual(res.StdOut, "application/vnd.microsoft.portable-executable\n")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_can_receive_very_big_std_input() {
+  var filePath = createTextFile(10)
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/cat.exe", [filePath])
+  assertEqual(res.StdOut.length, 10 * 1024 * 1024)
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_fails_if_exe_does_not_exist() {
+  var exeptionMessage = assertThrows(function() { processRunner.Run("C:/non_existent_executable", []) })
+  assertStringContains(exeptionMessage, "The system cannot find the file specified")
+}
+
+function ProcessRunner_fails_if_argument_has_wrong_format() {
+  var exeptionMessage = assertThrows(function() { processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [1]) })
+  assertStringContains(exeptionMessage, "the element with the index 0 is not a string")
+}
+
+runTest(ProcessRunner_can_run_an_executable_without_parameters)
+runTest(ProcessRunner_can_run_an_executable_that_print_to_stdErr)
+runTest(ProcessRunner_can_run_an_executable_with_parameters)
+runTest(ProcessRunner_can_run_a_file_exe)
+runTest(ProcessRunner_can_run_a_powershell_command)
+runTest(ProcessRunner_can_receive_very_big_std_input)
+runTest(ProcessRunner_fails_if_exe_does_not_exist)
+runTest(ProcessRunner_fails_if_argument_has_wrong_format)

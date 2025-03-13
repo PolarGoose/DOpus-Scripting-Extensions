@@ -1,0 +1,9 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <DefineConstants>InstallerVersion=$(InstallerVersion)</DefineConstants>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DOpusScriptingExtensions\DOpusScriptingExtensions.vcxproj" />
+  </ItemGroup>
+</Project>

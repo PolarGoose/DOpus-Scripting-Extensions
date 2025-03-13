@@ -1,0 +1,59 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+  object,
+  uuid(E8DB58B7-1D7E-486E-9C1B-5F216A85023D),
+  dual,
+  nonextensible,
+  pointer_default(unique)
+]
+interface IProcessRunnerResult : IDispatch
+{
+  [propget, id(1)]
+  HRESULT StdOut([out, retval] BSTR* pVal);
+
+  [propget, id(2)]
+  HRESULT StdErr([out, retval] BSTR* pVal);
+
+  [propget, id(3)]
+  HRESULT ExitCode([out, retval] long* pVal);
+};
+
+[
+	object,
+	uuid(7c4f5751-db2c-401d-94d4-fc286b714047),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IProcessRunner : IDispatch
+{
+  [id(1), helpstring("Run an executable synchroniously and returns its stdout, stderr, and error code")]
+  HRESULT Run([in] BSTR executablePath,
+              [in] IDispatch* commandLineArgumentsJsArray,
+              [out, retval] IProcessRunnerResult** ppResult);
+};
+
+[
+	uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3),
+	version(1.0),
+]
+library DOpusScriptingExtensionsLib
+{
+	importlib("stdole2.tlb");
+
+	[uuid(12de862c-a197-4f45-a282-cc9022eb51f1)]
+	coclass ProcessRunner
+	{
+		[default] interface IProcessRunner;
+	};
+
+  [uuid(40D713DE-D9F4-465F-BF4C-0E66FED4F2C8)]
+  coclass ProcessRunnerResult
+  {
+    [default] interface IProcessRunnerResult;
+  };
+};
+
+import "shobjidl.idl";

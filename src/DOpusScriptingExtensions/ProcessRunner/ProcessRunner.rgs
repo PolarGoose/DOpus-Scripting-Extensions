@@ -1,0 +1,26 @@
+HKCR
+{
+	DOpusScriptingExtensions.ProcessRunner.1 = s 'ProcessRunner class'
+	{
+		CLSID = s '{12de862c-a197-4f45-a282-cc9022eb51f1}'
+	}
+	DOpusScriptingExtensions.ProcessRunner = s 'ProcessRunner class'
+	{		
+		CurVer = s 'DOpusScriptingExtensions.ProcessRunner.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {12de862c-a197-4f45-a282-cc9022eb51f1} = s 'ProcessRunner class'
+		{
+      ProgID = s 'DOpusScriptingExtensions.ProcessRunner.1'
+			VersionIndependentProgID = s 'DOpusScriptingExtensions.ProcessRunner'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+			Version = s '1.0'
+		}
+	}
+}

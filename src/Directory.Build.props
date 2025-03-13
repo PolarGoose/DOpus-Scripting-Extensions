@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <ProjectRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\'))</ProjectRoot>
+    <BuildFolder>$(ProjectRoot)build\</BuildFolder>
+    <OutputPath>$(BuildFolder)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <BaseIntermediateOutputPath>$(BuildFolder)obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</BaseIntermediateOutputPath>
+    <InstallerVersion>0.0</InstallerVersion>
+    <OutDir>$(OutputPath)</OutDir>
+    <IntDir>$(BaseIntermediateOutputPath)</IntDir>
+  </PropertyGroup>
+</Project>

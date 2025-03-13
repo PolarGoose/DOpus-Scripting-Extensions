@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Gen">
+      <UniqueIdentifier>{6e419df3-5c64-4e14-bfb0-2172405434b0}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{e07d3efa-cd73-4dd4-a395-1e1433d2fde1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ProcessRunner">
+      <UniqueIdentifier>{c058dbcb-6eb2-426b-adf5-08e9cf49b872}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="DOpusScriptingExtensions_i.h">
+      <Filter>Gen</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="utils\ComUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Exceptions.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\StringUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessRunner\ProcessRunner.h">
+      <Filter>ProcessRunner</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessRunner\ProcessRunnerResult.h">
+      <Filter>ProcessRunner</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DOpusScriptingExtensions.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="DOpusScriptingExtensions_i.c">
+      <Filter>Gen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DOpusScriptingExtensions.rgs" />
+    <None Include="DOpusScriptingExtensions.def" />
+    <None Include="ProcessRunner\ProcessRunner.rgs">
+      <Filter>ProcessRunner</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DOpusScriptingExtensions.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="DOpusScriptingExtensions.idl" />
+  </ItemGroup>
+</Project>

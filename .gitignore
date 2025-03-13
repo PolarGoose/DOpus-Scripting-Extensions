@@ -1,0 +1,9 @@
+/build/
+/vcpkg_installed/
+/.vs/
+*.vcxproj.user
+/src/DOpusScriptingExtensions/DOpusScriptingExtensions_i.c
+/src/DOpusScriptingExtensions/DOpusScriptingExtensions_i.h
+/src/DOpusScriptingExtensions/DOpusScriptingExtensions_p.c
+/src/DOpusScriptingExtensions/dlldata.c
+/src/DOpusScriptingExtensions/DOpusScriptingExtensions.aps
