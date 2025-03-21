@@ -5,11 +5,21 @@
 #include <comdef.h>
 #include "Utils/StringUtils.h"
 
+#define THROW_HRESULT(hr) \
+  do { \
+    throw HResultException(__LINE__, __FUNCTIONW__, (hr)); \
+  } while (0)
+
+#define THROW_HRESULT_MSG(hr, ...) \
+  do { \
+    throw HResultException(__LINE__, __FUNCTIONW__, (hr), std::format(__VA_ARGS__)); \
+  } while (0)
+
 #define THROW_IF_FAILED_MSG(hr, ...) \
   do { \
     const auto& res = (hr); \
     if (FAILED(res)) { \
-      throw HResultException(__LINE__, __FUNCTIONW__, res, std::format(__VA_ARGS__)); \
+      THROW_HRESULT_MSG(res, __VA_ARGS__); \
     } \
   } while (0)
 
@@ -17,7 +27,7 @@
   do { \
     const auto& res = (hr); \
     if (FAILED(res)) { \
-      throw HResultException(__LINE__, __FUNCTIONW__, res); \
+      THROW_HRESULT(res); \
     } \
   } while (0)
 
@@ -26,7 +36,7 @@
     const auto& _var = (variant); \
     const auto& _vt = (variantType); \
     if (_var.vt != _vt) { \
-      throw HResultException(__LINE__, __FUNCTIONW__, DISP_E_TYPEMISMATCH, std::format(__VA_ARGS__)); \
+      THROW_HRESULT_MSG(DISP_E_TYPEMISMATCH, __VA_ARGS__); \
     } \
   } while (0)
 

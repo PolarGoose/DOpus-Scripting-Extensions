@@ -42,10 +42,16 @@ public:
 
 private:
   static std::tuple<std::string, std::string, int> RunProcess(const std::string& exePath, std::vector<std::string> args) {
+    if (!std::filesystem::exists(exePath))
+    {
+      THROW_HRESULT_MSG(STG_E_FILENOTFOUND, L"The executable not found '{}'", ToWide(exePath));
+    }
+
     boost::asio::io_context ctx;
     boost::asio::streambuf outBuffer, errBuffer;
     boost::asio::readable_pipe stdOutPipe(ctx), stdErrPipe(ctx);
-    boost::process::v2::process proc(ctx, exePath, args, boost::process::v2::process_stdio{ {}, stdOutPipe, stdErrPipe });
+    boost::process::v2::process proc(
+      ctx, boost::filesystem::canonical(exePath), args, boost::process::v2::process_stdio{ {}, stdOutPipe, stdErrPipe }, boost::process::v2::windows::show_window_hide);
 
     std::function<void()> readStdOut;
     readStdOut = [&]() {

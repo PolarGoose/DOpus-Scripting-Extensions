@@ -18,30 +18,24 @@ public:
 
   STDMETHOD(get_StdOut)(BSTR* pVal) override
   {
-    if (!pVal)
-      return E_POINTER;
     *pVal = stdOut.Copy();
     return S_OK;
   }
 
   STDMETHOD(get_StdErr)(BSTR* pVal) override
   {
-    if (!pVal)
-      return E_POINTER;
     *pVal = stdErr.Copy();
     return S_OK;
   }
 
   STDMETHOD(get_ExitCode)(long* pVal) override
   {
-    if (!pVal)
-      return E_POINTER;
     *pVal = exitCode;
     return S_OK;
   }
 
   // A helper method to initialize the result object with data.
-  void Init(const CComBSTR& bstrStdOut, const CComBSTR& bstrStdErr, long returnCode)
+  void Init(const CComBSTR& bstrStdOut, const CComBSTR& bstrStdErr, const long returnCode)
   {
     stdOut = bstrStdOut;
     stdErr = bstrStdErr;

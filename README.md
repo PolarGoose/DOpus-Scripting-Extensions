@@ -28,6 +28,8 @@ var res = processRunner.Run("C:/Program Files/Git/usr/bin/cat.exe", ["C:/some_fi
 res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", []) // This will run the executable without any arguments
 res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", ["--arg1", "--arg2"])
 // res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [1]) // This will throw an exception. The arguments must be strings
+res = processRunner.Run("C:/WINDOWS/system32/cmd.exe", ["/c", "echo test string| findstr test"])
+// res = processRunner.Run("%comspec%", ["/c", "echo test"]) // This will fail, because it doesn't resolve environment variables
 
 // The res variable is a `ProcessRunnerResult` object and can be used in the following way
 WScript.Echo("Exit code: " + res.ExitCode)

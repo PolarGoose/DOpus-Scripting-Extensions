@@ -28,7 +28,7 @@ function assertLess(a, b) {
 
 function assertStringContains(string, substring) {
   if (string.indexOf(substring) == -1) {
-    assertionFailed("Expected string to contain substring '" + substring + "', but it did not: " + string)
+    assertionFailed("Expected string to contain substring\n'" + substring + "'\nbut it did not. Full string:\n'" + string + "'")
   }
 }
 
@@ -135,12 +135,28 @@ function ProcessRunner_can_receive_very_big_std_input() {
 
 function ProcessRunner_fails_if_exe_does_not_exist() {
   var exeptionMessage = assertThrows(function() { processRunner.Run("C:/non_existent_executable", []) })
-  assertStringContains(exeptionMessage, "The system cannot find the file specified")
+  assertStringContains(exeptionMessage, "CProcessRunner::RunProcess:")
+  assertStringContains(exeptionMessage, "The executable not found 'C:/non_existent_executable'. HRESULT=0x80")
+  assertStringContains(exeptionMessage, "could not be found.")
 }
 
 function ProcessRunner_fails_if_argument_has_wrong_format() {
   var exeptionMessage = assertThrows(function() { processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [1]) })
-  assertStringContains(exeptionMessage, "the element with the index 0 is not a string")
+  assertStringContains(exeptionMessage, "JsStringArrayToVector:")
+  assertStringContains(exeptionMessage, "the element with the index 0 is not a string but a variant type #3. HRESULT=0x80020005: Type mismatch.")
+}
+
+function ProcessRunner_can_run_cmd_exe_with_pipe() {
+  var res = processRunner.Run("C:/WINDOWS/system32/cmd.exe", ["/c", "echo test string| findstr test"])
+  assertEqual(res.StdOut, "test string\r\n")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_if_wrong_type_is_passed_it_ignores_it() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", ProcessRunner_if_wrong_type_is_passed_it_ignores_it)
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
 }
 
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
@@ -151,3 +167,5 @@ runTest(ProcessRunner_can_run_a_powershell_command)
 runTest(ProcessRunner_can_receive_very_big_std_input)
 runTest(ProcessRunner_fails_if_exe_does_not_exist)
 runTest(ProcessRunner_fails_if_argument_has_wrong_format)
+runTest(ProcessRunner_can_run_cmd_exe_with_pipe)
+runTest(ProcessRunner_if_wrong_type_is_passed_it_ignores_it)

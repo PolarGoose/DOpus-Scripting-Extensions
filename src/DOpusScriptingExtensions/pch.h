@@ -19,8 +19,10 @@
 #include <format>
 #include <utility>
 #include <ranges>
+#include <filesystem>
 #include <boost/process/v2/process.hpp>
 #include <boost/process/v2/stdio.hpp>
+#include <boost/process/v2/windows/show_window.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/locale.hpp>
 #include <boost/asio.hpp>
