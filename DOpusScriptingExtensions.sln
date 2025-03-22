@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{02EA681E
 		vcpkg.json = vcpkg.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A9DC0F96-44B3-411E-A1CC-5F2E0E3B06C2}"
+	ProjectSection(SolutionItems) = preProject
+		src\Test\processRunnerPerformanceTest.js = src\Test\processRunnerPerformanceTest.js
+		src\Test\test.js = src\Test\test.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -37,6 +43,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A9DC0F96-44B3-411E-A1CC-5F2E0E3B06C2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {499071BF-D9EA-44E1-9436-41474094429D}
