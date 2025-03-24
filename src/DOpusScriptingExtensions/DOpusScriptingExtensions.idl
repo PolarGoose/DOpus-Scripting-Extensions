@@ -12,7 +12,7 @@ interface IProcessRunnerResult : IDispatch
 [object, uuid(7c4f5751-db2c-401d-94d4-fc286b714047), dual, nonextensible, pointer_default(unique)]
 interface IProcessRunner : IDispatch
 {
-  [id(1)] HRESULT Run([in] BSTR executablePath, [in] IDispatch* commandLineArgumentsJsArray, [in, defaultvalue("")] BSTR workingDirectory, [out, retval] IProcessRunnerResult** res);
+  [id(1)] HRESULT Run([in] BSTR executablePath, [in, defaultvalue(0)] IDispatch* commandLineArgumentsJsArray, [in, defaultvalue("")] BSTR workingDirectory, [out, retval] IProcessRunnerResult** res);
 };
 
 [object, uuid(CE86F2EC-8EC9-48C4-A3C6-0FB265011E86), dual, nonextensible, pointer_default(unique)]

@@ -88,6 +88,9 @@ try {
 function ProcessRunner_can_run_an_executable_without_parameters() {
   var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [])
   assertEqual(res.ExitCode, 0)
+
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe")
+  assertEqual(res.ExitCode, 0)
 }
 
 function ProcessRunner_can_run_an_executable_that_print_to_stdErr() {
@@ -134,16 +137,15 @@ function ProcessRunner_can_receive_very_big_std_input() {
 }
 
 function ProcessRunner_fails_if_exe_does_not_exist() {
-  var exeptionMessage = assertThrows(function() { processRunner.Run("C:/non_existent_executable", []) })
-  assertStringContains(exeptionMessage, "CProcessRunner::RunProcess:")
-  assertStringContains(exeptionMessage, "The executable not found 'C:/non_existent_executable'. HRESULT=0x80")
-  assertStringContains(exeptionMessage, "could not be found.")
+  var exeptionMessage = assertThrows(function() { processRunner.Run("C:/non_existent_executable") })
+  assertStringContains(exeptionMessage, "ProcessRunner.h:")
+  assertStringContains(exeptionMessage, "The executable not found 'C:/non_existent_executable'")
 }
 
 function ProcessRunner_fails_if_argument_has_wrong_format() {
   var exeptionMessage = assertThrows(function() { processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [1]) })
-  assertStringContains(exeptionMessage, "JsStringArrayToVector:")
-  assertStringContains(exeptionMessage, "the element with the index 0 is not a string but a variant type #3. HRESULT=0x80020005: Type mismatch.")
+  assertStringContains(exeptionMessage, "ComUtils.h:")
+  assertStringContains(exeptionMessage, "the element with the index 0 is not a string but a variant type #3")
 }
 
 function ProcessRunner_can_run_cmd_exe_with_pipe() {
@@ -166,7 +168,7 @@ function ProcessRunner_can_run_with_env_variable() {
 }
 
 function ProcessRunner_fails_if_env_variable_does_not_exist() {
-  var exeptionMessage = assertThrows(function () { processRunner.Run("%nonExistentEnvVar%", []) })
+  var exeptionMessage = assertThrows(function () { processRunner.Run("%nonExistentEnvVar%") })
   assertStringContains(exeptionMessage, "The executable not found '%nonExistentEnvVar%'")
 }
 
@@ -177,11 +179,13 @@ function ProcessRunner_if_wrong_type_is_passed_it_ignores_it() {
 }
 
 function ProcessRunner_fails_if_the_exe_is_not_executable() {
-  var exeptionMessage = assertThrows(function () { processRunner.Run("C:/Program Files", []) })
+  var exeptionMessage = assertThrows(function () { processRunner.Run("C:/Program Files") })
+  assertStringContains(exeptionMessage, "ProcessRunner.h:")
   assertStringContains(exeptionMessage, "The file 'C:/Program Files' is not executable")
 
-  var exeptionMessage = assertThrows(function () { processRunner.Run("C:/Windows/System32/mssecuser.dll", []) })
-  assertStringContains(exeptionMessage, "The file 'C:/Windows/System32/mssecuser.dll' is not executable.")
+  var exeptionMessage = assertThrows(function () { processRunner.Run("C:/Windows/System32/mssecuser.dll") })
+  assertStringContains(exeptionMessage, "ProcessRunner.h:")
+  assertStringContains(exeptionMessage, "The file 'C:/Windows/System32/mssecuser.dll' is not executable")
 }
 
 function ProcessRunner_can_specify_working_directory() {
@@ -211,8 +215,21 @@ function FileMimeTypeDetector_works_with_directories() {
 
 function FileMimeTypeDetector_fails_if_fail_doesn_not_exist() {
   var exeptionMessage = assertThrows(function () { fileMimeTypeDetector.DetectMimeType("C:/non_existent_file") })
-  assertStringContains(exeptionMessage, "CFileMimeTypeDetector::DetectMimeType:")
+  assertStringContains(exeptionMessage, "FileMimeTypeDetector.h:")
   assertStringContains(exeptionMessage, "The file not found 'C:/non_existent_file'")
+}
+
+function FileMimeTypeDetector_works_with_path_containing_unicode_characters() {
+  var fso = new ActiveXObject("Scripting.FileSystemObject");
+  var tempFolder = fso.GetSpecialFolder(2);
+  var filePath = tempFolder.Path + "/DOpusScriptingExtensions testTextFile трじα.txt";
+  var file = fso.CreateTextFile(filePath, true);
+  file.Write("AAAA\n");
+  file.Close();
+
+  var res = fileMimeTypeDetector.DetectMimeType(filePath)
+  assertEqual(res.MimeType, "text/plain")
+  assertEqual(res.Encoding, "us-ascii")
 }
 
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
@@ -233,3 +250,4 @@ runTest(ProcessRunner_can_specify_working_directory)
 runTest(FileMimeTypeDetector_works_with_binary_files)
 runTest(FileMimeTypeDetector_works_with_directories)
 runTest(FileMimeTypeDetector_fails_if_fail_doesn_not_exist)
+runTest(FileMimeTypeDetector_works_with_path_containing_unicode_characters)

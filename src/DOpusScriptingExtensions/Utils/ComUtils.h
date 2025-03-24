@@ -39,12 +39,15 @@ inline std::vector<std::wstring> JsStringArrayToVector(IDispatch& obj) {
   std::vector<std::wstring> result;
 
   const auto& lengthVariant = GetPropertyValue(obj, L"length");
-  THROW_IF_VARIANT_TYPE_NOT(lengthVariant, VT_I4, L"command line arguments 'length' property has a wrong variant type {}. Expected type is VT_I4", lengthVariant.vt);
+  if (lengthVariant.vt != VT_I4) {
+      THROW_WEXCEPTION(L"command line arguments 'length' property has a wrong variant type {}. Expected type is VT_I4", lengthVariant.vt);
+  }
 
   for (int i = 0; i < lengthVariant.intVal; i++) {
     const auto& arg = GetPropertyValue(obj, std::to_wstring(i));
-    THROW_IF_VARIANT_TYPE_NOT(arg, VT_BSTR, L"the element with the index {} is not a string but a variant type #{}", i, arg.vt);
-
+    if (arg.vt != VT_BSTR) {
+      THROW_WEXCEPTION(L"the element with the index {} is not a string but a variant type #{}", i, arg.vt);
+    }
     result.emplace_back(arg.bstrVal);
   }
 

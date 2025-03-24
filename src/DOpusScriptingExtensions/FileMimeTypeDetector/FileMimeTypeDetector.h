@@ -20,15 +20,14 @@ public:
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
   HRESULT FinalConstruct() try {
-    const auto& magicFileFullName = boost::dll::this_line_location().parent_path() / L"magic.mgc";
-    magicCookie.emplace(MAGIC_MIME, magicFileFullName.wstring());
+    magicCookie = LibMagicWrapper::GetSingleInstance();
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
   STDMETHOD(DetectMimeType)(BSTR fileFullName, IFileMimeTypeDetectorResult** res) override try {
     if (!std::filesystem::exists(fileFullName))
     {
-      THROW_HRESULT_MSG(E_FAIL, L"The file not found '{}'", fileFullName);
+      THROW_WEXCEPTION(L"The file not found '{}'", fileFullName);
     }
     const auto& mimeTypeAndEncoding = magicCookie->DetectFileType(fileFullName);
     const auto& [mimeType, encoding] = ParseMimeTypeAndEncoding(mimeTypeAndEncoding);
@@ -43,15 +42,15 @@ private:
   std::pair<std::wstring, std::wstring> ParseMimeTypeAndEncoding(std::wstring mimeTypeAndEncoding) {
     // The mimeTypeAndEncoding has values like "text/plain; charset=us-ascii"
 
-    std::wregex pattern{ LR"(([^;]+);\scharset=(.+))" };
+    static const std::wregex pattern{ LR"(([^;]+);\scharset=(.+))" };
     std::wsmatch match;
     if (!std::regex_search(mimeTypeAndEncoding, match, pattern)) {
-      THROW_HRESULT_MSG(E_FAIL, L"Failed to parse the mime type and encoding '{}'", mimeTypeAndEncoding);
+      THROW_WEXCEPTION(L"Failed to parse the mime type and encoding '{}'", mimeTypeAndEncoding);
     }
     return { match[1].str(), match[2].str() };
   }
 
-  std::optional<LibMagicWrapper> magicCookie;
+  const LibMagicWrapper* magicCookie;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(FileMimeTypeDetector), CFileMimeTypeDetector)

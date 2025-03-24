@@ -16,7 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{02EA681E
 		src\Directory.Build.props = src\Directory.Build.props
 		.github\workflows\main.yaml = .github\workflows\main.yaml
 		README.md = README.md
-		src\Test\test.js = src\Test\test.js
 		vcpkg.json = vcpkg.json
 	EndProjectSection
 EndProject

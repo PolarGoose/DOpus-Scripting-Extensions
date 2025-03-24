@@ -1,21 +1,18 @@
 #pragma once
+#include <boost/filesystem.hpp>
 #include <Utils/NonCopyableAndNonMovable.h>
 
 class LibMagicWrapper : NonCopyableAndNonMovable {
 public:
-  explicit LibMagicWrapper(int flags, std::wstring_view magicMagFileFullName) : magicCookie(magic_open(flags)) {
-    if (magicCookie == nullptr) {
-      THROW_HRESULT_MSG(E_FAIL, L"Failed to initialize magic_t handle");
-    }
-    if (magic_load(magicCookie, ToUtf8(magicMagFileFullName).c_str()) != 0) {
-      THROW_HRESULT_MSG(E_FAIL, L"Failed to load magic file '{}'. Error: {}", magicMagFileFullName, GetError());
-    }
+  static const LibMagicWrapper* GetSingleInstance() {
+    static const LibMagicWrapper instance{ MAGIC_MIME, boost::dll::this_line_location().parent_path() / L"magic.mgc" };
+    return &instance;
   }
 
-  std::wstring DetectFileType(std::wstring_view fileFullName) const {
+  std::wstring DetectFileType(const std::wstring_view fileFullName) const {
     const char* mimeCStr = magic_file(magicCookie, ToUtf8(fileFullName).c_str());
     if (!mimeCStr) {
-      THROW_HRESULT_MSG(E_FAIL, L"Failed to detect type of a file '{}'. Error message: {}", fileFullName, GetError());
+      THROW_WEXCEPTION(L"Failed to detect type of a file '{}'. Error message: {}", fileFullName, GetError());
     }
     return ToWide(mimeCStr);
   }
@@ -25,6 +22,16 @@ public:
   }
 
 private:
+  explicit LibMagicWrapper(const int flags, const boost::filesystem::path& magicMgcFile) : magicCookie(magic_open(flags)) {
+    if (magicCookie == nullptr) {
+      THROW_WEXCEPTION(L"Failed to initialize magic_t handle");
+    }
+    if (magic_load(magicCookie, ToUtf8(magicMgcFile.c_str()).c_str()) != 0) {
+      magic_close(magicCookie);
+      THROW_WEXCEPTION(L"Failed to load magic file '{}'. Error: {}", magicMgcFile, GetError());
+    }
+  }
+
   std::wstring GetError() const {
     const auto& err = magic_error(magicCookie);
     if (err == nullptr) {

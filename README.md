@@ -31,6 +31,7 @@ WScript.Echo("Standart error output: " + res.StdErr)
 #### More examples of using `Run` method
 ```javascript
 // Run an executable without arguments
+res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe")
 res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [])
 
 // Run an executable with many arguments

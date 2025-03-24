@@ -15,6 +15,7 @@ CDOpusScriptingExtensionsModule _AtlModule;
 
 extern "C" BOOL WINAPI DllMain(HINSTANCE /* hInstance */, DWORD dwReason, LPVOID lpReserved)
 {
+  setlocale(LC_ALL, ".utf8");
   return _AtlModule.DllMain(dwReason, lpReserved);
 }
 

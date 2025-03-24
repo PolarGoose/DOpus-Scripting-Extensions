@@ -19,13 +19,18 @@ public:
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
   STDMETHOD(Run)(BSTR executablePath, IDispatch* commandLineArgumentsJsArray, BSTR workingDirectory, IProcessRunnerResult** result) override try {
-    const auto& cmdWideArgs = JsStringArrayToVector(*commandLineArgumentsJsArray);
+    std::vector<std::wstring> cmdWideArgs;
+    if (commandLineArgumentsJsArray != 0)
+    {
+      cmdWideArgs = JsStringArrayToVector(*commandLineArgumentsJsArray);
+    }
+
     const auto& cmdArgs = ToUtf8StringVector(cmdWideArgs);
     const auto& expandedPath = ExpandPathWithEnvironmentVariables(executablePath);
     const auto& [stdOut, stdErr, exitCode] = RunProcess(expandedPath, cmdArgs, workingDirectory);
     *result = CreateComObject<CProcessRunnerResult, IProcessRunnerResult>(
-      [&](auto& pObj) {
-        pObj.Init(CComBSTR(ToWide(stdOut).c_str()), CComBSTR(ToWide(stdErr).c_str()), exitCode);
+      [&](auto& obj) {
+        obj.Init(CComBSTR(ToWide(stdOut).c_str()), CComBSTR(ToWide(stdErr).c_str()), exitCode);
       });
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
@@ -36,12 +41,12 @@ private:
                                                               std::wstring_view workingDirectory) {
     if (!boost::filesystem::exists(exePath))
     {
-      THROW_HRESULT_MSG(STG_E_FILENOTFOUND, L"The executable not found '{}'", exePath);
+      THROW_WEXCEPTION(L"The executable not found '{}'", exePath);
     }
 
     if (!boost::process::v2::environment::detail::is_exec_type(exePath.c_str()))
     {
-      THROW_HRESULT_MSG(E_FAIL, L"The file '{}' is not executable", exePath);
+      THROW_WEXCEPTION(L"The file '{}' is not executable", exePath);
     }
 
     boost::asio::io_context ctx;
