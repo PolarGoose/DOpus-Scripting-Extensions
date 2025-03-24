@@ -14,9 +14,10 @@
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="ProductComponent" Guid="*">
+      <Component Id="ProductComponent" Guid="C1F6F9A3-F513-4411-BF53-3B03B90E8B4B">
         <File Id="DOpusScriptingExtensions.dll" Source="$(var.SolutionDir)\build\$(var.Platform)\$(var.Configuration)\DOpusScriptingExtensions\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
-      </Component>
+        <File Id="magic.mgc" Source="$(var.SolutionDir)\build\$(var.Platform)\$(var.Configuration)\DOpusScriptingExtensions\magic.mgc" />
+    </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>

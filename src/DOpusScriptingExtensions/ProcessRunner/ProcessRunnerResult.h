@@ -7,8 +7,7 @@ using namespace ATL;
 class ATL_NO_VTABLE CProcessRunnerResult :
   public CComObjectRootEx<CComSingleThreadModel>,
   public CComCoClass<CProcessRunnerResult, &__uuidof(ProcessRunnerResult)>,
-  public IDispatchImpl<IProcessRunnerResult, &IID_IProcessRunnerResult, &LIBID_DOpusScriptingExtensionsLib, 1, 0>
-{
+  public IDispatchImpl<IProcessRunnerResult, &IID_IProcessRunnerResult, &LIBID_DOpusScriptingExtensionsLib, 1, 0> {
 public:
   BEGIN_COM_MAP(CProcessRunnerResult)
     COM_INTERFACE_ENTRY(IProcessRunnerResult)
@@ -16,34 +15,29 @@ public:
   END_COM_MAP()
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-  STDMETHOD(get_StdOut)(BSTR* pVal) override
-  {
-    *pVal = stdOut.Copy();
+  STDMETHOD(get_StdOut)(BSTR* val) override {
+    *val = _stdOut.Copy();
     return S_OK;
   }
 
-  STDMETHOD(get_StdErr)(BSTR* pVal) override
-  {
-    *pVal = stdErr.Copy();
+  STDMETHOD(get_StdErr)(BSTR* val) override {
+    *val = _stdErr.Copy();
     return S_OK;
   }
 
-  STDMETHOD(get_ExitCode)(long* pVal) override
-  {
-    *pVal = exitCode;
+  STDMETHOD(get_ExitCode)(long* val) override {
+    *val = _exitCode;
     return S_OK;
   }
 
-  // A helper method to initialize the result object with data.
-  void Init(const CComBSTR& bstrStdOut, const CComBSTR& bstrStdErr, const long returnCode)
-  {
-    stdOut = bstrStdOut;
-    stdErr = bstrStdErr;
-    exitCode = returnCode;
+  void Init(const CComBSTR& stdOut, const CComBSTR& stdErr, const long exitCode) {
+    _stdOut = stdOut;
+    _stdErr = stdErr;
+    _exitCode = exitCode;
   }
 
 private:
-  CComBSTR stdOut; 
-  CComBSTR stdErr;
-  long exitCode;
+  CComBSTR _stdOut; 
+  CComBSTR _stdErr;
+  long _exitCode;
 };

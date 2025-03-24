@@ -1,0 +1,13 @@
+diff --git a/include/boost/asio/impl/connect_pipe.ipp b/include/boost/asio/impl/connect_pipe.ipp
+index f626efbd..32160e0a 100644
+--- a/include/boost/asio/impl/connect_pipe.ipp
++++ b/include/boost/asio/impl/connect_pipe.ipp
+@@ -68,7 +68,7 @@ void create_pipe(native_pipe_handle p[2], boost::system::error_code& ec)
+ 
+   p[0] = ::CreateNamedPipeW(pipe_name,
+       PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
+-      0, 1, 8192, 8192, 0, 0);
++      0, 1, 10 * 1024 * 1024, 10 * 1024 * 1024, 0, 0);
+ 
+   if (p[0] == INVALID_HANDLE_VALUE)
+   {

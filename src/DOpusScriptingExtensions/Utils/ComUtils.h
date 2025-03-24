@@ -2,8 +2,7 @@
 #include <AtlBase.h>
 #include "Utils/Exceptions.h"
 
-inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view propName)
-{
+inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view propName) {
   DISPID dispId = 0;
   LPOLESTR lpNames[] = { const_cast<LPOLESTR>(propName.data()) };
   THROW_IF_FAILED_MSG(
@@ -19,18 +18,24 @@ inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view prop
   return result;
 }
 
-template<typename T>
-CComObject<T>* CreateComObject()
-{
-  CComObject<T>* obj = nullptr;
+template<typename CoClassType, typename QueryInterfaceType>
+QueryInterfaceType* CreateComObject(std::function<void(CoClassType&)> initializer) {
+  CComObject<CoClassType>* obj = nullptr;
   THROW_IF_FAILED_MSG(
-    CComObject<T>::CreateInstance(&obj),
-    L"Failed to create a COM object of type '{}'", ToWide(typeid(T).name()));
-  return obj;
+    CComObject<CoClassType>::CreateInstance(&obj),
+    L"Failed to create a COM object of type '{}'", ToWide(typeid(CoClassType).name()));
+
+  initializer(*obj);
+
+  QueryInterfaceType* res = nullptr;
+  THROW_IF_FAILED_MSG(
+    obj->QueryInterface(__uuidof(QueryInterfaceType), reinterpret_cast<void**>(&res)),
+    L"Failed to query interface '{}'", ToWide(typeid(QueryInterfaceType).name()));
+
+  return res;
 }
 
-inline std::vector<std::wstring> JsStringArrayToVector(IDispatch& obj)
-{
+inline std::vector<std::wstring> JsStringArrayToVector(IDispatch& obj) {
   std::vector<std::wstring> result;
 
   const auto& lengthVariant = GetPropertyValue(obj, L"length");

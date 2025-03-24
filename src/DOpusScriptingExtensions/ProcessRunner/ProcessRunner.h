@@ -3,13 +3,13 @@
 #include "ProcessRunner/ProcessRunnerResult.h"
 #include "DOpusScriptingExtensions_i.h"
 #include "Utils/ComUtils.h"
+#include "Utils/WinApiUtils.h"
 
 using namespace ATL;
 class ATL_NO_VTABLE CProcessRunner :
   public CComObjectRootEx<CComSingleThreadModel>,
   public CComCoClass<CProcessRunner, &CLSID_ProcessRunner>,
-  public IDispatchImpl<IProcessRunner, &IID_IProcessRunner, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
-{
+  public IDispatchImpl<IProcessRunner, &IID_IProcessRunner, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0> {
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_PROCESSRUNNER)
   BEGIN_COM_MAP(CProcessRunner)
@@ -18,40 +18,40 @@ public:
   END_COM_MAP()
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-  STDMETHOD(Run)(BSTR executablePath, IDispatch* commandLineArgumentsJsArray, IProcessRunnerResult** result) override
-  {
-    try {
-      const auto& cmdWideArgs = JsStringArrayToVector(*commandLineArgumentsJsArray);
-      const auto& cmdArgs = ToUtf8StringVector(cmdWideArgs);
-      const auto& [stdOut, stdErr, exitCode] = RunProcess(ToUtf8(executablePath), cmdArgs);
-      const auto& pResult = CreateComObject<CProcessRunnerResult>();
-      pResult->Init(CComBSTR(ToWide(stdOut).c_str()), CComBSTR(ToWide(stdErr).c_str()), exitCode);
-      THROW_IF_FAILED(pResult->QueryInterface(IID_IProcessRunnerResult, reinterpret_cast<void**>(result)));
-    }
-    catch (const HResultException& ex) {
-      AtlReportError(CLSID_ProcessRunner, ex.LMessage().data(), IID_IProcessRunner, ex.HResult());
-      return ex.HResult();
-    }
-    catch (const std::exception& ex) {
-      AtlReportError(CLSID_ProcessRunner, ex.what(), IID_IProcessRunner, E_FAIL);
-      return E_FAIL;
-    }
-
+  STDMETHOD(Run)(BSTR executablePath, IDispatch* commandLineArgumentsJsArray, BSTR workingDirectory, IProcessRunnerResult** result) override try {
+    const auto& cmdWideArgs = JsStringArrayToVector(*commandLineArgumentsJsArray);
+    const auto& cmdArgs = ToUtf8StringVector(cmdWideArgs);
+    const auto& expandedPath = ExpandPathWithEnvironmentVariables(executablePath);
+    const auto& [stdOut, stdErr, exitCode] = RunProcess(expandedPath, cmdArgs, workingDirectory);
+    *result = CreateComObject<CProcessRunnerResult, IProcessRunnerResult>(
+      [&](auto& pObj) {
+        pObj.Init(CComBSTR(ToWide(stdOut).c_str()), CComBSTR(ToWide(stdErr).c_str()), exitCode);
+      });
     return S_OK;
-  }
+  } CATCH_ALL_EXCEPTIONS()
 
 private:
-  static std::tuple<std::string, std::string, int> RunProcess(const std::string& exePath, std::vector<std::string> args) {
-    if (!std::filesystem::exists(exePath))
+  static std::tuple<std::string, std::string, int> RunProcess(const boost::filesystem::path& exePath,
+                                                              std::vector<std::string> args,
+                                                              std::wstring_view workingDirectory) {
+    if (!boost::filesystem::exists(exePath))
     {
-      THROW_HRESULT_MSG(STG_E_FILENOTFOUND, L"The executable not found '{}'", ToWide(exePath));
+      THROW_HRESULT_MSG(STG_E_FILENOTFOUND, L"The executable not found '{}'", exePath);
+    }
+
+    if (!boost::process::v2::environment::detail::is_exec_type(exePath.c_str()))
+    {
+      THROW_HRESULT_MSG(E_FAIL, L"The file '{}' is not executable", exePath);
     }
 
     boost::asio::io_context ctx;
     boost::asio::streambuf outBuffer, errBuffer;
     boost::asio::readable_pipe stdOutPipe(ctx), stdErrPipe(ctx);
     boost::process::v2::process proc(
-      ctx, boost::filesystem::canonical(exePath), args, boost::process::v2::process_stdio{ {}, stdOutPipe, stdErrPipe }, boost::process::v2::windows::show_window_hide);
+      ctx, boost::filesystem::canonical(exePath), args,
+      boost::process::v2::process_stdio{ {}, stdOutPipe, stdErrPipe },
+      boost::process::v2::windows::show_window_hide,
+      boost::process::process_start_dir(workingDirectory));
 
     std::function<void()> readStdOut;
     readStdOut = [&]() {
@@ -63,7 +63,7 @@ private:
           }
         }
       );
-    };
+      };
 
     std::function<void()> readStdErr;
     readStdErr = [&]() {
@@ -75,7 +75,7 @@ private:
           }
         }
       );
-    };
+      };
 
     readStdOut();
     readStdErr();

@@ -20,10 +20,15 @@
 #include <utility>
 #include <ranges>
 #include <filesystem>
+#include <regex>
 #include <boost/process/v2/process.hpp>
+#include <boost/process/v2/start_dir.hpp>
 #include <boost/process/v2/stdio.hpp>
+#include <boost/process/v2/environment.hpp>
 #include <boost/process/v2/windows/show_window.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/locale.hpp>
 #include <boost/asio.hpp>
+#include <boost/dll.hpp>
+#include <magic.h>
 

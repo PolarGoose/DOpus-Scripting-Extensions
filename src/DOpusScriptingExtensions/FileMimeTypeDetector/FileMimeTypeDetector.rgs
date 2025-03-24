@@ -1,0 +1,26 @@
+HKCR
+{
+	DOpusScriptingExtensions.FileMimeTypeDetector.1 = s 'FileMimeTypeDetector class'
+	{
+		CLSID = s '{0AD4E772-58F4-4AD5-84B4-8639609C81A5}'
+	}
+	DOpusScriptingExtensions.FileMimeTypeDetector = s 'FileMimeTypeDetector class'
+	{		
+		CurVer = s 'DOpusScriptingExtensions.FileMimeTypeDetector.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {0AD4E772-58F4-4AD5-84B4-8639609C81A5} = s 'FileMimeTypeDetector class'
+		{
+      ProgID = s 'DOpusScriptingExtensions.FileMimeTypeDetector.1'
+			VersionIndependentProgID = s 'DOpusScriptingExtensions.FileMimeTypeDetector'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+			Version = s '1.0'
+		}
+	}
+}

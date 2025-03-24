@@ -5,6 +5,21 @@
 #include <comdef.h>
 #include "Utils/StringUtils.h"
 
+#define CATCH_ALL_EXCEPTIONS() \
+  catch (const HResultException& ex) { \
+    AtlReportError(GetObjectCLSID(), ex.LMessage().data(), __uuidof(IUnknown), ex.HResult()); \
+    return ex.HResult(); \
+  } \
+  catch (const std::exception& ex) { \
+    AtlReportError(GetObjectCLSID(), ex.what(), __uuidof(IUnknown), E_FAIL); \
+    return E_FAIL; \
+  }
+
+#define DEBUG_LOG(...) \
+  do { \
+    ATLTRACE(std::format(__VA_ARGS__).c_str()); \
+  } while (0)
+
 #define THROW_HRESULT(hr) \
   do { \
     throw HResultException(__LINE__, __FUNCTIONW__, (hr)); \
@@ -17,9 +32,9 @@
 
 #define THROW_IF_FAILED_MSG(hr, ...) \
   do { \
-    const auto& res = (hr); \
-    if (FAILED(res)) { \
-      THROW_HRESULT_MSG(res, __VA_ARGS__); \
+    const auto& _res = (hr); \
+    if (FAILED(_res)) { \
+      THROW_HRESULT_MSG(_res, __VA_ARGS__); \
     } \
   } while (0)
 

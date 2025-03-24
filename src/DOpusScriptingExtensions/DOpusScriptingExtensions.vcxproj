@@ -140,6 +140,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DOpusScriptingExtensions_i.h" />
+    <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetector.h" />
+    <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetectorResult.h" />
+    <ClInclude Include="FileMimeTypeDetector\LibMagicWrapper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessRunner\ProcessRunner.h" />
     <ClInclude Include="ProcessRunner\ProcessRunnerResult.h" />
@@ -147,7 +150,9 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils\ComUtils.h" />
     <ClInclude Include="Utils\Exceptions.h" />
+    <ClInclude Include="Utils\NonCopyableAndNonMovable.h" />
     <ClInclude Include="Utils\StringUtils.h" />
+    <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
@@ -170,6 +175,7 @@
   <ItemGroup>
     <None Include="DOpusScriptingExtensions.def" />
     <None Include="DOpusScriptingExtensions.rgs" />
+    <None Include="FileMimeTypeDetector\FileMimeTypeDetector.rgs" />
     <None Include="ProcessRunner\ProcessRunner.rgs" />
   </ItemGroup>
   <ItemGroup>
@@ -178,4 +184,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="CopyMagicMgcFileToOutputFolder" AfterTargets="Build" Condition="!Exists('$(OutputPath)/magic.mgc')">
+    <Copy SourceFiles="$(ProjectRoot)/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libmagic_x64-windows/share/libmagic/misc/magic.mgc" DestinationFolder="$(OutputPath)" />
+  </Target>
 </Project>

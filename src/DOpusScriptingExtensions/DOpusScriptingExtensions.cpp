@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ProcessRunner/ProcessRunner.h"
 #include "ProcessRunner/ProcessRunnerResult.h"
+#include "FileMimeTypeDetector/FileMimeTypeDetector.h"
 #include "DOpusScriptingExtensions_i.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>

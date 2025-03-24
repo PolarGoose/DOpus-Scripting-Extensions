@@ -153,10 +153,66 @@ function ProcessRunner_can_run_cmd_exe_with_pipe() {
   assertEqual(res.ExitCode, 0)
 }
 
+function ProcessRunner_can_run_with_env_variable() {
+  var res = processRunner.Run("%comspec%", ["/c", "echo test string"])
+  assertEqual(res.StdOut, "test string\r\n")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+
+  var res = processRunner.Run("%ProgramW6432%/Git/usr/bin/echo.exe", ["test string"])
+  assertEqual(res.StdOut, "test string\n")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_fails_if_env_variable_does_not_exist() {
+  var exeptionMessage = assertThrows(function () { processRunner.Run("%nonExistentEnvVar%", []) })
+  assertStringContains(exeptionMessage, "The executable not found '%nonExistentEnvVar%'")
+}
+
 function ProcessRunner_if_wrong_type_is_passed_it_ignores_it() {
   var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", ProcessRunner_if_wrong_type_is_passed_it_ignores_it)
   assertStringEmpty(res.StdErr)
   assertEqual(res.ExitCode, 0)
+}
+
+function ProcessRunner_fails_if_the_exe_is_not_executable() {
+  var exeptionMessage = assertThrows(function () { processRunner.Run("C:/Program Files", []) })
+  assertStringContains(exeptionMessage, "The file 'C:/Program Files' is not executable")
+
+  var exeptionMessage = assertThrows(function () { processRunner.Run("C:/Windows/System32/mssecuser.dll", []) })
+  assertStringContains(exeptionMessage, "The file 'C:/Windows/System32/mssecuser.dll' is not executable.")
+}
+
+function ProcessRunner_can_specify_working_directory() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["--mime-type", "--brief", "regedit.exe"], "C:/Windows")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
+var fileMimeTypeDetector
+try {
+  fileMimeTypeDetector = new ActiveXObject("DOpusScriptingExtensions.FileMimeTypeDetector")
+} catch (e) {
+  WScript.Echo("Failed to get FileMimeTypeDetector object:\n" + e.message)
+}
+
+function FileMimeTypeDetector_works_with_binary_files() {
+  var res = fileMimeTypeDetector.DetectMimeType("C:/Program Files/Git/usr/bin/echo.exe")
+  assertEqual(res.MimeType, "application/vnd.microsoft.portable-executable")
+  assertEqual(res.Encoding, "binary")
+}
+
+function FileMimeTypeDetector_works_with_directories() {
+  var res = fileMimeTypeDetector.DetectMimeType("C:/Program Files")
+  assertEqual(res.MimeType, "inode/directory")
+  assertEqual(res.Encoding, "binary")
+}
+
+function FileMimeTypeDetector_fails_if_fail_doesn_not_exist() {
+  var exeptionMessage = assertThrows(function () { fileMimeTypeDetector.DetectMimeType("C:/non_existent_file") })
+  assertStringContains(exeptionMessage, "CFileMimeTypeDetector::DetectMimeType:")
+  assertStringContains(exeptionMessage, "The file not found 'C:/non_existent_file'")
 }
 
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
@@ -168,4 +224,12 @@ runTest(ProcessRunner_can_receive_very_big_std_input)
 runTest(ProcessRunner_fails_if_exe_does_not_exist)
 runTest(ProcessRunner_fails_if_argument_has_wrong_format)
 runTest(ProcessRunner_can_run_cmd_exe_with_pipe)
+runTest(ProcessRunner_can_run_with_env_variable)
+runTest(ProcessRunner_fails_if_env_variable_does_not_exist)
 runTest(ProcessRunner_if_wrong_type_is_passed_it_ignores_it)
+runTest(ProcessRunner_fails_if_the_exe_is_not_executable)
+runTest(ProcessRunner_can_specify_working_directory)
+
+runTest(FileMimeTypeDetector_works_with_binary_files)
+runTest(FileMimeTypeDetector_works_with_directories)
+runTest(FileMimeTypeDetector_fails_if_fail_doesn_not_exist)

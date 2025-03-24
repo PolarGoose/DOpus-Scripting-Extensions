@@ -99,7 +99,7 @@ END
 
 IDR_DOPUSSCRIPTINGEXTENSIONS REGISTRY                "DOpusScriptingExtensions.rgs"
 IDR_PROCESSRUNNER            REGISTRY                "ProcessRunner/ProcessRunner.rgs"
-
+IDR_FILEMIMETYPEDETECTOR     REGISTRY                "FileMimeTypeDetector/FileMimeTypeDetector.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //

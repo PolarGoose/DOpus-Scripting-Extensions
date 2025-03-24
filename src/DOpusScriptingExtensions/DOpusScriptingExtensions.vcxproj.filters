@@ -11,6 +11,9 @@
     <Filter Include="ProcessRunner">
       <UniqueIdentifier>{c058dbcb-6eb2-426b-adf5-08e9cf49b872}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FileMimeTypeDetector">
+      <UniqueIdentifier>{950afe60-4bf9-4dc1-bffa-806c6dfa907a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -34,6 +37,21 @@
     <ClInclude Include="ProcessRunner\ProcessRunnerResult.h">
       <Filter>ProcessRunner</Filter>
     </ClInclude>
+    <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetector.h">
+      <Filter>FileMimeTypeDetector</Filter>
+    </ClInclude>
+    <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetectorResult.h">
+      <Filter>FileMimeTypeDetector</Filter>
+    </ClInclude>
+    <ClInclude Include="FileMimeTypeDetector\LibMagicWrapper.h">
+      <Filter>FileMimeTypeDetector</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\NonCopyableAndNonMovable.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\WinApiUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
@@ -47,6 +65,9 @@
     <None Include="DOpusScriptingExtensions.def" />
     <None Include="ProcessRunner\ProcessRunner.rgs">
       <Filter>ProcessRunner</Filter>
+    </None>
+    <None Include="FileMimeTypeDetector\FileMimeTypeDetector.rgs">
+      <Filter>FileMimeTypeDetector</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

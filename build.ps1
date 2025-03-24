@@ -61,10 +61,6 @@ Function GetVersion() {
   return "$($tag.Substring(1))-$commitHash"
 }
 
-Function ReplaceTextInFile($file, $pattern, $replacement) {
-  (Get-Content $file) | ForEach-Object { $_.Replace($pattern, $replacement) } | Set-Content $file
-}
-
 Function GetInstallerVersion($version) {
   return $version.Split("-")[0];
 }
@@ -85,7 +81,7 @@ Info "Version: '$version'. InstallerVersion: '$installerVersion'"
 Info "Integrate VcPkg"
 & $vcPkg integrate install
 
-Info "Build project to download all VcPkg packages"
+Info "Build project"
 & $msbuild `
     /nologo `
     /verbosity:minimal `
@@ -95,24 +91,6 @@ Info "Build project to download all VcPkg packages"
     /property:InstallerVersion=$installerVersion `
     $root/DOpusScriptingExtensions.sln
 CheckReturnCodeOfPreviousCommand "build failed"
-
-Info "Patch boost files to fix performance of asio pipes"
-ReplaceTextInFile `
-  $root/vcpkg_installed/x64-windows-static/x64-windows-static/include/boost/asio/impl/connect_pipe.ipp `
-  "0, 1, 8192, 8192, 0, 0);" `
-  "0, 1, 10 * 1024 * 1024, 10 * 1024 * 1024, 0, 0);"
-
-Info "Rebuild project"
-& $msbuild `
-    /nologo `
-    /verbosity:minimal `
-    /property:Configuration=Release `
-    /property:DebugType=None `
-    /property:Version=$version `
-    /property:InstallerVersion=$installerVersion `
-    /target:Rebuild `
-    $root/DOpusScriptingExtensions.sln
-CheckReturnCodeOfPreviousCommand "msbuild rebuild failed"
 
 Info "Run tests"
 cscript $root/src/test/test.js
