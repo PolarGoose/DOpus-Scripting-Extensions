@@ -1,8 +1,17 @@
 #include "pch.h"
-#include "ProcessRunner/ProcessRunner.h"
-#include "ProcessRunner/ProcessRunnerResult.h"
-#include "FileMimeTypeDetector/FileMimeTypeDetector.h"
+#include "resource.h"
 #include "DOpusScriptingExtensions_i.h"
+#include "Utils/StringUtils.h"
+#include "Utils/Exceptions.h"
+#include "Utils/ComUtils.h"
+#include "Utils/WinApiUtils.h"
+#include "Utils/NonCopyableAndNonMovable.h"
+#include "ProcessRunner/ProcessRunnerResult.h"
+#include "ProcessRunner/ProcessRunner.h"
+#include "FileMimeTypeDetector/LibMagicWrapper.h"
+#include "FileMimeTypeDetector/FileMimeTypeDetectorResult.h"
+#include "FileMimeTypeDetector/FileMimeTypeDetector.h"
+#include "StringFormatter/StringFormatter.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>
 {

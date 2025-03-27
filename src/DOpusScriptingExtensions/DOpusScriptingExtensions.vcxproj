@@ -147,6 +147,7 @@
     <ClInclude Include="ProcessRunner\ProcessRunner.h" />
     <ClInclude Include="ProcessRunner\ProcessRunnerResult.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="StringFormatter\StringFormatter.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils\ComUtils.h" />
     <ClInclude Include="Utils\Exceptions.h" />
@@ -177,6 +178,7 @@
     <None Include="DOpusScriptingExtensions.rgs" />
     <None Include="FileMimeTypeDetector\FileMimeTypeDetector.rgs" />
     <None Include="ProcessRunner\ProcessRunner.rgs" />
+    <None Include="StringFormatter\StringFormatter.rgs" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="DOpusScriptingExtensions.idl" />

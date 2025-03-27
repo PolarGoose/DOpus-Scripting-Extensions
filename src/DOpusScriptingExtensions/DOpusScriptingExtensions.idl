@@ -28,6 +28,15 @@ interface IFileMimeTypeDetector : IDispatch
   [id(1)] HRESULT DetectMimeType([in] BSTR fileFullName, [out, retval] IFileMimeTypeDetectorResult** res);
 };
 
+[object, uuid(19337548-7C0D-4437-866E-4E47A4CE662B), dual, nonextensible, pointer_default(unique)]
+interface IStringFormatter : IDispatch
+{
+  [id(1)] HRESULT Format([in] BSTR formatString, [in, defaultvalue(0)] BSTR arg1, [in, defaultvalue(0)] BSTR arg2, [in, defaultvalue(0)] BSTR arg3,
+    [in, defaultvalue(0)] BSTR arg4, [in, defaultvalue(0)] BSTR arg5, [in, defaultvalue(0)] BSTR arg6, [in, defaultvalue(0)] BSTR arg7,
+    [in, defaultvalue(0)] BSTR arg8, [in, defaultvalue(0)] BSTR arg9, [in, defaultvalue(0)] BSTR arg10, [in, defaultvalue(0)] BSTR arg11,
+    [in, defaultvalue(0)] BSTR arg12, [out, retval] BSTR* res);
+};
+
 [uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3), version(1.0)]
 library DOpusScriptingExtensionsLib
 {
@@ -55,6 +64,12 @@ library DOpusScriptingExtensionsLib
   coclass FileMimeTypeDetector
   {
     [default] interface IFileMimeTypeDetector;
+  };
+
+  [uuid(933053BD-E75C-473F-A201-9C9586C1AA1A)]
+  coclass StringFormatter
+  {
+    [default] interface IStringFormatter;
   };
 };
 

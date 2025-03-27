@@ -1,6 +1,4 @@
 #pragma once
-#include "resource.h"
-#include "DOpusScriptingExtensions_i.h"
 
 using namespace ATL;
 
@@ -16,25 +14,23 @@ public:
   END_COM_MAP()
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-  STDMETHOD(get_MimeType)(BSTR* val) override
-  {
-    *val = _mimeType.Copy();
+  STDMETHOD(get_MimeType)(BSTR* val) override try {
+    *val = Copy(_mimeType);
     return S_OK;
-  }
+  } CATCH_ALL_EXCEPTIONS()
 
-  STDMETHOD(get_Encoding)(BSTR* val) override
-  {
-    *val = _encoding.Copy();
+  STDMETHOD(get_Encoding)(BSTR* val) override try {
+    *val = Copy(_encoding);
     return S_OK;
-  }
+  } CATCH_ALL_EXCEPTIONS()
 
-  void Init(const CComBSTR& mimeType, const CComBSTR& encoding)
+  void Init(std::wstring mimeType, std::wstring encoding)
   {
-    _mimeType = mimeType;
-    _encoding = encoding;
+    _mimeType = std::move(mimeType);
+    _encoding = std::move(encoding);
   }
 
 private:
-  CComBSTR _mimeType;
-  CComBSTR _encoding;
+  std::wstring _mimeType;
+  std::wstring _encoding;
 };

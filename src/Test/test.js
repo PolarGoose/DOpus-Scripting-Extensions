@@ -66,6 +66,15 @@ function getFunctionName(fn) {
   return match ? match[1] : "anonymous"
 }
 
+function GetComObject(name) {
+  try {
+    return new ActiveXObject(name)
+  } catch (e) {
+    WScript.Echo("Failed to get COM object '" + name + "':\n" + e.message)
+    WScript.Quit(1)
+  }
+}
+
 function runTest(testFunction) {
   try {
     WScript.Echo("\nRunning test: " + getFunctionName(testFunction))
@@ -77,13 +86,7 @@ function runTest(testFunction) {
   }
 }
 
-var processRunner
-try {
-  processRunner = new ActiveXObject("DOpusScriptingExtensions.ProcessRunner")
-} catch (e) {
-  WScript.Echo("Failed to get ProcessRunner object:\n" + e.message)
-  WScript.Quit(1)
-}
+var processRunner = GetComObject("DOpusScriptingExtensions.ProcessRunner")
 
 function ProcessRunner_can_run_an_executable_without_parameters() {
   var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [])
@@ -194,12 +197,7 @@ function ProcessRunner_can_specify_working_directory() {
   assertEqual(res.ExitCode, 0)
 }
 
-var fileMimeTypeDetector
-try {
-  fileMimeTypeDetector = new ActiveXObject("DOpusScriptingExtensions.FileMimeTypeDetector")
-} catch (e) {
-  WScript.Echo("Failed to get FileMimeTypeDetector object:\n" + e.message)
-}
+var fileMimeTypeDetector = GetComObject("DOpusScriptingExtensions.FileMimeTypeDetector")
 
 function FileMimeTypeDetector_works_with_binary_files() {
   var res = fileMimeTypeDetector.DetectMimeType("C:/Program Files/Git/usr/bin/echo.exe")
@@ -232,6 +230,46 @@ function FileMimeTypeDetector_works_with_path_containing_unicode_characters() {
   assertEqual(res.Encoding, "us-ascii")
 }
 
+var stringFormatter = GetComObject("DOpusScriptingExtensions.StringFormatter")
+
+function StringFormatter_works_without_parameters() {
+  var res = stringFormatter.Format("Test message");
+  assertEqual(res, "Test message");
+}
+
+function StringFormatter_a_parameter_can_be_passed() {
+  var res = stringFormatter.Format("Test message {}", 123);
+  assertEqual(res, "Test message 123");
+}
+
+function StringFormatter_values_are_converted_to_string_and_passed_into_Format_method() {
+  var res = stringFormatter.Format("Test message {} {}", 123, [1, 2, 3]);
+  assertEqual(res, "Test message 123 1,2,3");
+}
+
+function StringFormatter_test_extra_parameter_are_ignored() {
+  var res = stringFormatter.Format("Test message {}", 123, [1, 2, 3]);
+  assertEqual(res, "Test message 123");
+}
+
+function StringFormatter_can_accept_12_parameters() {
+  var res = stringFormatter.Format("Test message {}{}{}{}{}{}{}{}{}{}{}{}",
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+  assertEqual(res, "Test message 123456789101112");
+}
+
+function StringFormatter_format_with_specifiers() {
+  var res = stringFormatter.Format("Test message {:>10}", "message");
+  assertEqual(res, "Test message    message");
+}
+
+function StringFormatter_throws_if_invalid_specifier() {
+  var res = assertThrows(function () {
+    stringFormatter.Format("Test message {:X}", 1);
+  });
+  assertEqual(res, "Invalid presentation type for string");
+}
+
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
 runTest(ProcessRunner_can_run_an_executable_that_print_to_stdErr)
 runTest(ProcessRunner_can_run_an_executable_with_parameters)
@@ -251,3 +289,11 @@ runTest(FileMimeTypeDetector_works_with_binary_files)
 runTest(FileMimeTypeDetector_works_with_directories)
 runTest(FileMimeTypeDetector_fails_if_fail_doesn_not_exist)
 runTest(FileMimeTypeDetector_works_with_path_containing_unicode_characters)
+
+runTest(StringFormatter_works_without_parameters);
+runTest(StringFormatter_a_parameter_can_be_passed);
+runTest(StringFormatter_values_are_converted_to_string_and_passed_into_Format_method);
+runTest(StringFormatter_test_extra_parameter_are_ignored);
+runTest(StringFormatter_can_accept_12_parameters);
+runTest(StringFormatter_format_with_specifiers);
+runTest(StringFormatter_throws_if_invalid_specifier);

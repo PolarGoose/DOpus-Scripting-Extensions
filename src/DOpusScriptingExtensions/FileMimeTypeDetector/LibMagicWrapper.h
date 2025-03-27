@@ -1,6 +1,4 @@
 #pragma once
-#include <boost/filesystem.hpp>
-#include <Utils/NonCopyableAndNonMovable.h>
 
 class LibMagicWrapper : NonCopyableAndNonMovable {
 public:

@@ -1,9 +1,4 @@
 #pragma once
-#include "resource.h"
-#include "DOpusScriptingExtensions_i.h"
-#include "Utils/ComUtils.h"
-#include "FileMimeTypeDetector/FileMimeTypeDetectorResult.h"
-#include "FileMimeTypeDetector/LibMagicWrapper.h"
 
 using namespace ATL;
 class ATL_NO_VTABLE CFileMimeTypeDetector :
@@ -33,7 +28,7 @@ public:
     const auto& [mimeType, encoding] = ParseMimeTypeAndEncoding(mimeTypeAndEncoding);
     *res = CreateComObject<CFileMimeTypeDetectorResult, IFileMimeTypeDetectorResult>(
       [&](auto& pObj) {
-        pObj.Init(CComBSTR(mimeType.c_str()), CComBSTR(encoding.c_str()));
+        pObj.Init(std::move(mimeType), std::move(encoding));
       });
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()

@@ -21,6 +21,7 @@
 #include <ranges>
 #include <filesystem>
 #include <regex>
+#include <comdef.h>
 #include <boost/process/v2/process.hpp>
 #include <boost/process/v2/start_dir.hpp>
 #include <boost/process/v2/stdio.hpp>

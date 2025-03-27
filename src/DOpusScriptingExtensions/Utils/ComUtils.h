@@ -1,6 +1,6 @@
 #pragma once
-#include <AtlBase.h>
-#include "Utils/Exceptions.h"
+
+using namespace ATL;
 
 inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view propName) {
   DISPID dispId = 0;
@@ -52,4 +52,12 @@ inline std::vector<std::wstring> JsStringArrayToVector(IDispatch& obj) {
   }
 
   return result;
+}
+
+inline BSTR Copy(std::wstring_view str) {
+  const auto& res = SysAllocStringLen(str.data(), static_cast<UINT>(str.size()));
+  if (res == nullptr) {
+    THROW_WEXCEPTION(L"Failed to create a BSTR copy");
+  }
+  return res;
 }

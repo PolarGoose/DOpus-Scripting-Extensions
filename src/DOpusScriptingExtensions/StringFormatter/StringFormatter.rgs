@@ -1,0 +1,26 @@
+HKCR
+{
+	DOpusScriptingExtensions.StringFormatter.1 = s 'StringFormatter class'
+	{
+		CLSID = s '{933053BD-E75C-473F-A201-9C9586C1AA1A}'
+	}
+	DOpusScriptingExtensions.StringFormatter = s 'StringFormatter class'
+	{		
+		CurVer = s 'DOpusScriptingExtensions.StringFormatter.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {933053BD-E75C-473F-A201-9C9586C1AA1A} = s 'StringFormatter class'
+		{
+      ProgID = s 'DOpusScriptingExtensions.StringFormatter.1'
+			VersionIndependentProgID = s 'DOpusScriptingExtensions.StringFormatter'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+			Version = s '1.0'
+		}
+	}
+}

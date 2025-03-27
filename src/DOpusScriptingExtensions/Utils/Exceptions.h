@@ -1,9 +1,4 @@
 #pragma once
-#include <stdexcept>
-#include <AtlBase.h>
-#include <format>
-#include <comdef.h>
-#include "Utils/StringUtils.h"
 
 #define CATCH_ALL_EXCEPTIONS() \
   catch (const HResultException& ex) { \

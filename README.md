@@ -2,14 +2,13 @@
 A COM DLL that extends JScript functionality for [Directory Opus](https://www.gpsoft.com.au/) scripts.
 
 # Limitations
-* Tested on Windows 11 but should also work on Windows 7 and higher.
-* Supports only Windows x64 bit
+* Supports Windows 10 x64 or higher.
 * Supports only JScript scripting language. VBScript is not supported.
 * Portable DOpus is not supported because the extensions DLL require installation using a `msi` installer.
 
 # Description of classes
 ## ProcessRunner
-This is an improved version of the [WScript.shell Run](https://ss64.com/vb/run.html) method. It allows to get StdOur and StdErr of the process without creating a temporary file.<br>
+This is an alternative to [WScript.shell Run](https://ss64.com/vb/run.html) method. It allows to get `StdOut` and `StdErr` of a process without creating a temporary file.<br>
 `ProcessRunner` is 2-3 times faster than using the `WScript.shell`.
 
 ### Examples
@@ -51,8 +50,37 @@ res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["twain_32.dll"
 res = processRunner.Run("%comspec%", ["/c", "echo test"])
 res = processRunner.Run("%ProgramW6432%/Git/usr/bin/echo.exe", ["test string"])
 ```
-#### Notes
+### Notes
 * Arguments must be an array of strings.
+
+## StringFormatter
+This class allows you to format strings in a similar way to how it works in Python.<br>
+It is an alternative to a traditional string concatenation approach used in JScript.<br>
+It also allows to use format specifiers described in [format specification](https://en.cppreference.com/w/cpp/utility/format/spec).<br>
+The implementation uses `std::format` from C++20.
+
+### Examples
+
+#### Simple example
+```javascript
+var fmt = new ActiveXObject("DOpusScriptingExtensions.StringFormatter")
+
+// You can pass any object as an argument. JScript will convert it to a string
+var resStr = fmt.Format("Some {} with {}", "message", "arguments")
+WScript.Echo(resStr) // Some message with arguments
+```
+
+#### Using format specifiers
+You can use any format specifiers that only apply to strings<br>
+Because all parameters are converted to strings and then passed to the `Format` method.<br>
+For example, the `{:X}` format specifier doesn't work
+```javascript
+var resStr = fmt.Format("Value with offset {:6}", 1234)
+WScript.Echo(resStr) // Value with offset   1234
+```
+
+### Notes
+The `Format` method accepts up to 12 arguments.
 
 ## FileMimeTypeDetector
 This class allows you to detect the MIME type and encoding based on the file's content, not its extension. This class uses the [libmagic](https://man7.org/linux/man-pages/man3/libmagic.3.html), it is the same mechanism that the UNIX [file utility](https://man7.org/linux/man-pages/man1/file.1.html) uses.
@@ -63,8 +91,8 @@ This class allows you to detect the MIME type and encoding based on the file's c
 fileMimeTypeDetector = new ActiveXObject("DOpusScriptingExtensions.FileMimeTypeDetector")
 
 var res = fileMimeTypeDetector.DetectMimeType("C:/some text file.txt")
-assertEqual(res.MimeType, "text/plain")
-assertEqual(res.Encoding, "utf-8")
+WScript.Echo("MimeType: " + res.MimeType) // "text/plain"
+WScript.Echo("Encoding: " + res.Encoding) // "utf-8"
 ```
 
 ### Notes

@@ -14,6 +14,9 @@
     <Filter Include="FileMimeTypeDetector">
       <UniqueIdentifier>{950afe60-4bf9-4dc1-bffa-806c6dfa907a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StringFormatter">
+      <UniqueIdentifier>{454e85dc-de25-4260-94c1-091e07a7eeb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -52,6 +55,9 @@
     <ClInclude Include="Utils\WinApiUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="StringFormatter\StringFormatter.h">
+      <Filter>StringFormatter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
@@ -68,6 +74,9 @@
     </None>
     <None Include="FileMimeTypeDetector\FileMimeTypeDetector.rgs">
       <Filter>FileMimeTypeDetector</Filter>
+    </None>
+    <None Include="StringFormatter\StringFormatter.rgs">
+      <Filter>StringFormatter</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

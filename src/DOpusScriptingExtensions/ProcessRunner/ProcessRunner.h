@@ -1,9 +1,4 @@
 #pragma once
-#include "resource.h"
-#include "ProcessRunner/ProcessRunnerResult.h"
-#include "DOpusScriptingExtensions_i.h"
-#include "Utils/ComUtils.h"
-#include "Utils/WinApiUtils.h"
 
 using namespace ATL;
 class ATL_NO_VTABLE CProcessRunner :
@@ -27,18 +22,18 @@ public:
 
     const auto& cmdArgs = ToUtf8StringVector(cmdWideArgs);
     const auto& expandedPath = ExpandPathWithEnvironmentVariables(executablePath);
-    const auto& [stdOut, stdErr, exitCode] = RunProcess(expandedPath, cmdArgs, workingDirectory);
+    auto [stdOut, stdErr, exitCode] = RunProcess(expandedPath, cmdArgs, workingDirectory);
     *result = CreateComObject<CProcessRunnerResult, IProcessRunnerResult>(
       [&](auto& obj) {
-        obj.Init(CComBSTR(ToWide(stdOut).c_str()), CComBSTR(ToWide(stdErr).c_str()), exitCode);
+        obj.Init(std::move(stdOut), std::move(stdErr), exitCode);
       });
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
 private:
-  static std::tuple<std::string, std::string, int> RunProcess(const boost::filesystem::path& exePath,
-                                                              std::vector<std::string> args,
-                                                              std::wstring_view workingDirectory) {
+  static std::tuple<std::wstring, std::wstring, int> RunProcess(const boost::filesystem::path& exePath,
+                                                                std::vector<std::string> args,
+                                                                std::wstring_view workingDirectory) {
     if (!boost::filesystem::exists(exePath))
     {
       THROW_WEXCEPTION(L"The executable not found '{}'", exePath);
@@ -89,12 +84,8 @@ private:
 
     const auto& exitCode = proc.wait();
 
-    return { std::string(
-              boost::asio::buffers_begin(outBuffer.data()),
-              boost::asio::buffers_end(outBuffer.data())),
-            std::string(
-              boost::asio::buffers_begin(errBuffer.data()),
-              boost::asio::buffers_end(errBuffer.data())),
+    return { ToWide({ static_cast<const char*>(outBuffer.data().data()), outBuffer.size() }),
+             ToWide({ static_cast<const char*>(errBuffer.data().data()), errBuffer.size() }),
             exitCode };
   }
 };

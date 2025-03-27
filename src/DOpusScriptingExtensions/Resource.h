@@ -7,6 +7,7 @@
 #define IDR_PROCESSRUNNER               106
 #define IDR_PROCESSRUNNERRESULT         107
 #define IDR_FILEMIMETYPEDETECTOR        108
+#define IDR_STRINGFORMATTER             109
 #define IDR_REGISTRY1                   202
 
 // Next default values for new objects
