@@ -1,0 +1,26 @@
+HKCR
+{
+	DOpusScriptingExtensions.MediaInfoRetriever.1 = s 'MediaInfoRetriever class'
+	{
+		CLSID = s '{4349DCF9-4E85-47CB-917F-A6EEBBD11B3F}'
+	}
+	DOpusScriptingExtensions.MediaInfoRetriever = s 'MediaInfoRetriever class'
+	{		
+		CurVer = s 'DOpusScriptingExtensions.MediaInfoRetriever.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {4349DCF9-4E85-47CB-917F-A6EEBBD11B3F} = s 'MediaInfoRetriever class'
+		{
+      ProgID = s 'DOpusScriptingExtensions.MediaInfoRetriever.1'
+			VersionIndependentProgID = s 'DOpusScriptingExtensions.MediaInfoRetriever'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+			Version = s '1.0'
+		}
+	}
+}

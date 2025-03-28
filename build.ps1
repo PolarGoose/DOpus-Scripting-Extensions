@@ -96,10 +96,6 @@ Info "Run tests"
 cscript $root/src/test/test.js
 CheckReturnCodeOfPreviousCommand "tests failed"
 
-Info "Run ProcessRunner performance tests"
-cscript $root/src/test/processRunnerPerformanceTest.js
-CheckReturnCodeOfPreviousCommand "tests failed"
-
 Info "Copy installer to the Publish directory"
 New-Item -Force -ItemType "directory" $buildDir/Publish > $null
 Copy-Item -Force -Path $buildDir/x64/Release/Installer/Installer.msi -Destination $buildDir/Publish/DOpusScriptingExtensions.msi > $null

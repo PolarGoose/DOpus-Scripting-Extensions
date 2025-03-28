@@ -1,3 +1,6 @@
+var fso = new ActiveXObject("Scripting.FileSystemObject");
+var shell = new ActiveXObject("WScript.shell");
+
 function assertionFailed(message) {
   throw new Error("Assertion failed:\n" + message)
 }
@@ -42,23 +45,48 @@ function assertThrows(fn) {
 }
 
 function createTextFile(sizeInMb) {
-  var fso = new ActiveXObject("Scripting.FileSystemObject");
-  var tempFolder = fso.GetSpecialFolder(2);
-  var filePath = tempFolder.Path + "/DOpusScriptingExtensions_testTextFile.txt";
-  var file = fso.CreateTextFile(filePath, true);
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/DOpusScriptingExtensions_testTextFile.txt"
+  var file = fso.CreateTextFile(filePath, true)
 
-  var oneKB = "";
+  var oneKB = ""
   for (var i = 0; i < 1023; i++) {
-    oneKB += "A";
+    oneKB += "A"
   }
-  oneKB += "\n";
+  oneKB += "\n"
 
-  for (var i = 0; i < sizeInMb * 1024; i++) {
-      file.Write(oneKB);
+  var oneMB = ""
+  for (var i = 0; i < 1024; i++) {
+    oneMB += oneKB
   }
 
-  file.Close();
-  return filePath;
+  for (var i = 0; i < sizeInMb; i++) {
+      file.Write(oneMB)
+  }
+
+  file.Close()
+  return filePath
+}
+
+function runCommandUsingWShellAndReturnOutput(command, args) {
+  var tempFileFullName = fso.GetSpecialFolder(2) + "\\DOpusScriptingExtensions_ProcessRunner_performance_test.txt"
+  var cmdLine = 'cmd.exe /c ""' + command + '" ' + args + '  > "'+ tempFileFullName + '""'
+  WScript.Echo("shell.run " + cmdLine)
+
+  try {
+    var exitCode = shell.run(cmdLine, 0, true)
+    if (exitCode !== 0) {
+      throw new Error("Failed to execute the command. ExitCode=" + exitCode)
+    }
+
+    var handle = fso.OpenTextFile(tempFileFullName, 1);
+    var content = handle.ReadAll();
+    handle.Close()
+    return content
+  }
+  finally {
+    fso.DeleteFile(tempFileFullName)
+  }
 }
 
 function getFunctionName(fn) {
@@ -66,13 +94,19 @@ function getFunctionName(fn) {
   return match ? match[1] : "anonymous"
 }
 
-function GetComObject(name) {
+function createComObject(name) {
   try {
     return new ActiveXObject(name)
   } catch (e) {
     WScript.Echo("Failed to get COM object '" + name + "':\n" + e.message)
     WScript.Quit(1)
   }
+}
+
+function runFunctionAndMeasureTimeInMs(func) {
+  var startTime = new Date()
+  func()
+  return new Date() - startTime
 }
 
 function runTest(testFunction) {
@@ -86,7 +120,7 @@ function runTest(testFunction) {
   }
 }
 
-var processRunner = GetComObject("DOpusScriptingExtensions.ProcessRunner")
+var processRunner = createComObject("DOpusScriptingExtensions.ProcessRunner")
 
 function ProcessRunner_can_run_an_executable_without_parameters() {
   var res = processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", [])
@@ -197,7 +231,55 @@ function ProcessRunner_can_specify_working_directory() {
   assertEqual(res.ExitCode, 0)
 }
 
-var fileMimeTypeDetector = GetComObject("DOpusScriptingExtensions.FileMimeTypeDetector")
+function testThatProcessRunnerPerformanceIsBetter(wshellFunc, processRunnerFunc) {
+  WScript.Echo("Run using WScript.shell")
+  var wshellTime = runFunctionAndMeasureTimeInMs(wshellFunc)
+  WScript.Echo("Run using ProcessRunner")
+  var processRunnerTime = runFunctionAndMeasureTimeInMs(processRunnerFunc)
+
+  WScript.Echo("Result:\nWScript.shell: " + wshellTime + "ms\nProcessRunner: " + processRunnerTime + "ms")
+
+  assertLess(wshellTime, processRunnerTime)
+}
+
+function ProcessRunner_performance_test_executable_with_small_output() {
+  testThatProcessRunnerPerformanceIsBetter(
+    function() {
+      runCommandUsingWShellAndReturnOutput("C:/Program Files/Git/usr/bin/echo.exe",  "123")
+    },
+    function() {
+      processRunner.Run("C:/Program Files/Git/usr/bin/echo.exe", ["123"])
+    }
+  )
+}
+
+function ProcessRunner_performance_test_executable_with_1mb_output() {
+  var file = createTextFile(1)
+
+  testThatProcessRunnerPerformanceIsBetter(
+    function() {
+      runCommandUsingWShellAndReturnOutput("C:/Program Files/Git/usr/bin/cat.exe",  file)
+    },
+    function() {
+      processRunner.Run("C:/Program Files/Git/usr/bin/cat.exe", [file])
+    }
+  )
+}
+
+function ProcessRunner_performance_test_executable_with_30mb_output() {
+  var file = createTextFile(30)
+
+  testThatProcessRunnerPerformanceIsBetter(
+    function() {
+      runCommandUsingWShellAndReturnOutput("C:/Program Files/Git/usr/bin/cat.exe",  file)
+    },
+    function() {
+      processRunner.Run("C:/Program Files/Git/usr/bin/cat.exe", [file])
+    }
+  )
+}
+
+var fileMimeTypeDetector = createComObject("DOpusScriptingExtensions.FileMimeTypeDetector")
 
 function FileMimeTypeDetector_works_with_binary_files() {
   var res = fileMimeTypeDetector.DetectMimeType("C:/Program Files/Git/usr/bin/echo.exe")
@@ -218,56 +300,118 @@ function FileMimeTypeDetector_fails_if_fail_doesn_not_exist() {
 }
 
 function FileMimeTypeDetector_works_with_path_containing_unicode_characters() {
-  var fso = new ActiveXObject("Scripting.FileSystemObject");
-  var tempFolder = fso.GetSpecialFolder(2);
-  var filePath = tempFolder.Path + "/DOpusScriptingExtensions testTextFile трじα.txt";
-  var file = fso.CreateTextFile(filePath, true);
-  file.Write("AAAA\n");
-  file.Close();
+  var fso = new ActiveXObject("Scripting.FileSystemObject")
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/DOpusScriptingExtensions testTextFile трじα.txt"
+  var file = fso.CreateTextFile(filePath, true)
+  file.Write("AAAA\n")
+  file.Close()
 
   var res = fileMimeTypeDetector.DetectMimeType(filePath)
   assertEqual(res.MimeType, "text/plain")
   assertEqual(res.Encoding, "us-ascii")
 }
 
-var stringFormatter = GetComObject("DOpusScriptingExtensions.StringFormatter")
+var stringFormatter = createComObject("DOpusScriptingExtensions.StringFormatter")
 
 function StringFormatter_works_without_parameters() {
-  var res = stringFormatter.Format("Test message");
-  assertEqual(res, "Test message");
+  var res = stringFormatter.Format("Test message")
+  assertEqual(res, "Test message")
 }
 
 function StringFormatter_a_parameter_can_be_passed() {
-  var res = stringFormatter.Format("Test message {}", 123);
-  assertEqual(res, "Test message 123");
+  var res = stringFormatter.Format("Test message {}", 123)
+  assertEqual(res, "Test message 123")
 }
 
 function StringFormatter_values_are_converted_to_string_and_passed_into_Format_method() {
-  var res = stringFormatter.Format("Test message {} {}", 123, [1, 2, 3]);
-  assertEqual(res, "Test message 123 1,2,3");
+  var res = stringFormatter.Format("Test message {} {}", 123, [1, 2, 3])
+  assertEqual(res, "Test message 123 1,2,3")
 }
 
 function StringFormatter_test_extra_parameter_are_ignored() {
-  var res = stringFormatter.Format("Test message {}", 123, [1, 2, 3]);
-  assertEqual(res, "Test message 123");
+  var res = stringFormatter.Format("Test message {}", 123, [1, 2, 3])
+  assertEqual(res, "Test message 123")
 }
 
 function StringFormatter_can_accept_12_parameters() {
   var res = stringFormatter.Format("Test message {}{}{}{}{}{}{}{}{}{}{}{}",
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
-  assertEqual(res, "Test message 123456789101112");
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+  assertEqual(res, "Test message 123456789101112")
 }
 
 function StringFormatter_format_with_specifiers() {
-  var res = stringFormatter.Format("Test message {:>10}", "message");
-  assertEqual(res, "Test message    message");
+  var res = stringFormatter.Format("Test message {:>10}", "message")
+  assertEqual(res, "Test message    message")
 }
 
 function StringFormatter_throws_if_invalid_specifier() {
   var res = assertThrows(function () {
-    stringFormatter.Format("Test message {:X}", 1);
+    stringFormatter.Format("Test message {:X}", 1)
   });
-  assertEqual(res, "Invalid presentation type for string");
+  assertEqual(res, "Invalid presentation type for string")
+}
+
+var stream_t = {
+  Stream_General: 0,  // StreamKind = General
+  Stream_Video: 1,    // StreamKind = Video
+  Stream_Audio: 2,    // StreamKind = Audio
+  Stream_Text: 3,     // StreamKind = Text
+  Stream_Other: 4,    // StreamKind = Chapters
+  Stream_Image: 5,    // StreamKind = Image
+  Stream_Menu: 6      // StreamKind = Menu
+}
+
+var info_t = {
+  Info_Name: 0,         // InfoKind = Unique name of parameter
+  Info_Text: 1,         // InfoKind = Value of parameter
+  Info_Measure: 2,      // InfoKind = Unique name of measure unit of parameter
+  Info_Options: 3,      // InfoKind = See infooptions_t
+  Info_Name_Text: 4,    // InfoKind = Translated name of parameter
+  Info_Measure_Text: 5, // InfoKind = Translated name of measure unit
+  Info_Info: 6,         // InfoKind = More information about the parameter
+  Info_HowTo: 7,        // InfoKind = How this parameter is supported, could be N (No), B (Beta), R (Read only), W (Read/Write)
+  Info_Domain: 8        // InfoKind = Domain of this piece of information
+}
+
+var mediaInfo = createComObject("DOpusScriptingExtensions.MediaInfoRetriever")
+
+function MediaInfoRetriever_fails_to_open_a_file_if_it_does_not_exist() {
+  var res = assertThrows(function () { mediaInfo.Open("C:/non_existent_file") })
+  assertStringContains(res, "MediaInfoRetriever.h:")
+  assertStringContains(res, "File 'C:/non_existent_file' does not exist")
+}
+
+function MediaInfoRetriever_fails_to_open_a_file_if_it_is_a_folder() {
+  var res = assertThrows(function () { mediaInfo.Open("C:/Windows") })
+  assertStringContains(res, "MediaInfoRetriever.h:")
+  assertStringContains(res, "Failed to open a file 'C:/Windows'")
+}
+
+function MediaInfoRetriever_can_open_media_file() {
+  mediaInfo.Open("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+
+  var res = mediaInfo.Get(stream_t.Stream_General, 0, "Format")
+  assertEqual(res, "WebM")
+
+  res = mediaInfo.Get(stream_t.Stream_General, 0, "OverallBitRate", info_t.Info_Text, info_t.Info_Name)
+  assertEqual(res, "1191839")
+
+  res = mediaInfo.Get(stream_t.Stream_Video, 0, "Format", info_t.Info_Text, info_t.Info_Name)
+  assertEqual(res, "VP9")
+
+  res = mediaInfo.Get(stream_t.Stream_Video, 0, "Format", info_t.Info_Text, info_t.Info_Text)
+  assertEqual(res, "")
+
+  res = mediaInfo.Get(stream_t.Stream_Video, 0, "Width")
+  assertEqual(res, "1920")
+}
+
+function MediaInfoRetriever_can_close_file() {
+  mediaInfo.Open("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+  mediaInfo.Close()
+  mediaInfo.Open("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+  mediaInfo.Close()
 }
 
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
@@ -284,16 +428,24 @@ runTest(ProcessRunner_fails_if_env_variable_does_not_exist)
 runTest(ProcessRunner_if_wrong_type_is_passed_it_ignores_it)
 runTest(ProcessRunner_fails_if_the_exe_is_not_executable)
 runTest(ProcessRunner_can_specify_working_directory)
+runTest(ProcessRunner_performance_test_executable_with_small_output)
+runTest(ProcessRunner_performance_test_executable_with_1mb_output)
+runTest(ProcessRunner_performance_test_executable_with_30mb_output)
 
 runTest(FileMimeTypeDetector_works_with_binary_files)
 runTest(FileMimeTypeDetector_works_with_directories)
 runTest(FileMimeTypeDetector_fails_if_fail_doesn_not_exist)
 runTest(FileMimeTypeDetector_works_with_path_containing_unicode_characters)
 
-runTest(StringFormatter_works_without_parameters);
-runTest(StringFormatter_a_parameter_can_be_passed);
-runTest(StringFormatter_values_are_converted_to_string_and_passed_into_Format_method);
-runTest(StringFormatter_test_extra_parameter_are_ignored);
-runTest(StringFormatter_can_accept_12_parameters);
-runTest(StringFormatter_format_with_specifiers);
-runTest(StringFormatter_throws_if_invalid_specifier);
+runTest(StringFormatter_works_without_parameters)
+runTest(StringFormatter_a_parameter_can_be_passed)
+runTest(StringFormatter_values_are_converted_to_string_and_passed_into_Format_method)
+runTest(StringFormatter_test_extra_parameter_are_ignored)
+runTest(StringFormatter_can_accept_12_parameters)
+runTest(StringFormatter_format_with_specifiers)
+runTest(StringFormatter_throws_if_invalid_specifier)
+
+runTest(MediaInfoRetriever_fails_to_open_a_file_if_it_does_not_exist)
+runTest(MediaInfoRetriever_fails_to_open_a_file_if_it_is_a_folder)
+runTest(MediaInfoRetriever_can_open_media_file)
+runTest(MediaInfoRetriever_can_close_file)

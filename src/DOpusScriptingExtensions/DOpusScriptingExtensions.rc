@@ -97,10 +97,11 @@ END
 // REGISTRY
 //
 
-IDR_DOPUSSCRIPTINGEXTENSIONS REGISTRY                "DOpusScriptingExtensions.rgs"
-IDR_PROCESSRUNNER            REGISTRY                "ProcessRunner/ProcessRunner.rgs"
-IDR_FILEMIMETYPEDETECTOR     REGISTRY                "FileMimeTypeDetector/FileMimeTypeDetector.rgs"
-IDR_STRINGFORMATTER          REGISTRY                "StringFormatter/StringFormatter.rgs"
+IDR_DOpusScriptingExtensions  REGISTRY  "DOpusScriptingExtensions.rgs"
+IDR_ProcessRunner             REGISTRY  "ProcessRunner/ProcessRunner.rgs"
+IDR_FileMimeTypeDetector      REGISTRY  "FileMimeTypeDetector/FileMimeTypeDetector.rgs"
+IDR_StringFormatter           REGISTRY  "StringFormatter/StringFormatter.rgs"
+IDR_MediaInfoRetriever        REGISTRY  "MediaInfoRetriever/MediaInfoRetriever.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -109,7 +110,7 @@ IDR_STRINGFORMATTER          REGISTRY                "StringFormatter/StringForm
 
 STRINGTABLE
 BEGIN
-    IDS_PROJNAME            "DOpusScriptingExtensions"
+    IDS_ProjName            "DOpusScriptingExtensions"
 END
 
 #endif    // English (United States) resources

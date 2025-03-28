@@ -6,7 +6,7 @@ class ATL_NO_VTABLE CProcessRunner :
   public CComCoClass<CProcessRunner, &CLSID_ProcessRunner>,
   public IDispatchImpl<IProcessRunner, &IID_IProcessRunner, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0> {
 public:
-  DECLARE_REGISTRY_RESOURCEID(IDR_PROCESSRUNNER)
+  DECLARE_REGISTRY_RESOURCEID(IDR_ProcessRunner)
   BEGIN_COM_MAP(CProcessRunner)
     COM_INTERFACE_ENTRY(IProcessRunner)
     COM_INTERFACE_ENTRY(IDispatch)
@@ -32,8 +32,8 @@ public:
 
 private:
   static std::tuple<std::wstring, std::wstring, int> RunProcess(const boost::filesystem::path& exePath,
-                                                                std::vector<std::string> args,
-                                                                std::wstring_view workingDirectory) {
+                                                                const std::vector<std::string>& args,
+                                                                const std::wstring_view workingDirectory) {
     if (!boost::filesystem::exists(exePath))
     {
       THROW_WEXCEPTION(L"The executable not found '{}'", exePath);

@@ -7,7 +7,7 @@ class ATL_NO_VTABLE CStringFormatter :
   public IDispatchImpl<IStringFormatter, &IID_IStringFormatter, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
-  DECLARE_REGISTRY_RESOURCEID(IDR_STRINGFORMATTER)
+  DECLARE_REGISTRY_RESOURCEID(IDR_StringFormatter)
   BEGIN_COM_MAP(CStringFormatter)
     COM_INTERFACE_ENTRY(IStringFormatter)
     COM_INTERFACE_ENTRY(IDispatch)

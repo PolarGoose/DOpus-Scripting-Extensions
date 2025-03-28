@@ -2,7 +2,7 @@
   "vcpkg-configuration": {
     "default-registry": {
       "kind": "git",
-      "baseline": "670f6dddaafc59c5dfe0587a130d59a35c48ea38",
+      "baseline": "e2e3f654bc45c28f2696ace32d66f28429bb3b28",
       "repository": "https://github.com/microsoft/vcpkg"
     },
     "registries": [
@@ -21,6 +21,7 @@
     "boost-process",
     "boost-locale",
     "boost-dll",
-    "libmagic"
+    "libmagic",
+    "libmediainfo"
   ]
 }

@@ -7,7 +7,7 @@ class ATL_NO_VTABLE CFileMimeTypeDetector :
   public IDispatchImpl<IFileMimeTypeDetector, &IID_IFileMimeTypeDetector, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
-  DECLARE_REGISTRY_RESOURCEID(IDR_FILEMIMETYPEDETECTOR)
+  DECLARE_REGISTRY_RESOURCEID(IDR_FileMimeTypeDetector)
   BEGIN_COM_MAP(CFileMimeTypeDetector)
     COM_INTERFACE_ENTRY(IFileMimeTypeDetector)
     COM_INTERFACE_ENTRY(IDispatch)
@@ -34,7 +34,7 @@ public:
   } CATCH_ALL_EXCEPTIONS()
 
 private:
-  std::pair<std::wstring, std::wstring> ParseMimeTypeAndEncoding(std::wstring mimeTypeAndEncoding) {
+  std::pair<std::wstring, std::wstring> ParseMimeTypeAndEncoding(const std::wstring& mimeTypeAndEncoding) {
     // The mimeTypeAndEncoding has values like "text/plain; charset=us-ascii"
 
     static const std::wregex pattern{ LR"(([^;]+);\scharset=(.+))" };

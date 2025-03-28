@@ -95,7 +95,7 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\DOpusScriptingExtensions.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib;crypt32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +135,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib;crypt32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -143,6 +143,7 @@
     <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetector.h" />
     <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetectorResult.h" />
     <ClInclude Include="FileMimeTypeDetector\LibMagicWrapper.h" />
+    <ClInclude Include="MediaInfoRetriever\MediaInfoRetriever.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessRunner\ProcessRunner.h" />
     <ClInclude Include="ProcessRunner\ProcessRunnerResult.h" />
@@ -177,6 +178,7 @@
     <None Include="DOpusScriptingExtensions.def" />
     <None Include="DOpusScriptingExtensions.rgs" />
     <None Include="FileMimeTypeDetector\FileMimeTypeDetector.rgs" />
+    <None Include="MediaInfoRetriever\MediaInfoRetriever.rgs" />
     <None Include="ProcessRunner\ProcessRunner.rgs" />
     <None Include="StringFormatter\StringFormatter.rgs" />
   </ItemGroup>

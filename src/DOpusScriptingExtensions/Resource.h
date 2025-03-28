@@ -2,12 +2,12 @@
 // Microsoft Visual C++ generated include file.
 // Used by DOpusScriptingExtensions.rc
 //
-#define IDS_PROJNAME                    100
-#define IDR_DOPUSSCRIPTINGEXTENSIONS    101
-#define IDR_PROCESSRUNNER               106
-#define IDR_PROCESSRUNNERRESULT         107
-#define IDR_FILEMIMETYPEDETECTOR        108
-#define IDR_STRINGFORMATTER             109
+#define IDS_ProjName                    100
+#define IDR_DOpusScriptingExtensions    101
+#define IDR_ProcessRunner               106
+#define IDR_FileMimeTypeDetector        107
+#define IDR_StringFormatter             108
+#define IDR_MediaInfoRetriever          109
 #define IDR_REGISTRY1                   202
 
 // Next default values for new objects

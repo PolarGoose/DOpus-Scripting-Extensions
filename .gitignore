@@ -1,4 +1,5 @@
 /build/
+.idea/
 /vcpkg_installed/
 /.vs/
 *.vcxproj.user

@@ -32,4 +32,4 @@
 #include <boost/asio.hpp>
 #include <boost/dll.hpp>
 #include <magic.h>
-
+#include <MediaInfo/MediaInfo.h>

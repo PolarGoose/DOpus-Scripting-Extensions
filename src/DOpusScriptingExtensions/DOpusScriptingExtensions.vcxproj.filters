@@ -17,6 +17,9 @@
     <Filter Include="StringFormatter">
       <UniqueIdentifier>{454e85dc-de25-4260-94c1-091e07a7eeb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MediaInfoRetriever">
+      <UniqueIdentifier>{4e51588b-08ee-4f4e-86d8-eb827d65f996}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -58,6 +61,9 @@
     <ClInclude Include="StringFormatter\StringFormatter.h">
       <Filter>StringFormatter</Filter>
     </ClInclude>
+    <ClInclude Include="MediaInfoRetriever\MediaInfoRetriever.h">
+      <Filter>MediaInfoRetriever</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
@@ -77,6 +83,9 @@
     </None>
     <None Include="StringFormatter\StringFormatter.rgs">
       <Filter>StringFormatter</Filter>
+    </None>
+    <None Include="MediaInfoRetriever\MediaInfoRetriever.rgs">
+      <Filter>MediaInfoRetriever</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

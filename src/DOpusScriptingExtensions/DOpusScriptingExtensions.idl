@@ -37,6 +37,14 @@ interface IStringFormatter : IDispatch
     [in, defaultvalue(0)] BSTR arg12, [out, retval] BSTR* res);
 };
 
+[object, uuid(D29821A8-51F9-40F3-B065-6BF073238124), dual, nonextensible, pointer_default(unique)]
+interface IMediaInfoRetriever : IDispatch
+{
+  [id(1)] HRESULT Open([in] BSTR mediaFileFullName);
+  [id(2)] HRESULT Get([in] UINT streamKind, [in] UINT streamNumber, [in] BSTR parameter, [in, defaultvalue(1)] UINT infoKind, [in, defaultvalue(0)] UINT searchKind, [out, retval] BSTR* res);
+  [id(3)] HRESULT Close();
+};
+
 [uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3), version(1.0)]
 library DOpusScriptingExtensionsLib
 {
@@ -70,6 +78,12 @@ library DOpusScriptingExtensionsLib
   coclass StringFormatter
   {
     [default] interface IStringFormatter;
+  };
+
+  [uuid(4349DCF9-4E85-47CB-917F-A6EEBBD11B3F)]
+  coclass MediaInfoRetriever
+  {
+    [default] interface IMediaInfoRetriever;
   };
 };
 

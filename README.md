@@ -82,6 +82,55 @@ WScript.Echo(resStr) // Value with offset   1234
 ### Notes
 The `Format` method accepts up to 12 arguments.
 
+## MediaInfoRetriever
+This class allows you to retrieve media information using [MediaInfo](https://mediaarea.net/en/MediaInfo).<br>
+The class uses [MediaInfoLib](https://github.com/MediaArea/MediaInfoLib).
+
+### Examples
+```javascript
+
+// Define the constants to use in the "Get" method
+var stream_t = {
+  Stream_General: 0,  // StreamKind = General
+  Stream_Video: 1,    // StreamKind = Video
+  Stream_Audio: 2,    // StreamKind = Audio
+  Stream_Text: 3,     // StreamKind = Text
+  Stream_Other: 4,    // StreamKind = Chapters
+  Stream_Image: 5,    // StreamKind = Image
+  Stream_Menu: 6      // StreamKind = Menu
+}
+var info_t = {
+  Info_Name: 0,         // InfoKind = Unique name of parameter
+  Info_Text: 1,         // InfoKind = Value of parameter
+  Info_Measure: 2,      // InfoKind = Unique name of measure unit of parameter
+  Info_Options: 3,      // InfoKind = See infooptions_t
+  Info_Name_Text: 4,    // InfoKind = Translated name of parameter
+  Info_Measure_Text: 5, // InfoKind = Translated name of measure unit
+  Info_Info: 6,         // InfoKind = More information about the parameter
+  Info_HowTo: 7,        // InfoKind = How this parameter is supported, could be N (No), B (Beta), R (Read only), W (Read/Write)
+  Info_Domain: 8        // InfoKind = Domain of this piece of information
+}
+
+// Acquire the COM object. You can acquire it once and reuse it.
+var mediaInfo = var fso = new ActiveXObject("DOpusScriptingExtensions.MediaInfoRetriever");
+
+// Open a media file. Throws an exception in case of failure
+mediaInfo.Open("C:/some video file.mp4")
+
+// Get the media information.
+// "Get" method returns an empty string in case of failure.
+var res = mediaInfo.Get(stream_t.Stream_General, 0, "Format")
+WScript.Echo(res, "WebM")
+
+// You can also specify the infoKind and searchKind parameters.
+res = mediaInfo.Get(stream_t.Stream_General, 0, "OverallBitRate", info_t.Info_Text, info_t.Info_Name)
+
+// Close the media file
+mediaInfo.Close()
+```
+### Notes
+* More information how to use `Get` method: look at the comment section of the original `Get` method: [MediaInfo.h::Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L146)
+
 ## FileMimeTypeDetector
 This class allows you to detect the MIME type and encoding based on the file's content, not its extension. This class uses the [libmagic](https://man7.org/linux/man-pages/man3/libmagic.3.html), it is the same mechanism that the UNIX [file utility](https://man7.org/linux/man-pages/man1/file.1.html) uses.
 
@@ -109,6 +158,10 @@ WScript.Echo("Encoding: " + res.Encoding) // "utf-8"
 
 ## Build instructions
 * Run `build.ps1` script as an admin.
+
+## Notes
+* `vcpkg_overlay_ports\boost-asio` is an original port with the custom `increase_pipe_buffer.diff` patch. This is a workaround for the issue: [[Windows] Setting the capacity of the underline pipe #470
+](https://github.com/boostorg/process/issues/470)
 
 # References
 * Discussion of this project on DOpus forum: [DOpus-Scripting-Extensions project](https://resource.dopus.com/t/dopus-scripting-extensions-project-wild-idea/55000)

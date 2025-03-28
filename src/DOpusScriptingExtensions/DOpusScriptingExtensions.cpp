@@ -12,12 +12,13 @@
 #include "FileMimeTypeDetector/FileMimeTypeDetectorResult.h"
 #include "FileMimeTypeDetector/FileMimeTypeDetector.h"
 #include "StringFormatter/StringFormatter.h"
+#include "MediaInfoRetriever/MediaInfoRetriever.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>
 {
 public:
   DECLARE_LIBID(LIBID_DOpusScriptingExtensionsLib)
-  DECLARE_REGISTRY_APPID_RESOURCEID(IDR_DOPUSSCRIPTINGEXTENSIONS, "{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}")
+  DECLARE_REGISTRY_APPID_RESOURCEID(IDR_DOpusScriptingExtensions, "{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}")
 };
 
 CDOpusScriptingExtensionsModule _AtlModule;
