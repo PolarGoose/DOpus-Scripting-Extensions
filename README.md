@@ -112,7 +112,7 @@ var info_t = {
 }
 
 // Acquire the COM object. You can acquire it once and reuse it.
-var mediaInfo = var fso = new ActiveXObject("DOpusScriptingExtensions.MediaInfoRetriever");
+var mediaInfo = new ActiveXObject("DOpusScriptingExtensions.MediaInfoRetriever");
 
 // Open a media file. Throws an exception in case of failure
 mediaInfo.Open("C:/some video file.mp4")
