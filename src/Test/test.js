@@ -1,5 +1,5 @@
-var fso = new ActiveXObject("Scripting.FileSystemObject");
-var shell = new ActiveXObject("WScript.shell");
+var fso = new ActiveXObject("Scripting.FileSystemObject")
+var shell = new ActiveXObject("WScript.shell")
 
 function assertionFailed(message) {
   throw new Error("Assertion failed:\n" + message)
@@ -79,8 +79,8 @@ function runCommandUsingWShellAndReturnOutput(command, args) {
       throw new Error("Failed to execute the command. ExitCode=" + exitCode)
     }
 
-    var handle = fso.OpenTextFile(tempFileFullName, 1);
-    var content = handle.ReadAll();
+    var handle = fso.OpenTextFile(tempFileFullName, 1)
+    var content = handle.ReadAll()
     handle.Close()
     return content
   }
@@ -348,7 +348,7 @@ function StringFormatter_format_with_specifiers() {
 function StringFormatter_throws_if_invalid_specifier() {
   var res = assertThrows(function () {
     stringFormatter.Format("Test message {:X}", 1)
-  });
+  })
   assertEqual(res, "Invalid presentation type for string")
 }
 
@@ -391,20 +391,89 @@ function MediaInfoRetriever_fails_to_open_a_file_if_it_is_a_folder() {
 function MediaInfoRetriever_can_open_media_file() {
   mediaInfo.Open("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
 
-  var res = mediaInfo.Get(stream_t.Stream_General, 0, "Format")
-  assertEqual(res, "WebM")
+  // Test `Get` method
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_General, 0, "Format"),
+    "WebM")
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_General, 0, "OverallBitRate", info_t.Info_Text, info_t.Info_Name),
+    "1191839")
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_Video, 0, "Format", info_t.Info_Text, info_t.Info_Name),
+    "VP9")
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_Video, 0, "Format", info_t.Info_Text, info_t.Info_Text),
+    "")
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_Video, 0, "Width"),
+    "1920")
 
-  res = mediaInfo.Get(stream_t.Stream_General, 0, "OverallBitRate", info_t.Info_Text, info_t.Info_Name)
-  assertEqual(res, "1191839")
+  // Test `GetI` method
+  assertEqual(
+    mediaInfo.GetI(stream_t.Stream_General, 0, 0),
+    "360")
+  assertEqual(
+    mediaInfo.GetI(stream_t.Stream_Video, 0, 0),
+    "392")
+  assertEqual(
+    mediaInfo.GetI(stream_t.Stream_Video, 0, 0, info_t.Info_Name),
+    "Count")
+  assertEqual(
+    mediaInfo.GetI(stream_t.Stream_Video, 0, 3),
+    "Video")
 
-  res = mediaInfo.Get(stream_t.Stream_Video, 0, "Format", info_t.Info_Text, info_t.Info_Name)
-  assertEqual(res, "VP9")
+  // Test `Get_Count` method
+  assertEqual(
+    mediaInfo.Count_Get(stream_t.Stream_General),
+    1)
+  assertEqual(
+    mediaInfo.Count_Get(stream_t.Stream_Audio),
+    0)
+  assertEqual(
+    mediaInfo.Count_Get(stream_t.Stream_Video),
+    1)
+  assertEqual(
+    mediaInfo.Count_Get(stream_t.Stream_Video, 0),
+    392)
+  assertEqual(
+    mediaInfo.Count_Get(stream_t.Stream_Video, 1),
+    "0")
+  assertEqual(
+    mediaInfo.Count_Get(stream_t.Stream_General, 0),
+    "360")
 
-  res = mediaInfo.Get(stream_t.Stream_Video, 0, "Format", info_t.Info_Text, info_t.Info_Text)
-  assertEqual(res, "")
+  // Test `Option` method
+  assertEqual(
+    mediaInfo.Option("Info_Version"),
+    "MediaInfoLib - v25.03")
+  assertEqual(
+    mediaInfo.Option("Complete", "1"),
+    "")
+  assertEqual(
+    mediaInfo.Option("Complete_Get"),
+    "1")
+  assertEqual(
+    mediaInfo.Option("Complete", "0"),
+    "")
+  assertEqual(
+    mediaInfo.Option("Complete_Get"),
+    "")
 
-  res = mediaInfo.Get(stream_t.Stream_Video, 0, "Width")
-  assertEqual(res, "1920")
+  // Test `Inform` method
+  var inform = mediaInfo.Inform()
+  assertStringContains(inform, "Complete name")
+  assertStringContains(inform, "HDRSample.mkv")
+
+  // Test `Option_Static` method
+  assertEqual(
+    mediaInfo.Option_Static("Info_Version"),
+    "MediaInfoLib - v25.03")
+  assertEqual(
+    mediaInfo.Option_Static("Complete", "1"),
+    "")
+  assertEqual(
+    mediaInfo.Option_Static("Complete_Get"),
+    "1")
 }
 
 function MediaInfoRetriever_can_close_file() {

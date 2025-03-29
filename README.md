@@ -86,9 +86,18 @@ The `Format` method accepts up to 12 arguments.
 This class allows you to retrieve media information using [MediaInfo](https://mediaarea.net/en/MediaInfo).<br>
 The class uses [MediaInfoLib](https://github.com/MediaArea/MediaInfoLib).
 
-### Examples
-```javascript
+### Methods description
+* `void Open(mediaFileFullName>)` - opens a media file. Throws an exception in case of failure.
+* `string Get(streamKind, streamNumber, stringParameter, infoKind = Info_Text, searchKind = Info_Name)` - [MediaInfo.h::Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L146)
+* `string GetI(streamKind, streamNumber, intParameter, infoKind = Info_Text)` - [MediaInfo.h::Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L135)
+* `int Count_Get(streamKind, <optional> UINT streamNumber)` - [MediaInfo.h::Count_Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L242)
+* `string Option(option, <optional> value)` - [MediaInfo.h::Option](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L223)
+* `string Option_Static(option, <optional> value)` - [MediaInfo.h::Option_Static](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L229)
+* `string Inform()` - [MediaInfo.h::Inform](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L123)
+* `void Close()` - closes the media file.
 
+### Example
+```javascript
 // Define the constants to use in the "Get" method
 var stream_t = {
   Stream_General: 0,  // StreamKind = General
@@ -112,24 +121,71 @@ var info_t = {
 }
 
 // Acquire the COM object. You can acquire it once and reuse it.
-var mediaInfo = var fso = new ActiveXObject("DOpusScriptingExtensions.MediaInfoRetriever");
+var mediaInfo = new ActiveXObject("DOpusScriptingExtensions.MediaInfoRetriever")
 
-// Open a media file. Throws an exception in case of failure
+// Open a media file.
 mediaInfo.Open("C:/some video file.mp4")
+// Get media info version using Option method.
+var mediaInfoVersion = mediaInfo.Option(/* option */ "Info_Version")
+WScript.Echo(mediaInfoVersion) // "MediaInfoLib - v25.03"
 
-// Get the media information.
-// "Get" method returns an empty string in case of failure.
-var res = mediaInfo.Get(stream_t.Stream_General, 0, "Format")
-WScript.Echo(res, "WebM")
+// The alternative way is to use the Option_Static method.
+mediaInfoVersion = mediaInfo.Option_Static(/* option */ "Info_Version")
+WScript.Echo(mediaInfoVersion) // "MediaInfoLib - v25.03"
+
+// Set the option to show the full information.
+mediaInfo.Option(/* option */ "Complete", /* value */ "1")
+// You can also use the Option_Static method for that.
+mediaInfo.Option_Static(/* option */ "Complete", /* value */ "1")
+
+// Get the full media information.
+var info = mediaInfo.Inform()
+WScript.Echo(info)
+
+// Get media parameters using the Get method.
+var format = mediaInfo.Get(
+    /* streamKind */ stream_t.Stream_General, 
+    /* streamNumber */ 0, 
+    /* stringParameter */ "Format"
+)
+WScript.Echo(format) // "WebM"
 
 // You can also specify the infoKind and searchKind parameters.
-res = mediaInfo.Get(stream_t.Stream_General, 0, "OverallBitRate", info_t.Info_Text, info_t.Info_Name)
+var bitrate = mediaInfo.Get(
+    /* streamKind */ stream_t.Stream_General, 
+    /* streamNumber */ 0, 
+    /* stringParameter */ "OverallBitRate", 
+    /* infoKind */ info_t.Info_Text, 
+    /* searchKind */ info_t.Info_Name
+)
 
-// Close the media file
+// Get media parameters using the GetI method.
+var width = mediaInfo.GetI(
+    /* streamKind */ stream_t.Stream_Video, 
+    /* streamNumber */ 0, 
+    /* intParameter */ 0
+)
+
+// You can also specify the infoKind parameter.
+width = mediaInfo.GetI(
+    /* streamKind */ stream_t.Stream_Video, 
+    /* streamNumber */ 0, 
+    /* intParameter */ 0, 
+    /* infoKind */ info_t.Info_Text
+)
+
+// Get a number of video streams.
+var videoStreamsCount = mediaInfo.Count_Get(/* streamKind */ stream_t.Stream_Video)
+
+// Get a count of pieces of information available in a stream (#0).
+var videoStreamsCount = mediaInfo.Count_Get(
+    /* streamKind */ stream_t.Stream_Video, 
+    /* streamNumber */ 0
+)
+
+// Close the media file.
 mediaInfo.Close()
 ```
-### Notes
-* More information how to use `Get` method: look at the comment section of the original `Get` method: [MediaInfo.h::Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L146)
 
 ## FileMimeTypeDetector
 This class allows you to detect the MIME type and encoding based on the file's content, not its extension. This class uses the [libmagic](https://man7.org/linux/man-pages/man3/libmagic.3.html), it is the same mechanism that the UNIX [file utility](https://man7.org/linux/man-pages/man1/file.1.html) uses.

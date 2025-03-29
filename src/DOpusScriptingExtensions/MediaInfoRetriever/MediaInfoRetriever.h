@@ -33,8 +33,40 @@ public:
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
+  STDMETHOD(GetI)(UINT streamKind, UINT streamNumber, UINT parameter, UINT infoKind, BSTR* res) override try {
+    *res = Copy(
+      mi.Get(static_cast<MediaInfoLib::stream_t>(streamKind), streamNumber,
+             parameter, static_cast<MediaInfoLib::info_t>(infoKind)));
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
+  STDMETHOD(Count_Get)(UINT streamKind, UINT streamNumber, UINT64* res) override try {
+    if (streamNumber == UINT_MAX) {
+      *res = mi.Count_Get(static_cast<MediaInfoLib::stream_t>(streamKind));
+      return S_OK;
+    }
+
+    *res = mi.Count_Get(static_cast<MediaInfoLib::stream_t>(streamKind), streamNumber);
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
+  STDMETHOD(Option)(BSTR option, BSTR value, BSTR* res) override try {
+    *res = Copy(mi.Option(option, value));
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
   STDMETHOD(Close)() override try {
     mi.Close();
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
+  STDMETHOD(Inform)(BSTR* res) override try {
+    *res = Copy(mi.Inform());
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
+  STDMETHOD(Option_Static)(BSTR option, BSTR value, BSTR* res) override try {
+    *res = Copy(MediaInfoLib::MediaInfo::Option_Static(option, value));
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 

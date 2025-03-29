@@ -42,7 +42,12 @@ interface IMediaInfoRetriever : IDispatch
 {
   [id(1)] HRESULT Open([in] BSTR mediaFileFullName);
   [id(2)] HRESULT Get([in] UINT streamKind, [in] UINT streamNumber, [in] BSTR parameter, [in, defaultvalue(1)] UINT infoKind, [in, defaultvalue(0)] UINT searchKind, [out, retval] BSTR* res);
-  [id(3)] HRESULT Close();
+  [id(3)] HRESULT GetI([in] UINT streamKind, [in] UINT streamNumber, [in] UINT parameter, [in, defaultvalue(1)] UINT infoKind, [out, retval] BSTR* res);
+  [id(4)] HRESULT Count_Get([in] UINT streamKind, [in, defaultvalue(/* UINT_MAX */ 0xFFFFFFFF)] UINT streamNumber, [out, retval] UINT64* res);
+  [id(5)] HRESULT Option([in] BSTR option, [in, defaultvalue("")] BSTR value, [out, retval] BSTR* res);
+  [id(6)] HRESULT Inform([out, retval] BSTR* res);
+  [id(7)] HRESULT Option_Static([in] BSTR option, [in, defaultvalue("")] BSTR value, [out, retval] BSTR* res);
+  [id(8)] HRESULT Close();
 };
 
 [uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3), version(1.0)]
