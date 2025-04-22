@@ -14,26 +14,21 @@ public:
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
   STDMETHOD(Run)(BSTR executablePath, IDispatch* commandLineArgumentsJsArray, BSTR workingDirectory, IProcessRunnerResult** result) override try {
-    std::vector<std::wstring> cmdWideArgs;
-    if (commandLineArgumentsJsArray != 0)
-    {
-      cmdWideArgs = JsStringArrayToVector(*commandLineArgumentsJsArray);
-    }
-
-    const auto& cmdArgs = ToUtf8StringVector(cmdWideArgs);
-    const auto& expandedPath = ExpandPathWithEnvironmentVariables(executablePath);
-    auto [stdOut, stdErr, exitCode] = RunProcess(expandedPath, cmdArgs, workingDirectory);
+    auto [stdOut, stdErr, exitCode] = RunProcess(
+      ExpandPathWithEnvironmentVariables(executablePath),
+      ToUtf8StringVector(JsStringArrayToVector(commandLineArgumentsJsArray)),
+      ExpandPathWithEnvironmentVariables(workingDirectory));
     *result = CreateComObject<CProcessRunnerResult, IProcessRunnerResult>(
       [&](auto& obj) {
         obj.Init(std::move(stdOut), std::move(stdErr), exitCode);
-      });
+      }).Detach();
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
 private:
   static std::tuple<std::wstring, std::wstring, int> RunProcess(const boost::filesystem::path& exePath,
                                                                 const std::vector<std::string>& args,
-                                                                const std::wstring_view workingDirectory) {
+                                                                const boost::filesystem::path& workingDirectory) {
     if (!boost::filesystem::exists(exePath))
     {
       THROW_WEXCEPTION(L"The executable not found '{}'", exePath);

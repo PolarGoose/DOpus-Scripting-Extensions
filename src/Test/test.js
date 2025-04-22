@@ -1,6 +1,12 @@
 var fso = new ActiveXObject("Scripting.FileSystemObject")
 var shell = new ActiveXObject("WScript.shell")
 
+// Make JSON object available in cscript.exe
+// https://stackoverflow.com/a/27643386/7585517
+var htmlfile = WSH.CreateObject('htmlfile'), JSON;
+htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=9" />');
+htmlfile.close(JSON = htmlfile.parentWindow.JSON);
+
 function assertionFailed(message) {
   throw new Error("Assertion failed:\n" + message)
 }
@@ -11,27 +17,51 @@ function assertStringEmpty(string) {
   }
 }
 
+function assertStringStartsWith(str, prefix) {
+  if (str.indexOf(prefix) !== 0) {
+    assertionFailed("string doesn't start with a prefix. string:\n" + str + "\nprefix:\n" + prefix)
+  }
+}
+
+function assertStringEndsWith(str, suffix) {
+  if (str.lastIndexOf(suffix) !== str.length - suffix.length) {
+    assertionFailed("string doesn't end with a suffix. string:\n" + str + "\suffix:\n" + suffix)
+  }
+}
+
+function assertStringStartsWith(str, prefix) {
+  if (str.indexOf(prefix) !== 0) {
+    assertionFailed("string doesn't starts with a prefix. string:\n" + str + "\nprefix:\n" + prefix)
+  }
+}
+
 function assertEqual(actual, expected) {
   if (actual != expected) {
-    assertionFailed("actual=\n'" + actual + "'\nnot equal to expected\n'" + expected + "'")
+    assertionFailed("actual:\n" + actual + "\nnot equal to expected:\n" + expected)
   }
 }
 
 function assertGreater(a, b) {
-  if (a > b) {
-    assertionFailed("a='" + a + "' is not greater than b='" + b + "'")
+  if (a <= b) {
+    assertionFailed("a=" + a + " is not greater than b=" + b)
   }
 }
 
 function assertLess(a, b) {
-  if (a < b) {
-    assertionFailed("a='" + a + "' is not less than b='" + b + "'")
+  if (a >= b) {
+    assertionFailed("a=" + a + " is not less than b=" + b)
   }
 }
 
 function assertStringContains(string, substring) {
   if (string.indexOf(substring) == -1) {
-    assertionFailed("Expected string to contain substring\n'" + substring + "'\nbut it did not. Full string:\n'" + string + "'")
+    assertionFailed("Expected string to contain substring\n" + substring + "\nbut it did not. Full string:\n" + string)
+  }
+}
+
+function assertStringDoesNotContain(string, substring) {
+  if (string.indexOf(substring) !== -1) {
+    assertionFailed("String contains substring\n" + substring + "\nFull string:\n" + string)
   }
 }
 
@@ -231,6 +261,12 @@ function ProcessRunner_can_specify_working_directory() {
   assertEqual(res.ExitCode, 0)
 }
 
+function ProcessRunner_can_specify_working_directory_with_env_variables() {
+  var res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["--mime-type", "--brief", "Git"], "%ProgramW6432%")
+  assertStringEmpty(res.StdErr)
+  assertEqual(res.ExitCode, 0)
+}
+
 function testThatProcessRunnerPerformanceIsBetter(wshellFunc, processRunnerFunc) {
   WScript.Echo("Run using WScript.shell")
   var wshellTime = runFunctionAndMeasureTimeInMs(wshellFunc)
@@ -239,7 +275,7 @@ function testThatProcessRunnerPerformanceIsBetter(wshellFunc, processRunnerFunc)
 
   WScript.Echo("Result:\nWScript.shell: " + wshellTime + "ms\nProcessRunner: " + processRunnerTime + "ms")
 
-  assertLess(wshellTime, processRunnerTime)
+  assertGreater(wshellTime, processRunnerTime)
 }
 
 function ProcessRunner_performance_test_executable_with_small_output() {
@@ -483,6 +519,100 @@ function MediaInfoRetriever_can_close_file() {
   mediaInfo.Close()
 }
 
+var exifTool = createComObject("DOpusScriptingExtensions.ExifTool")
+
+function ExifTool_throws_if_file_not_found() {
+  var res = assertThrows(function () { exifTool.GetInfoAsJson("C:/non_existent_file") })
+  assertStringContains(res, "File not found 'C:/non_existent_file'")
+}
+
+function ExifTool_can_get_all_tags() {
+  var json = exifTool.GetInfoAsJson("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+
+  assertGreater(json.length, 100)
+  assertStringStartsWith(json, '[{')
+  assertStringEndsWith(json, '}]\r\n')
+  assertStringContains(json, '"SourceFile": "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",')
+  assertStringContains(json, '"Composite:Composite:ImageSize": {')
+  assertStringContains(json, '"desc": "Image Size",')
+  assertStringContains(json, '"id": "Exif-ImageSize",')
+  assertStringContains(json, '"num": "1920 1080",')
+  assertStringContains(json, '"val": "1920x1080"')
+}
+
+function ExifTool_can_get_specific_tags() {
+  var json = exifTool.GetInfoAsJson(
+    "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+    ["TrackType", "DocTypeVersion"])
+
+  assertStringStartsWith(json, '[{')
+  assertStringEndsWith(json, '}]\r\n')
+  assertStringContains(json, 'Matroska:Matroska:DocTypeVersion')
+  assertStringContains(json, 'Matroska:Track1:TrackType')
+  assertStringDoesNotContain(json, 'Matroska:Matroska:MuxingApp')
+}
+
+function ExifTool_if_specific_tag_does_not_exists_it_is_ignored() {
+  var json = exifTool.GetInfoAsJson(
+    "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+    ["TrackType", "DocTypeVersion", "NonExistentTagName"])
+
+  assertStringContains(json, 'Matroska:Matroska:DocTypeVersion')
+  assertStringContains(json, 'Matroska:Track1:TrackType')
+  assertStringDoesNotContain(json, 'NonExistentTagName')
+}
+
+function ExifTool_returns_empty_string_if_file_does_not_have_specified_tags() {
+  var json = exifTool.GetInfoAsJson(
+    "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+    ["NonExistentTagName1", "NonExistentTagName2"])
+
+  assertStringEmpty(json)
+}
+
+function ExifTool_returns_no_tags_if_file_does_not_have_specified_tags() {
+  var json = exifTool.GetInfoAsJson(
+    "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+    ["NonExistentTagName1", "NonExistentTagName2"])
+
+  assertStringContains(json, 'SourceFile')
+  assertStringDoesNotContain(json, 'FileName')
+}
+
+function ExifTool_works_with_file_names_containing_unicode_characters() {
+  var fso = new ActiveXObject("Scripting.FileSystemObject")
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/DOpusScriptingExtensions testTextFile трじα.txt"
+  var file = fso.CreateTextFile(filePath, true)
+  file.Write("AAAA\n")
+  file.Close()
+
+  var jsonString = exifTool.GetInfoAsJson(filePath)
+  assertStringContains(jsonString, "File:System:FileName")
+  assertStringContains(jsonString, "DOpusScriptingExtensions testTextFile трじα.txt")
+}
+
+function ExifTool_can_parse_json() {
+  var jsonString = exifTool.GetInfoAsJson("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+  var tags = JSON.parse(jsonString)[0]
+
+  for (var tagName in tags) {
+    tag = tags[tagName]
+
+    if (tagName === "SourceFile") {
+      WScript.Echo("SourceFile: " + tag)
+      continue
+    }
+
+    WScript.Echo("TagName: " + tagName)
+    WScript.Echo("Description: " + tag.desk)
+    WScript.Echo("Id: " + tag.id)
+    WScript.Echo("Num: " + tag.num)
+    WScript.Echo("Value: " + tag.val)
+    WScript.Echo("--------")
+  }
+}
+
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
 runTest(ProcessRunner_can_run_an_executable_that_print_to_stdErr)
 runTest(ProcessRunner_can_run_an_executable_with_parameters)
@@ -497,6 +627,7 @@ runTest(ProcessRunner_fails_if_env_variable_does_not_exist)
 runTest(ProcessRunner_if_wrong_type_is_passed_it_ignores_it)
 runTest(ProcessRunner_fails_if_the_exe_is_not_executable)
 runTest(ProcessRunner_can_specify_working_directory)
+runTest(ProcessRunner_can_specify_working_directory_with_env_variables)
 runTest(ProcessRunner_performance_test_executable_with_small_output)
 runTest(ProcessRunner_performance_test_executable_with_1mb_output)
 runTest(ProcessRunner_performance_test_executable_with_30mb_output)
@@ -518,3 +649,11 @@ runTest(MediaInfoRetriever_fails_to_open_a_file_if_it_does_not_exist)
 runTest(MediaInfoRetriever_fails_to_open_a_file_if_it_is_a_folder)
 runTest(MediaInfoRetriever_can_open_media_file)
 runTest(MediaInfoRetriever_can_close_file)
+
+runTest(ExifTool_throws_if_file_not_found)
+runTest(ExifTool_can_get_all_tags)
+runTest(ExifTool_can_get_specific_tags)
+runTest(ExifTool_if_specific_tag_does_not_exists_it_is_ignored)
+runTest(ExifTool_returns_no_tags_if_file_does_not_have_specified_tags)
+runTest(ExifTool_works_with_file_names_containing_unicode_characters)
+runTest(ExifTool_can_parse_json)

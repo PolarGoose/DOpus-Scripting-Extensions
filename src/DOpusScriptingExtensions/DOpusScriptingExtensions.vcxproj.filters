@@ -20,6 +20,9 @@
     <Filter Include="MediaInfoRetriever">
       <UniqueIdentifier>{4e51588b-08ee-4f4e-86d8-eb827d65f996}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ExifTool">
+      <UniqueIdentifier>{adbc85ad-863c-45dd-a303-142c82843435}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -64,6 +67,12 @@
     <ClInclude Include="MediaInfoRetriever\MediaInfoRetriever.h">
       <Filter>MediaInfoRetriever</Filter>
     </ClInclude>
+    <ClInclude Include="ExifTool\ExifTool.h">
+      <Filter>ExifTool</Filter>
+    </ClInclude>
+    <ClInclude Include="ExifTool\ExifToolWrapper.h">
+      <Filter>ExifTool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
@@ -86,6 +95,9 @@
     </None>
     <None Include="MediaInfoRetriever\MediaInfoRetriever.rgs">
       <Filter>MediaInfoRetriever</Filter>
+    </None>
+    <None Include="ExifTool\ExifTool.rgs">
+      <Filter>ExifTool</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

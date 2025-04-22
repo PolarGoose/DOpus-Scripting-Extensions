@@ -4,12 +4,15 @@
     <MediaTemplate EmbedCab="yes"/>
     <Feature Id="ProductFeature" Title="DOpusScriptingExtensions" Level="1">
       <ComponentGroupRef Id="ProductComponents"/>
+      <ComponentGroupRef Id="ExifToolComponents"/>
     </Feature>
     <Launch Message="Requires Windows x64" Condition="VersionNT64" />
   </Package>
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
-      <Directory Id="INSTALLFOLDER" Name="DOpusScriptingExtensions"/>
+      <Directory Id="INSTALLFOLDER" Name="DOpusScriptingExtensions">
+        <Directory Id="ExiftoolFolder" Name="exiftool"/>
+      </Directory>
     </StandardDirectory>
   </Fragment>
   <Fragment>
@@ -17,7 +20,7 @@
       <Component Id="ProductComponent" Guid="C1F6F9A3-F513-4411-BF53-3B03B90E8B4B">
         <File Id="DOpusScriptingExtensions.dll" Source="$(var.SolutionDir)\build\$(var.Platform)\$(var.Configuration)\DOpusScriptingExtensions\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
         <File Id="magic.mgc" Source="$(var.SolutionDir)\build\$(var.Platform)\$(var.Configuration)\DOpusScriptingExtensions\magic.mgc" />
-    </Component>
+      </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>

@@ -7,6 +7,12 @@ A COM DLL that extends JScript functionality for [Directory Opus](https://www.gp
 * Portable DOpus is not supported because the extensions DLL require installation using a `msi` installer.
 
 # Description of classes
+* [ProcessRunner](#ProcessRunner)
+* [StringFormatter](#StringFormatter)
+* [MediaInfoRetriever](#MediaInfoRetriever)
+* [FileMimeTypeDetector](#FileMimeTypeDetector)
+* [ExifTool](#ExifTool)
+
 ## ProcessRunner
 This is an alternative to [WScript.shell Run](https://ss64.com/vb/run.html) method. It allows to get `StdOut` and `StdErr` of a process without creating a temporary file.<br>
 `ProcessRunner` is 2-3 times faster than using the `WScript.shell`.
@@ -45,6 +51,7 @@ res = processRunner.Run("C:/Program Files/ImageMagick/magick.exe", paramsArray)
 
 // Run an executable with working directory
 res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["twain_32.dll"], "C:/Windows")
+res = processRunner.Run("C:/Program Files/Git/usr/bin/file.exe", ["twain_32.dll"], "%ProgramW6432%/Git")
 
 // Use environment variables in the executable path
 res = processRunner.Run("%comspec%", ["/c", "echo test"])
@@ -87,7 +94,7 @@ This class allows you to retrieve media information using [MediaInfo](https://me
 The class uses [MediaInfoLib](https://github.com/MediaArea/MediaInfoLib).
 
 ### Methods description
-* `void Open(mediaFileFullName>)` - opens a media file. Throws an exception in case of failure.
+* `void Open(mediaFileFullName)` - opens a media file. Throws an exception in case of failure.
 * `string Get(streamKind, streamNumber, stringParameter, infoKind = Info_Text, searchKind = Info_Name)` - [MediaInfo.h::Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L146)
 * `string GetI(streamKind, streamNumber, intParameter, infoKind = Info_Text)` - [MediaInfo.h::Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L135)
 * `int Count_Get(streamKind, <optional> UINT streamNumber)` - [MediaInfo.h::Count_Get](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L242)
@@ -144,33 +151,33 @@ WScript.Echo(info)
 
 // Get media parameters using the Get method.
 var format = mediaInfo.Get(
-    /* streamKind */ stream_t.Stream_General, 
-    /* streamNumber */ 0, 
+    /* streamKind */ stream_t.Stream_General,
+    /* streamNumber */ 0,
     /* stringParameter */ "Format"
 )
 WScript.Echo(format) // "WebM"
 
 // You can also specify the infoKind and searchKind parameters.
 var bitrate = mediaInfo.Get(
-    /* streamKind */ stream_t.Stream_General, 
-    /* streamNumber */ 0, 
-    /* stringParameter */ "OverallBitRate", 
-    /* infoKind */ info_t.Info_Text, 
+    /* streamKind */ stream_t.Stream_General,
+    /* streamNumber */ 0,
+    /* stringParameter */ "OverallBitRate",
+    /* infoKind */ info_t.Info_Text,
     /* searchKind */ info_t.Info_Name
 )
 
 // Get media parameters using the GetI method.
 var width = mediaInfo.GetI(
-    /* streamKind */ stream_t.Stream_Video, 
-    /* streamNumber */ 0, 
+    /* streamKind */ stream_t.Stream_Video,
+    /* streamNumber */ 0,
     /* intParameter */ 0
 )
 
 // You can also specify the infoKind parameter.
 width = mediaInfo.GetI(
-    /* streamKind */ stream_t.Stream_Video, 
-    /* streamNumber */ 0, 
-    /* intParameter */ 0, 
+    /* streamKind */ stream_t.Stream_Video,
+    /* streamNumber */ 0,
+    /* intParameter */ 0,
     /* infoKind */ info_t.Info_Text
 )
 
@@ -179,7 +186,7 @@ var videoStreamsCount = mediaInfo.Count_Get(/* streamKind */ stream_t.Stream_Vid
 
 // Get a count of pieces of information available in a stream (#0).
 var videoStreamsCount = mediaInfo.Count_Get(
-    /* streamKind */ stream_t.Stream_Video, 
+    /* streamKind */ stream_t.Stream_Video,
     /* streamNumber */ 0
 )
 
@@ -193,7 +200,7 @@ This class allows you to detect the MIME type and encoding based on the file's c
 ### Examples
 ```javascript
 // Acquire the COM object. It is recommended to acquire it only once and reuse it for performance reasons.
-fileMimeTypeDetector = new ActiveXObject("DOpusScriptingExtensions.FileMimeTypeDetector")
+var fileMimeTypeDetector = new ActiveXObject("DOpusScriptingExtensions.FileMimeTypeDetector")
 
 var res = fileMimeTypeDetector.DetectMimeType("C:/some text file.txt")
 WScript.Echo("MimeType: " + res.MimeType) // "text/plain"
@@ -202,6 +209,71 @@ WScript.Echo("Encoding: " + res.Encoding) // "utf-8"
 
 ### Notes
 * The encoding doesn't show if a file has BOM or not.
+
+## ExifTool
+This class uses [ExifTool](https://exiftool.org/) to read meta information from files. The ExifTool executable is included in the installation package, so you don't need to install it separately.<br>
+
+### Examples
+```javascript
+// Create the COM object. The first time the object is created, it starts the ExifTool process in the background.
+var exifTool = new ActiveXObject("DOpusScriptingExtensions.ExifTool")
+
+// The `GetInfoAsJson` method uses the following ExifTool command line arguments:
+//   -decimal -json -long -groupNames:0:1
+//
+// The output is a string that looks like the following:
+//   [{ 
+//    "SourceFile": "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+//    "ExifTool:ExifTool:ExifToolVersion" : {
+//      "desc": "ExifTool Version Number",
+//      "id" : "ExifToolVersion",
+//      "val" : 13.27
+//    },
+//    "File:System:FileName" : {
+//      "desc": "File Name",
+//      "id" : "FileName",
+//      "val" : "HDRSample.mkv"
+//    },
+//    "File:System:FileSize": { 
+//      "desc": "File Size", 
+//      "id": "FileSize", 
+//      "num": 1764666, 
+//      "val": "1765 kB" 
+//    },   
+//    ...
+//   }]
+var jsonString = exifTool.GetInfoAsJson("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+
+// Parse the JSON and get the first element, which is an array of tags
+var tags = JSON.parse(jsonString)[0]
+
+// Iterate through all tags
+for (var tagName in tags) {
+  tag = tags[tagName]
+
+  // "SourceFile" is a special tag that contains the full path to the file
+  if (tagName === "SourceFile") {
+    WScript.Echo("SourceFile: " + tag)
+    continue
+  }
+
+  tag = tags[tagName]
+  WScript.Echo("TagName: " + tagName) // Tag name is in a format GeneralLocation:SpecificLocation:TagName
+  WScript.Echo("Description: " + tag.desk)
+  WScript.Echo("Id: " + tag.id)
+  WScript.Echo("Num: " + tag.num)
+  WScript.Echo("Value: " + tag.val)
+  WScript.Echo("--------")
+}
+```
+
+#### Getting only specific tags
+`GetInfoAsJson` method accepts the array of tag names. The output will only contain these specific tags. The tag names are passed to the ExifTool executable as `-TAG` command line arguments.
+```javascript
+var jsonString = exifTool.GetInfoAsJson(
+  "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+  ["TrackType", "DocTypeVersion"])
+```
 
 # How to use
 * Download the installer from the [latest release](https://github.com/PolarGoose/DOpus-Scripting-Extensions/releases) and install it on your system

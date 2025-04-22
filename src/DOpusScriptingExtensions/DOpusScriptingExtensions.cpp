@@ -13,6 +13,8 @@
 #include "FileMimeTypeDetector/FileMimeTypeDetector.h"
 #include "StringFormatter/StringFormatter.h"
 #include "MediaInfoRetriever/MediaInfoRetriever.h"
+#include "ExifTool/ExifToolWrapper.h"
+#include "ExifTool/ExifTool.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>
 {
@@ -25,7 +27,6 @@ CDOpusScriptingExtensionsModule _AtlModule;
 
 extern "C" BOOL WINAPI DllMain(HINSTANCE /* hInstance */, DWORD dwReason, LPVOID lpReserved)
 {
-  setlocale(LC_ALL, ".utf8");
   return _AtlModule.DllMain(dwReason, lpReserved);
 }
 

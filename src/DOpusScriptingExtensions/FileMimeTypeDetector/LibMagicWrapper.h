@@ -24,6 +24,11 @@ private:
     if (magicCookie == nullptr) {
       THROW_WEXCEPTION(L"Failed to initialize magic_t handle");
     }
+
+    // This allows the std library to accept unicode file names.
+    // It is needed for because LibMagic uses 'fopen' to open files.
+    setlocale(LC_ALL, ".utf8");
+
     if (magic_load(magicCookie, ToUtf8(magicMgcFile.c_str()).c_str()) != 0) {
       magic_close(magicCookie);
       THROW_WEXCEPTION(L"Failed to load magic file '{}'. Error: {}", magicMgcFile, GetError());

@@ -1,6 +1,7 @@
 #pragma once
 
 using namespace ATL;
+
 class ATL_NO_VTABLE CMediaInfoRetriever :
   public CComObjectRootEx<CComSingleThreadModel>,
   public CComCoClass<CMediaInfoRetriever, &CLSID_MediaInfoRetriever>,

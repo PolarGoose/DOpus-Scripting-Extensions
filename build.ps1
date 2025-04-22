@@ -84,6 +84,7 @@ Info "Integrate VcPkg"
 Info "Build project"
 & $msbuild `
     /nologo `
+    /restore `
     /verbosity:minimal `
     /property:Configuration=Release `
     /property:DebugType=None `

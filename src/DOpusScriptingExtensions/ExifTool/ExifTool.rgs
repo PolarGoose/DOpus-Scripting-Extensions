@@ -1,0 +1,26 @@
+HKCR
+{
+	DOpusScriptingExtensions.ExifTool.1 = s 'ExifTool class'
+	{
+		CLSID = s '{4352EB78-F8A6-4F27-A0EA-000135238D6A}'
+	}
+	DOpusScriptingExtensions.ExifTool = s 'ExifTool class'
+	{		
+		CurVer = s 'DOpusScriptingExtensions.ExifTool.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {4352EB78-F8A6-4F27-A0EA-000135238D6A} = s 'ExifTool class'
+		{
+      ProgID = s 'DOpusScriptingExtensions.ExifTool.1'
+			VersionIndependentProgID = s 'DOpusScriptingExtensions.ExifTool'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+			Version = s '1.0'
+		}
+	}
+}

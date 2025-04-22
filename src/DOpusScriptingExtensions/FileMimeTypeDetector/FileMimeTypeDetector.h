@@ -29,7 +29,7 @@ public:
     *res = CreateComObject<CFileMimeTypeDetectorResult, IFileMimeTypeDetectorResult>(
       [&](auto& pObj) {
         pObj.Init(std::move(mimeType), std::move(encoding));
-      });
+      }).Detach();
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 

@@ -97,11 +97,12 @@ END
 // REGISTRY
 //
 
-IDR_DOpusScriptingExtensions  REGISTRY  "DOpusScriptingExtensions.rgs"
-IDR_ProcessRunner             REGISTRY  "ProcessRunner/ProcessRunner.rgs"
-IDR_FileMimeTypeDetector      REGISTRY  "FileMimeTypeDetector/FileMimeTypeDetector.rgs"
-IDR_StringFormatter           REGISTRY  "StringFormatter/StringFormatter.rgs"
-IDR_MediaInfoRetriever        REGISTRY  "MediaInfoRetriever/MediaInfoRetriever.rgs"
+IDR_DOpusScriptingExtensions REGISTRY "DOpusScriptingExtensions.rgs"
+IDR_ProcessRunner            REGISTRY "ProcessRunner/ProcessRunner.rgs"
+IDR_FileMimeTypeDetector     REGISTRY "FileMimeTypeDetector/FileMimeTypeDetector.rgs"
+IDR_StringFormatter          REGISTRY "StringFormatter/StringFormatter.rgs"
+IDR_MediaInfoRetriever       REGISTRY "MediaInfoRetriever/MediaInfoRetriever.rgs"
+IDR_ExifTool                 REGISTRY "ExifTool/ExifTool.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //

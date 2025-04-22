@@ -19,32 +19,41 @@ inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view prop
 }
 
 template<typename CoClassType, typename QueryInterfaceType>
-QueryInterfaceType* CreateComObject(std::function<void(CoClassType&)> initializer) {
-  CComObject<CoClassType>* obj = nullptr;
+CComPtr<QueryInterfaceType> CreateComObject(std::function<void(CoClassType&)> initializer) {
+  CComObject<CoClassType>* rawObj = nullptr;
   THROW_IF_FAILED_MSG(
-    CComObject<CoClassType>::CreateInstance(&obj),
+    CComObject<CoClassType>::CreateInstance(&rawObj),
     L"Failed to create a COM object of type '{}'", ToWide(typeid(CoClassType).name()));
+
+  // Wrap the object in CComPtr to ensure that it is released in case of an exception
+  CComPtr<CoClassType> obj(rawObj);
 
   initializer(*obj);
 
-  QueryInterfaceType* res = nullptr;
-  THROW_IF_FAILED_MSG(
-    obj->QueryInterface(__uuidof(QueryInterfaceType), reinterpret_cast<void**>(&res)),
-    L"Failed to query interface '{}'", ToWide(typeid(QueryInterfaceType).name()));
-
+  CComQIPtr<QueryInterfaceType> res(obj);
+  if (!res) {
+    THROW_HRESULT(
+      E_NOINTERFACE,
+      L"Failed to get the interface '{}' from '{}' class", ToWide(typeid(QueryInterfaceType).name()), ToWide(typeid(CoClassType).name()));
+  }
+  
   return res;
 }
 
-inline std::vector<std::wstring> JsStringArrayToVector(IDispatch& obj) {
+inline std::vector<std::wstring> JsStringArrayToVector(IDispatch* obj) {
   std::vector<std::wstring> result;
 
-  const auto& lengthVariant = GetPropertyValue(obj, L"length");
+  if (obj == 0) {
+    return result;
+  }
+
+  const auto& lengthVariant = GetPropertyValue(*obj, L"length");
   if (lengthVariant.vt != VT_I4) {
       THROW_WEXCEPTION(L"command line arguments 'length' property has a wrong variant type {}. Expected type is VT_I4", lengthVariant.vt);
   }
 
   for (int i = 0; i < lengthVariant.intVal; i++) {
-    const auto& arg = GetPropertyValue(obj, std::to_wstring(i));
+    const auto& arg = GetPropertyValue(*obj, std::to_wstring(i));
     if (arg.vt != VT_BSTR) {
       THROW_WEXCEPTION(L"the element with the index {} is not a string but a variant type #{}", i, arg.vt);
     }

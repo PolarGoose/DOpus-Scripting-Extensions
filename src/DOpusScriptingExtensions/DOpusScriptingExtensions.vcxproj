@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DOpusScriptingExtensions_i.h" />
+    <ClInclude Include="ExifTool\ExifTool.h" />
+    <ClInclude Include="ExifTool\ExifToolWrapper.h" />
     <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetector.h" />
     <ClInclude Include="FileMimeTypeDetector\FileMimeTypeDetectorResult.h" />
     <ClInclude Include="FileMimeTypeDetector\LibMagicWrapper.h" />
@@ -177,6 +179,7 @@
   <ItemGroup>
     <None Include="DOpusScriptingExtensions.def" />
     <None Include="DOpusScriptingExtensions.rgs" />
+    <None Include="ExifTool\ExifTool.rgs" />
     <None Include="FileMimeTypeDetector\FileMimeTypeDetector.rgs" />
     <None Include="MediaInfoRetriever\MediaInfoRetriever.rgs" />
     <None Include="ProcessRunner\ProcessRunner.rgs" />
@@ -190,5 +193,12 @@
   </ImportGroup>
   <Target Name="CopyMagicMgcFileToOutputFolder" AfterTargets="Build" Condition="!Exists('$(OutputPath)/magic.mgc')">
     <Copy SourceFiles="$(ProjectRoot)/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libmagic_x64-windows/share/libmagic/misc/magic.mgc" DestinationFolder="$(OutputPath)" />
+  </Target>
+  <Target Name="DownloadExifTool" AfterTargets="Build" Condition="!Exists('$(BuildFolder)exiftool.zip')">
+    <DownloadFile SourceUrl="https://exiftool.org/exiftool-13.27_64.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
+    <Unzip SourceFiles="$(BuildFolder)exiftool.zip" DestinationFolder="$(BuildFolder)" />
+  </Target>
+  <Target Name="CopyExifToolToOutputFolder" AfterTargets="DownloadExifTool" Condition="!Exists('$(OutputPath)exiftool')">
+    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.27_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
   </Target>
 </Project>
