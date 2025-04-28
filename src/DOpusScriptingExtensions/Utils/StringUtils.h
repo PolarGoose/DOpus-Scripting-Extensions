@@ -19,6 +19,10 @@ inline std::vector<std::string> ToUtf8StringVector(const std::vector<std::wstrin
   return std::vector<std::string>(transformed.begin(), transformed.end());
 }
 
+inline const char* GetData(const boost::asio::streambuf& buf) {
+  return static_cast<const char*>(buf.data().data());
+}
+
 // Allow std::format(L"..") to format std::filesystem::path and boost::filesystem::path
 namespace std {
   template <>

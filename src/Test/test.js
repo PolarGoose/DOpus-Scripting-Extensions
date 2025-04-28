@@ -526,6 +526,11 @@ function ExifTool_throws_if_file_not_found() {
   assertStringContains(res, "File not found 'C:/non_existent_file'")
 }
 
+function ExifTool_throws_if_file_is_a_directory() {
+  var res = assertThrows(function () { exifTool.GetInfoAsJson("C:/Windows") })
+  assertStringContains(res, "File is a directory 'C:/Windows'")
+}
+
 function ExifTool_can_get_all_tags() {
   var json = exifTool.GetInfoAsJson("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
 
@@ -560,6 +565,15 @@ function ExifTool_if_specific_tag_does_not_exists_it_is_ignored() {
   assertStringContains(json, 'Matroska:Matroska:DocTypeVersion')
   assertStringContains(json, 'Matroska:Track1:TrackType')
   assertStringDoesNotContain(json, 'NonExistentTagName')
+}
+
+function ExifTool_throws_if_tags_have_wrong_format() {
+  var res = assertThrows(function () {
+    exifTool.GetInfoAsJson(
+      "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+      ["TrackType", 1, "NonExistentTagName"])
+  })
+  assertStringContains(res, "the element with the index 1 is not a string but a variant type #3")
 }
 
 function ExifTool_returns_empty_string_if_file_does_not_have_specified_tags() {
@@ -651,9 +665,11 @@ runTest(MediaInfoRetriever_can_open_media_file)
 runTest(MediaInfoRetriever_can_close_file)
 
 runTest(ExifTool_throws_if_file_not_found)
+runTest(ExifTool_throws_if_file_is_a_directory)
 runTest(ExifTool_can_get_all_tags)
 runTest(ExifTool_can_get_specific_tags)
 runTest(ExifTool_if_specific_tag_does_not_exists_it_is_ignored)
+runTest(ExifTool_throws_if_tags_have_wrong_format)
 runTest(ExifTool_returns_no_tags_if_file_does_not_have_specified_tags)
 runTest(ExifTool_works_with_file_names_containing_unicode_characters)
 runTest(ExifTool_can_parse_json)

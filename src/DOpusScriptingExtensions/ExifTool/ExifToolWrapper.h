@@ -28,10 +28,15 @@ public:
   //    },   
   //    ...
   //   }]
-  std::string GetTagInfosJson(std::wstring_view filePath, const std::vector<std::string>& tagNames) {
+  std::wstring GetTagInfosJson(std::wstring_view filePath, const std::vector<std::string>& tagNames) {
     if (!std::filesystem::exists(filePath))
     {
       THROW_WEXCEPTION(L"File not found '{}'", filePath);
+    }
+
+    if (std::filesystem::is_directory(filePath))
+    {
+      THROW_WEXCEPTION(L"File is a directory '{}'", filePath);
     }
 
     ioCtx.restart();
@@ -47,12 +52,12 @@ public:
 
     ioCtx.run();
 
-    const std::string stdErr = std::string{ static_cast<const char*>(errBuf.data().data()), errBuf.size() - readyErrStr.size() };
+    const auto& stdErr = ToWide({ GetData(errBuf), errBuf.size() - readyErrStr.size() });
     if (!stdErr.empty()) {
-      THROW_WEXCEPTION(L"ExifTool.exe failed to get information from the file: '{}'. Error message: {}", filePath, ToWide(stdErr));
+      THROW_WEXCEPTION(L"ExifTool.exe failed to get information from the file: '{}'. Error message: {}", filePath, stdErr);
     }
 
-    return { static_cast<const char*>(outBuf.data().data()), outBuf.size() - readyStr.size() };
+    return ToWide({ GetData(outBuf), outBuf.size() - readyStr.size() });
   }
 
 private:

@@ -79,8 +79,8 @@ private:
 
     const auto& exitCode = proc.wait();
 
-    return { ToWide({ static_cast<const char*>(outBuffer.data().data()), outBuffer.size() }),
-             ToWide({ static_cast<const char*>(errBuffer.data().data()), errBuffer.size() }),
+    return { ToWide({ GetData(outBuffer), outBuffer.size() }),
+             ToWide({ GetData(errBuffer), errBuffer.size() }),
             exitCode };
   }
 };

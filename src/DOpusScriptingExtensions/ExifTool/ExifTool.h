@@ -21,8 +21,8 @@ public:
   } CATCH_ALL_EXCEPTIONS()
 
   STDMETHOD(GetInfoAsJson)(BSTR fileFullName, IDispatch* tagNamesJsArray, BSTR* infoAsJson) override try {
-   *infoAsJson = Copy(ToWide(
-     exifToolWrapper->GetTagInfosJson(fileFullName, ToUtf8StringVector(JsStringArrayToVector(tagNamesJsArray)))));
+    *infoAsJson = Copy(
+      exifToolWrapper->GetTagInfosJson(fileFullName, ToUtf8StringVector(JsStringArrayToVector(tagNamesJsArray))));
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
