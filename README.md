@@ -268,11 +268,11 @@ for (var tagName in tags) {
 ```
 
 #### Getting only specific tags
-`GetInfoAsJson` method accepts the array of tag names. The output will only contain these specific tags. The tag names are passed to the ExifTool executable as `-TAG` command line arguments.
+`GetInfoAsJson` method accepts the array of tag names in format `Group0:TagName`. The output will only contain these specific tags. The tag names are passed to the ExifTool executable as `-TAG` command line arguments.
 ```javascript
 var jsonString = exifTool.GetInfoAsJson(
   "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
-  ["TrackType", "DocTypeVersion"])
+  ["Matroska:TrackType", "Matroska:DocTypeVersion"])
 ```
 
 # How to use

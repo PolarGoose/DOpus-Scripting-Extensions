@@ -1,21 +1,10 @@
-﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+﻿<Project Sdk="WixToolset.Sdk/6.0.0">
   <PropertyGroup>
-    <DefineConstants>InstallerVersion=$(InstallerVersion);ExifToolSourceDir=$(OutputPath)..\DOpusScriptingExtensions\exiftool</DefineConstants>
+    <DefineConstants>InstallerVersion=$(InstallerVersion);DOpusScriptingExtensionsOutputPath=$(OutputPath)..\DOpusScriptingExtensions</DefineConstants>
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WixToolset.Heat" Version="5.0.2" />
-
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.1" />
     <ProjectReference Include="..\DOpusScriptingExtensions\DOpusScriptingExtensions.vcxproj" />
-
-    <HarvestDirectory Include="$(OutputPath)..\DOpusScriptingExtensions\exiftool">
-      <ComponentGroupName>ExifToolComponents</ComponentGroupName>
-      <DirectoryRefId>ExiftoolFolder</DirectoryRefId>
-      <SuppressRootDirectory>true</SuppressRootDirectory>
-      <SuppressCom>true</SuppressCom>
-      <SuppressRegistry>true</SuppressRegistry>
-      <KeepEmptyDirectories>true</KeepEmptyDirectories>
-      <PreprocessorVariable>var.ExifToolSourceDir</PreprocessorVariable>
-    </HarvestDirectory>
   </ItemGroup>
 </Project>

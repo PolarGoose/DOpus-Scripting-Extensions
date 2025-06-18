@@ -75,13 +75,11 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "TODO: <Company name>"
-            VALUE "FileDescription", "TODO: <File description>"
+            VALUE "CompanyName", "PolarGoose"
             VALUE "FileVersion", "1.0.0.1"
-            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
             VALUE "InternalName", "DOpusScriptingExtensions.dll"
             VALUE "OriginalFilename", "DOpusScriptingExtensions.dll"
-            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "ProductName", "DOpusScriptingExtensions"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END

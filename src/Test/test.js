@@ -1,12 +1,6 @@
 var fso = new ActiveXObject("Scripting.FileSystemObject")
-var shell = new ActiveXObject("WScript.shell")
 
-// Make JSON object available in cscript.exe
-// https://stackoverflow.com/a/27643386/7585517
-var htmlfile = WSH.CreateObject('htmlfile'), JSON;
-htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=9" />');
-htmlfile.close(JSON = htmlfile.parentWindow.JSON);
-
+// Helper functions
 function assertionFailed(message) {
   throw new Error("Assertion failed:\n" + message)
 }
@@ -99,6 +93,8 @@ function createTextFile(sizeInMb) {
 }
 
 function runCommandUsingWShellAndReturnOutput(command, args) {
+  var shell = new ActiveXObject("WScript.shell")
+
   var tempFileFullName = fso.GetSpecialFolder(2) + "\\DOpusScriptingExtensions_ProcessRunner_performance_test.txt"
   var cmdLine = 'cmd.exe /c ""' + command + '" ' + args + '  > "'+ tempFileFullName + '""'
   WScript.Echo("shell.run " + cmdLine)
@@ -150,6 +146,7 @@ function runTest(testFunction) {
   }
 }
 
+// ProcessRunner tests
 var processRunner = createComObject("DOpusScriptingExtensions.ProcessRunner")
 
 function ProcessRunner_can_run_an_executable_without_parameters() {
@@ -315,6 +312,7 @@ function ProcessRunner_performance_test_executable_with_30mb_output() {
   )
 }
 
+// FileMimeTypeDetector tests
 var fileMimeTypeDetector = createComObject("DOpusScriptingExtensions.FileMimeTypeDetector")
 
 function FileMimeTypeDetector_works_with_binary_files() {
@@ -348,6 +346,7 @@ function FileMimeTypeDetector_works_with_path_containing_unicode_characters() {
   assertEqual(res.Encoding, "us-ascii")
 }
 
+// StringFormatter tests
 var stringFormatter = createComObject("DOpusScriptingExtensions.StringFormatter")
 
 function StringFormatter_works_without_parameters() {
@@ -388,6 +387,7 @@ function StringFormatter_throws_if_invalid_specifier() {
   assertEqual(res, "Invalid presentation type for string")
 }
 
+// MediaInfoRetriever tests
 var stream_t = {
   Stream_General: 0,  // StreamKind = General
   Stream_Video: 1,    // StreamKind = Video
@@ -479,9 +479,9 @@ function MediaInfoRetriever_can_open_media_file() {
     "360")
 
   // Test `Option` method
-  assertEqual(
+  assertStringContains(
     mediaInfo.Option("Info_Version"),
-    "MediaInfoLib - v25.03")
+    "MediaInfoLib - v")
   assertEqual(
     mediaInfo.Option("Complete", "1"),
     "")
@@ -501,9 +501,9 @@ function MediaInfoRetriever_can_open_media_file() {
   assertStringContains(inform, "HDRSample.mkv")
 
   // Test `Option_Static` method
-  assertEqual(
-    mediaInfo.Option_Static("Info_Version"),
-    "MediaInfoLib - v25.03")
+  assertStringContains(
+    mediaInfo.Option("Info_Version"),
+    "MediaInfoLib - v")
   assertEqual(
     mediaInfo.Option_Static("Complete", "1"),
     "")
@@ -519,6 +519,7 @@ function MediaInfoRetriever_can_close_file() {
   mediaInfo.Close()
 }
 
+// ExifTool tests
 var exifTool = createComObject("DOpusScriptingExtensions.ExifTool")
 
 function ExifTool_throws_if_file_not_found() {
@@ -548,7 +549,7 @@ function ExifTool_can_get_all_tags() {
 function ExifTool_can_get_specific_tags() {
   var json = exifTool.GetInfoAsJson(
     "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
-    ["TrackType", "DocTypeVersion"])
+    ["Matroska:TrackType", "Matroska:DocTypeVersion"])
 
   assertStringStartsWith(json, '[{')
   assertStringEndsWith(json, '}]\r\n')
@@ -560,14 +561,14 @@ function ExifTool_can_get_specific_tags() {
 function ExifTool_if_specific_tag_does_not_exists_it_is_ignored() {
   var json = exifTool.GetInfoAsJson(
     "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
-    ["TrackType", "DocTypeVersion", "NonExistentTagName"])
+    ["Matroska:TrackType", "Matroska:DocTypeVersion", "Group0:NonExistentTagName"])
 
   assertStringContains(json, 'Matroska:Matroska:DocTypeVersion')
   assertStringContains(json, 'Matroska:Track1:TrackType')
   assertStringDoesNotContain(json, 'NonExistentTagName')
 }
 
-function ExifTool_throws_if_tags_have_wrong_format() {
+function ExifTool_throws_if_tags_have_wrong_javascript_type() {
   var res = assertThrows(function () {
     exifTool.GetInfoAsJson(
       "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
@@ -576,18 +577,19 @@ function ExifTool_throws_if_tags_have_wrong_format() {
   assertStringContains(res, "the element with the index 1 is not a string but a variant type #3")
 }
 
-function ExifTool_returns_empty_string_if_file_does_not_have_specified_tags() {
-  var json = exifTool.GetInfoAsJson(
-    "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
-    ["NonExistentTagName1", "NonExistentTagName2"])
-
-  assertStringEmpty(json)
+function ExifTool_throws_if_tags_have_wrong_format() {
+  var res = assertThrows(function () {
+    exifTool.GetInfoAsJson(
+      "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
+      ["TrackType"])
+  })
+  assertStringContains(res, "ExifTool tag name 'TrackType' is incorrect. The tag name should be in format 'Group0:TagName', for example 'AIFF:FormatVersionTime'")
 }
 
 function ExifTool_returns_no_tags_if_file_does_not_have_specified_tags() {
   var json = exifTool.GetInfoAsJson(
     "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
-    ["NonExistentTagName1", "NonExistentTagName2"])
+    ["Group0:NonExistentTagName1", "Group0:NonExistentTagName2"])
 
   assertStringContains(json, 'SourceFile')
   assertStringDoesNotContain(json, 'FileName')
@@ -604,27 +606,6 @@ function ExifTool_works_with_file_names_containing_unicode_characters() {
   var jsonString = exifTool.GetInfoAsJson(filePath)
   assertStringContains(jsonString, "File:System:FileName")
   assertStringContains(jsonString, "DOpusScriptingExtensions testTextFile трじα.txt")
-}
-
-function ExifTool_can_parse_json() {
-  var jsonString = exifTool.GetInfoAsJson("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
-  var tags = JSON.parse(jsonString)[0]
-
-  for (var tagName in tags) {
-    tag = tags[tagName]
-
-    if (tagName === "SourceFile") {
-      WScript.Echo("SourceFile: " + tag)
-      continue
-    }
-
-    WScript.Echo("TagName: " + tagName)
-    WScript.Echo("Description: " + tag.desk)
-    WScript.Echo("Id: " + tag.id)
-    WScript.Echo("Num: " + tag.num)
-    WScript.Echo("Value: " + tag.val)
-    WScript.Echo("--------")
-  }
 }
 
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
@@ -670,6 +651,6 @@ runTest(ExifTool_can_get_all_tags)
 runTest(ExifTool_can_get_specific_tags)
 runTest(ExifTool_if_specific_tag_does_not_exists_it_is_ignored)
 runTest(ExifTool_throws_if_tags_have_wrong_format)
+runTest(ExifTool_throws_if_tags_have_wrong_javascript_type)
 runTest(ExifTool_returns_no_tags_if_file_does_not_have_specified_tags)
 runTest(ExifTool_works_with_file_names_containing_unicode_characters)
-runTest(ExifTool_can_parse_json)

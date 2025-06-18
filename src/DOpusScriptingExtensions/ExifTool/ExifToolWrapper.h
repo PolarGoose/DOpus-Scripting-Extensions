@@ -1,6 +1,6 @@
 #pragma once
 
-class ExifToolWrapper : NonCopyableAndNonMovable {
+class ExifToolWrapper : boost::noncopyable {
 public:
   static ExifToolWrapper* GetInstance() {
     static ExifToolWrapper instance;
@@ -39,10 +39,12 @@ public:
       THROW_WEXCEPTION(L"File is a directory '{}'", filePath);
     }
 
+    ValidateExifToolTagNames(tagNames);
+
     ioCtx.restart();
 
     boost::asio::write(stdInPipe, boost::asio::buffer(
-      ToUtf8(filePath) + "\n-decimal\n-json\n-long\n-groupNames:0:1\n-echo4\n{readyErr}\n" + toCommandLineArgs(tagNames) + "-execute\n"));
+      ToUtf8(filePath) + "\n-decimal\n-json\n-long\n-groupNames:0:1\n-echo4\n{readyErr}\n" + ToCommandLineArgs(tagNames) + "-execute\n"));
 
     static const std::string readyStr = "{ready}\r\n";
     static const std::string readyErrStr = "{readyErr}\r\n";
@@ -63,7 +65,7 @@ public:
 private:
   ExifToolWrapper() = default;
 
-  std::string toCommandLineArgs(const std::vector<std::string>& tagNames) {
+  std::string ToCommandLineArgs(const std::vector<std::string>& tagNames) {
     std::string result;
     for (const auto& tag : tagNames) {
       result += std::format("-{}\n", tag);
@@ -71,12 +73,23 @@ private:
     return result;
   }
 
+  void ValidateExifToolTagNames(const std::vector<std::string>& tagNames) {
+    // ExifTags must be in the format "Group0:TagName"
+    static const std::regex exifTagFormat(R"(^[A-Za-z0-9]+:[A-Za-z0-9]+$)");
+
+    for (const auto& tagName : tagNames) {
+      if(!std::regex_match(tagName, exifTagFormat)) {
+        THROW_WEXCEPTION(L"ExifTool tag name '{}' is incorrect. The tag name should be in format 'Group0:TagName', for example 'AIFF:FormatVersionTime'", ToWide(tagName));
+      }
+    }
+  }
+
   boost::asio::io_context ioCtx;
   boost::asio::readable_pipe stdOutPipe{ ioCtx }, stdErrPipe{ ioCtx };
   boost::asio::writable_pipe stdInPipe{ ioCtx };
   boost::process::v2::process proc{
     ioCtx,
-    boost::dll::this_line_location().parent_path() / L"exiftool" / L"exiftool(-k).exe",
+    boost::dll::this_line_location().parent_path() / L"exiftool" / L"exiftool.exe",
     { "-stay_open", "true", "-@", "-" },
     boost::process::v2::process_stdio{ stdInPipe, stdOutPipe, stdErrPipe },
     boost::process::v2::windows::show_window_hide };

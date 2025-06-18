@@ -55,9 +55,6 @@
     <ClInclude Include="FileMimeTypeDetector\LibMagicWrapper.h">
       <Filter>FileMimeTypeDetector</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\NonCopyableAndNonMovable.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\WinApiUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>

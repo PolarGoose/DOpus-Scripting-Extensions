@@ -154,7 +154,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils\ComUtils.h" />
     <ClInclude Include="Utils\Exceptions.h" />
-    <ClInclude Include="Utils\NonCopyableAndNonMovable.h" />
     <ClInclude Include="Utils\StringUtils.h" />
     <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
@@ -195,10 +194,11 @@
     <Copy SourceFiles="$(ProjectRoot)/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libmagic_x64-windows/share/libmagic/misc/magic.mgc" DestinationFolder="$(OutputPath)" />
   </Target>
   <Target Name="DownloadExifTool" AfterTargets="Build" Condition="!Exists('$(BuildFolder)exiftool.zip')">
-    <DownloadFile SourceUrl="https://exiftool.org/exiftool-13.27_64.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
+    <DownloadFile SourceUrl="https://exiftool.org/exiftool-13.30_64.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
     <Unzip SourceFiles="$(BuildFolder)exiftool.zip" DestinationFolder="$(BuildFolder)" />
   </Target>
   <Target Name="CopyExifToolToOutputFolder" AfterTargets="DownloadExifTool" Condition="!Exists('$(OutputPath)exiftool')">
-    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.27_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
+    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.30_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
+    <Exec Command="ren &quot;$(OutputPath)exiftool\exiftool(-k).exe&quot; &quot;exiftool.exe&quot;" />
   </Target>
 </Project>

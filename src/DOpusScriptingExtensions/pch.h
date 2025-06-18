@@ -31,5 +31,6 @@
 #include <boost/locale.hpp>
 #include <boost/asio.hpp>
 #include <boost/dll.hpp>
+#include <boost/noncopyable.hpp>
 #include <magic.h>
 #include <MediaInfo/MediaInfo.h>

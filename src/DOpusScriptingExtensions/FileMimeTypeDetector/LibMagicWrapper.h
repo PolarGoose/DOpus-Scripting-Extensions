@@ -1,6 +1,6 @@
 #pragma once
 
-class LibMagicWrapper : NonCopyableAndNonMovable {
+class LibMagicWrapper : boost::noncopyable {
 public:
   static const LibMagicWrapper* GetSingleInstance() {
     static const LibMagicWrapper instance{ MAGIC_MIME, boost::dll::this_line_location().parent_path() / L"magic.mgc" };

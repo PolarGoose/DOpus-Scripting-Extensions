@@ -1,26 +1,23 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
   <Package Name="DOpusScriptingExtensions" Manufacturer="PolarGoose" Version="$(var.InstallerVersion)" UpgradeCode="5eb26a67-df9f-4c8e-8286-820db391f3dc">
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
     <MediaTemplate EmbedCab="yes"/>
     <Feature Id="ProductFeature" Title="DOpusScriptingExtensions" Level="1">
       <ComponentGroupRef Id="ProductComponents"/>
-      <ComponentGroupRef Id="ExifToolComponents"/>
     </Feature>
-    <Launch Message="Requires Windows x64" Condition="VersionNT64" />
+    <util:CloseApplication Target="dopus.exe" CloseMessage="yes" RebootPrompt="no" />
   </Package>
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
-      <Directory Id="INSTALLFOLDER" Name="DOpusScriptingExtensions">
-        <Directory Id="ExiftoolFolder" Name="exiftool"/>
-      </Directory>
+      <Directory Id="INSTALLFOLDER" Name="DOpusScriptingExtensions"/>
     </StandardDirectory>
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="ProductComponent" Guid="C1F6F9A3-F513-4411-BF53-3B03B90E8B4B">
-        <File Id="DOpusScriptingExtensions.dll" Source="$(var.SolutionDir)\build\$(var.Platform)\$(var.Configuration)\DOpusScriptingExtensions\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
-        <File Id="magic.mgc" Source="$(var.SolutionDir)\build\$(var.Platform)\$(var.Configuration)\DOpusScriptingExtensions\magic.mgc" />
-      </Component>
+      <File Id="DOpusScriptingExtensions.dll" Source="$(var.DOpusScriptingExtensionsOutputPath)\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
+      <File Id="magic.mgc" Source="$(var.DOpusScriptingExtensionsOutputPath)\magic.mgc" />
+      <Files Subdirectory="exiftool" Include="$(var.DOpusScriptingExtensionsOutputPath)\exiftool\**" />
     </ComponentGroup>
   </Fragment>
 </Wix>

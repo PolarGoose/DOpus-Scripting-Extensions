@@ -41,28 +41,16 @@ Function FindVcPkg() {
   return "$installationPath/VC/vcpkg/vcpkg.exe"
 }
 
-Function CreateZipArchive($fileFullName, $archiveFullName) {
-  Info "Create zip archive `n $archiveFullName from `n $fileFullName"
-  Compress-Archive -Force -Path $fileFullName -DestinationPath $archiveFullName
-}
-
-Function GetVersion() {
+Function GetInstallerVersion() {
   $gitCommand = Get-Command -Name git
 
   try { $tag = & $gitCommand describe --exact-match --tags HEAD 2> $null } catch { }
   if(-Not $?) {
-    Info "The commit is not tagged. Use 'v0.0-dev' as a tag instead"
-    $tag = "v0.0-dev"
+    Info "The commit is not tagged. Use 'v0.0' as a tag instead"
+    $tag = "v0.0"
   }
 
-  $commitHash = & $gitCommand rev-parse --short HEAD
-  CheckReturnCodeOfPreviousCommand "Failed to get git commit hash"
-
-  return "$($tag.Substring(1))-$commitHash"
-}
-
-Function GetInstallerVersion($version) {
-  return $version.Split("-")[0];
+  return $tag.Substring(1)
 }
 
 Set-StrictMode -Version Latest
@@ -71,12 +59,11 @@ $ProgressPreference = "SilentlyContinue"
 
 $root = Resolve-Path $PSScriptRoot
 $buildDir = "$root/build"
-$version = GetVersion
-$installerVersion = GetInstallerVersion $version
+$installerVersion = GetInstallerVersion
 $msbuild = FindMsBuild
 $vcPkg = FindVcPkg
 
-Info "Version: '$version'. InstallerVersion: '$installerVersion'"
+Info "InstallerVersion: '$installerVersion'"
 
 Info "Integrate VcPkg"
 & $vcPkg integrate install
@@ -88,7 +75,6 @@ Info "Build project"
     /verbosity:minimal `
     /property:Configuration=Release `
     /property:DebugType=None `
-    /property:Version=$version `
     /property:InstallerVersion=$installerVersion `
     $root/DOpusScriptingExtensions.sln
 CheckReturnCodeOfPreviousCommand "build failed"
@@ -97,7 +83,7 @@ Info "Run tests"
 cscript $root/src/test/test.js
 CheckReturnCodeOfPreviousCommand "tests failed"
 
-Info "Copy installer to the Publish directory"
+Info "Copy installer to the Publish directory and create zip archive"
 New-Item -Force -ItemType "directory" $buildDir/Publish > $null
 Copy-Item -Force -Path $buildDir/x64/Release/Installer/Installer.msi -Destination $buildDir/Publish/DOpusScriptingExtensions.msi > $null
-CreateZipArchive $buildDir/Publish/DOpusScriptingExtensions.msi $buildDir/Publish/DOpusScriptingExtensions.msi.zip
+Compress-Archive -Force -Path $buildDir/Publish/DOpusScriptingExtensions.msi -DestinationPath $buildDir/Publish/DOpusScriptingExtensions.msi.zip
