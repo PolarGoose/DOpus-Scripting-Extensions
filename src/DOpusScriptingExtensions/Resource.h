@@ -9,6 +9,7 @@
 #define IDR_StringFormatter             108
 #define IDR_MediaInfoRetriever          109
 #define IDR_ExifTool                    110
+#define IDR_UCharDet                    111
 #define IDR_REGISTRY1                   202
 
 // Next default values for new objects

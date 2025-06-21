@@ -56,6 +56,12 @@ interface IExifTool : IDispatch
   [id(1)] HRESULT GetInfoAsJson([in] BSTR fileFullName, [in, defaultvalue(0)] IDispatch* tagNamesJsArray, [out, retval] BSTR* infoAsJson);
 };
 
+[object, uuid(EA478603-BB0E-4024-9308-FC147D0443F4), dual, nonextensible, pointer_default(unique)]
+interface IUCharDet : IDispatch
+{
+  [id(1)] HRESULT DetectFileEncoding([in] BSTR fileFullName, [in, defaultvalue(1024)] UINT maxBytesToInspect, [out, retval] BSTR* fileEncoding);
+};
+
 [uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3), version(1.0)]
 library DOpusScriptingExtensionsLib
 {
@@ -101,6 +107,12 @@ library DOpusScriptingExtensionsLib
   coclass ExifTool
   {
     [default] interface IExifTool;
+  };
+
+  [uuid(C8FC22F0-78D6-4F3F-BBDA-60EFA02F4E60)]
+  coclass UCharDet
+  {
+    [default] interface IUCharDet;
   };
 };
 

@@ -6,12 +6,17 @@ A COM DLL that extends JScript functionality for [Directory Opus](https://www.gp
 * Supports only JScript scripting language. VBScript is not supported.
 * Portable DOpus is not supported because the extensions DLL require installation using a `msi` installer.
 
+# How to use
+* Download the installer from the [latest release](https://github.com/PolarGoose/DOpus-Scripting-Extensions/releases) and install it on your system
+* After that, you can access the functionality from any JScript or DOpus script.
+
 # Description of classes
 * [ProcessRunner](#ProcessRunner)
 * [StringFormatter](#StringFormatter)
 * [MediaInfoRetriever](#MediaInfoRetriever)
 * [FileMimeTypeDetector](#FileMimeTypeDetector)
 * [ExifTool](#ExifTool)
+* [UCharDet](#UCharDet)
 
 ## ProcessRunner
 This is an alternative to [WScript.shell Run](https://ss64.com/vb/run.html) method. It allows to get `StdOut` and `StdErr` of a process without creating a temporary file.<br>
@@ -275,13 +280,35 @@ var jsonString = exifTool.GetInfoAsJson(
   ["Matroska:TrackType", "Matroska:DocTypeVersion"])
 ```
 
-# How to use
-* Download the installer from the [latest release](https://github.com/PolarGoose/DOpus-Scripting-Extensions/releases) and install it on your system
-* After that, you can access the functionality from any JScript or DOpus script.
+## UCharDet
+Detects the encoding of a text file using [UCharDet](https://www.freedesktop.org/wiki/Software/uchardet/).
+The list of supported encodings is described in the paragraph `Supported Languages/Encodings`.
+
+### Examples
+```javascript
+// Acquire the COM object. It is recommended to acquire it only once and reuse it for performance reasons.
+var uCharDet = createComObject("DOpusScriptingExtensions.UCharDet");
+
+// Detect the encoding of a text file.
+// By default, it reads up to 1kb of the file to detect the encoding.
+// You can specify the number of bytes to read using the second parameter.
+var encoding = uCharDet.DetectFileEncoding("C:/some_text_file.txt")
+var encoding = uCharDet.DetectFileEncoding("C:/some_text_file.txt", 2048)
+WScript.Echo(encoding) // "UTF-8"
+
+// You can use the detected encoding name to decode the file content using DirectoryOpus StringTools utility.
+// StringTools.Decode method uses encoding names described in the
+//   https://learn.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
+// Not all encoding names returned by UCharDet have the same names. You might need to map some of the names manually.
+var st = DOpus.Create.StringTools;
+var file = DOpus.FSUtil.OpenFile(file)
+var Blob = file.read()
+var content = st.Decode(Blob, encoding);
+```
 
 # How to build
 ## Build requirements
-* Visual Studio 2022 or higher
+* Visual Studio 2022 or higher (you need to run it as an admin to build the solution)
 * [HeatWave for VS2022](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17) plugin
 
 ## Build instructions

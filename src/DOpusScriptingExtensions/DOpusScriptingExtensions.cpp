@@ -14,6 +14,8 @@
 #include "MediaInfoRetriever/MediaInfoRetriever.h"
 #include "ExifTool/ExifToolWrapper.h"
 #include "ExifTool/ExifTool.h"
+#include "UCharDet/UCharDetWrapper.h"
+#include "UCharDet/UCharDet.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>
 {

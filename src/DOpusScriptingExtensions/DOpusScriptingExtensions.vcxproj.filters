@@ -23,6 +23,9 @@
     <Filter Include="ExifTool">
       <UniqueIdentifier>{adbc85ad-863c-45dd-a303-142c82843435}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UCharDet">
+      <UniqueIdentifier>{c46e4933-bd6a-43fc-b659-13a8d6c1092b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -70,6 +73,12 @@
     <ClInclude Include="ExifTool\ExifToolWrapper.h">
       <Filter>ExifTool</Filter>
     </ClInclude>
+    <ClInclude Include="UCharDet\UCharDet.h">
+      <Filter>UCharDet</Filter>
+    </ClInclude>
+    <ClInclude Include="UCharDet\UCharDetWrapper.h">
+      <Filter>UCharDet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
@@ -95,6 +104,9 @@
     </None>
     <None Include="ExifTool\ExifTool.rgs">
       <Filter>ExifTool</Filter>
+    </None>
+    <None Include="UCharDet\UCharDet.rgs">
+      <Filter>UCharDet</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

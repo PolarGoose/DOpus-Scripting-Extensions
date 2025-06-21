@@ -1,0 +1,26 @@
+HKCR
+{
+	DOpusScriptingExtensions.UCharDet.1 = s 'UCharDet class'
+	{
+		CLSID = s '{C8FC22F0-78D6-4F3F-BBDA-60EFA02F4E60}'
+	}
+	DOpusScriptingExtensions.UCharDet = s 'UCharDet class'
+	{		
+		CurVer = s 'DOpusScriptingExtensions.UCharDet.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {C8FC22F0-78D6-4F3F-BBDA-60EFA02F4E60} = s 'UCharDet class'
+		{
+      ProgID = s 'DOpusScriptingExtensions.UCharDet.1'
+			VersionIndependentProgID = s 'DOpusScriptingExtensions.UCharDet'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+			Version = s '1.0'
+		}
+	}
+}

@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace ATL;
-
 class ATL_NO_VTABLE CExifTool :
   public CComObjectRootEx<CComSingleThreadModel>,
   public CComCoClass<CExifTool, &CLSID_ExifTool>,

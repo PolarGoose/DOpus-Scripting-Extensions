@@ -34,3 +34,4 @@
 #include <boost/noncopyable.hpp>
 #include <magic.h>
 #include <MediaInfo/MediaInfo.h>
+#include <uchardet/uchardet.h>

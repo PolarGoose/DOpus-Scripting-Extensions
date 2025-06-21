@@ -334,7 +334,6 @@ function FileMimeTypeDetector_fails_if_fail_doesn_not_exist() {
 }
 
 function FileMimeTypeDetector_works_with_path_containing_unicode_characters() {
-  var fso = new ActiveXObject("Scripting.FileSystemObject")
   var tempFolder = fso.GetSpecialFolder(2)
   var filePath = tempFolder.Path + "/DOpusScriptingExtensions testTextFile трじα.txt"
   var file = fso.CreateTextFile(filePath, true)
@@ -596,7 +595,6 @@ function ExifTool_returns_no_tags_if_file_does_not_have_specified_tags() {
 }
 
 function ExifTool_works_with_file_names_containing_unicode_characters() {
-  var fso = new ActiveXObject("Scripting.FileSystemObject")
   var tempFolder = fso.GetSpecialFolder(2)
   var filePath = tempFolder.Path + "/DOpusScriptingExtensions testTextFile трじα.txt"
   var file = fso.CreateTextFile(filePath, true)
@@ -606,6 +604,64 @@ function ExifTool_works_with_file_names_containing_unicode_characters() {
   var jsonString = exifTool.GetInfoAsJson(filePath)
   assertStringContains(jsonString, "File:System:FileName")
   assertStringContains(jsonString, "DOpusScriptingExtensions testTextFile трじα.txt")
+}
+
+// UCharDet tests
+var uCharDet = createComObject("DOpusScriptingExtensions.UCharDet");
+
+function UCharDet_throws_exception_if_file_does_not_exist() {
+  var res = assertThrows(function () { uCharDet.DetectFileEncoding("C:/non_existent_file") })
+  assertStringContains(res, "UCharDetWrapper.h:")
+  assertStringContains(res, "Unable to open file: 'C:/non_existent_file'. Error message: no such file or directory")
+}
+
+function UCharDet_throws_exception_if_file_is_empty() {
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/UCharDet_test_file.txt"
+  var file = fso.CreateTextFile(filePath, true)
+  file.Close()
+
+  var res = assertThrows(function () { uCharDet.DetectFileEncoding(filePath) })
+  assertStringContains(res, "UCharDetWrapper.h:")
+  assertStringContains(res, "File is empty: 'C:")
+}
+
+function UCharDet_correctly_detects_UTF8_file_encoding() {
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/UCharDet_test_file.txt"
+  var file = fso.CreateTextFile(filePath, true)
+  file.Write("текст. some text")
+  file.Close()
+
+  res = uCharDet.DetectFileEncoding(filePath)
+  assertEqual(res, "UTF-8")
+}
+
+function UCharDet_correctly_detects_UTF16_file_encoding() {
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/UCharDet_test_file.txt"
+  var file = fso.CreateTextFile(filePath, true, true)
+  file.Write("текст. some text")
+  file.Close()
+
+  var res = uCharDet.DetectFileEncoding(filePath)
+  assertEqual(res, "UTF-16")
+}
+
+function UCharDet_works_with_non_text_files() {
+  var res = uCharDet.DetectFileEncoding("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+  assertEqual(res, "UTF-8")
+}
+
+function UCharDet_uses_maxBytesToRead_parameter() {
+  var tempFolder = fso.GetSpecialFolder(2)
+  var filePath = tempFolder.Path + "/UCharDet_test_file.txt"
+  var file = fso.CreateTextFile(filePath, true)
+  file.Write("some text. текст")
+  file.Close()
+
+  var res = uCharDet.DetectFileEncoding(filePath, 10)
+  assertEqual(res, "ASCII")
 }
 
 runTest(ProcessRunner_can_run_an_executable_without_parameters)
@@ -654,3 +710,10 @@ runTest(ExifTool_throws_if_tags_have_wrong_format)
 runTest(ExifTool_throws_if_tags_have_wrong_javascript_type)
 runTest(ExifTool_returns_no_tags_if_file_does_not_have_specified_tags)
 runTest(ExifTool_works_with_file_names_containing_unicode_characters)
+
+runTest(UCharDet_throws_exception_if_file_does_not_exist)
+runTest(UCharDet_throws_exception_if_file_is_empty)
+runTest(UCharDet_correctly_detects_UTF8_file_encoding)
+runTest(UCharDet_correctly_detects_UTF16_file_encoding)
+runTest(UCharDet_works_with_non_text_files)
+runTest(UCharDet_uses_maxBytesToRead_parameter)
