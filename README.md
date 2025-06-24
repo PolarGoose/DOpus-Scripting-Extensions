@@ -287,7 +287,7 @@ The list of supported encodings is described in the paragraph `Supported Languag
 ### Examples
 ```javascript
 // Acquire the COM object. It is recommended to acquire it only once and reuse it for performance reasons.
-var uCharDet = createComObject("DOpusScriptingExtensions.UCharDet");
+var uCharDet = new ActiveXObject("DOpusScriptingExtensions.UCharDet");
 
 // Detect the encoding of a text file.
 // By default, it reads up to 1kb of the file to detect the encoding.
@@ -317,6 +317,7 @@ var content = st.Decode(Blob, encoding);
 ## Notes
 * `vcpkg_overlay_ports\boost-asio` is an original port with the custom `increase_pipe_buffer.diff` patch. This is a workaround for the issue: [[Windows] Setting the capacity of the underline pipe #470
 ](https://github.com/boostorg/process/issues/470)
+* libmediainfo is set to a version `25.3` because of the bug: [[v25.04] MediaInfo::Open hangs on a specific MXF file](https://github.com/MediaArea/MediaInfoLib/issues/2340)
 
 # References
 * Discussion of this project on DOpus forum: [DOpus-Scripting-Extensions project](https://resource.dopus.com/t/dopus-scripting-extensions-project-wild-idea/55000)

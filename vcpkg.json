@@ -24,5 +24,9 @@
     "libmagic",
     "libmediainfo",
     "uchardet"
+  ],
+
+  "overrides": [
+    { "name": "libmediainfo", "version": "25.3" }
   ]
 }
