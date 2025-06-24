@@ -75,7 +75,7 @@ private:
 
   void ValidateExifToolTagNames(const std::vector<std::string>& tagNames) {
     // ExifTags must be in the format "Group0:TagName"
-    static const std::regex exifTagFormat(R"(^[A-Za-z0-9]+:[A-Za-z0-9]+$)");
+    static const std::regex exifTagFormat(R"(^[A-Za-z0-9_-]+:[A-Za-z0-9_-]+$)");
 
     for (const auto& tagName : tagNames) {
       if(!std::regex_match(tagName, exifTagFormat)) {

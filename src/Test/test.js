@@ -560,7 +560,7 @@ function ExifTool_can_get_specific_tags() {
 function ExifTool_if_specific_tag_does_not_exists_it_is_ignored() {
   var json = exifTool.GetInfoAsJson(
     "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
-    ["Matroska:TrackType", "Matroska:DocTypeVersion", "Group0:NonExistentTagName"])
+    ["Matroska:TrackType", "Matroska:DocTypeVersion", "Group0:NonExistentTagName", "Some_-Name:Some_-Name"])
 
   assertStringContains(json, 'Matroska:Matroska:DocTypeVersion')
   assertStringContains(json, 'Matroska:Track1:TrackType')
