@@ -518,6 +518,26 @@ function MediaInfoRetriever_can_close_file() {
   mediaInfo.Close()
 }
 
+function MediaInfoRetriever_throws_when_selected_unsupported_language() {
+  var res = assertThrows(function () { mediaInfo.SetLanguage("non_existent_language") })
+  assertStringContains(res, "Language 'non_existent_language' is not supported.")
+  assertStringContains(res, "non_existent_language.csv' file doesn't exist")
+}
+
+function MediaInfoRetriever_can_select_language() {
+  mediaInfo.SetLanguage("ko")
+  mediaInfo.Open("C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv")
+
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_General, 0, "Format", info_t.Info_Name_Text),
+    "포맷")
+
+  mediaInfo.SetLanguage("cs")
+  assertEqual(
+    mediaInfo.Get(stream_t.Stream_General, 0, "Format", info_t.Info_Name_Text),
+    "Formát")
+}
+
 // ExifTool tests
 var exifTool = createComObject("DOpusScriptingExtensions.ExifTool")
 
@@ -700,6 +720,8 @@ runTest(MediaInfoRetriever_fails_to_open_a_file_if_it_does_not_exist)
 runTest(MediaInfoRetriever_fails_to_open_a_file_if_it_is_a_folder)
 runTest(MediaInfoRetriever_can_open_media_file)
 runTest(MediaInfoRetriever_can_close_file)
+runTest(MediaInfoRetriever_throws_when_selected_unsupported_language)
+runTest(MediaInfoRetriever_can_select_language)
 
 runTest(ExifTool_throws_if_file_not_found)
 runTest(ExifTool_throws_if_file_is_a_directory)

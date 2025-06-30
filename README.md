@@ -106,6 +106,7 @@ The class uses [MediaInfoLib](https://github.com/MediaArea/MediaInfoLib).
 * `string Option(option, <optional> value)` - [MediaInfo.h::Option](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L223)
 * `string Option_Static(option, <optional> value)` - [MediaInfo.h::Option_Static](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L229)
 * `string Inform()` - [MediaInfo.h::Inform](https://github.com/MediaArea/MediaInfoLib/blob/9a8b8270f1823725e690f29b2ce696a986b227fa/Source/MediaInfo/MediaInfo.h#L123)
+* `void SetLanguage(languageName)` - selects the default language and the language of the current object. `languageName` is a name of the language file like `en`, `ru`, `es`, etc. [List of all language files](https://github.com/MediaArea/MediaInfo/tree/v25.04/Source/Resource/Plugin/Language)
 * `void Close()` - closes the media file.
 
 ### Example
@@ -194,6 +195,12 @@ var videoStreamsCount = mediaInfo.Count_Get(
     /* streamKind */ stream_t.Stream_Video,
     /* streamNumber */ 0
 )
+
+// You can change the language and get field and unit names in the specified language
+mediaInfo.SetLanguage("cs")
+var formatCzech = mediaInfo.Get(
+  mediaInfo.Get(stream_t.Stream_General, 0, "Format", info_t.Info_Name_Text),
+  "Formát")
 
 // Close the media file.
 mediaInfo.Close()

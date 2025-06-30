@@ -32,6 +32,7 @@
 #include <boost/asio.hpp>
 #include <boost/dll.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/filesystem.hpp>
 #include <magic.h>
 #include <MediaInfo/MediaInfo.h>
 #include <uchardet/uchardet.h>

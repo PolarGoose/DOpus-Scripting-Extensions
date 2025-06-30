@@ -48,6 +48,7 @@ interface IMediaInfoRetriever : IDispatch
   [id(6)] HRESULT Inform([out, retval] BSTR* res);
   [id(7)] HRESULT Option_Static([in] BSTR option, [in, defaultvalue("")] BSTR value, [out, retval] BSTR* res);
   [id(8)] HRESULT Close();
+  [id(9)] HRESULT SetLanguage([in] BSTR languageName);
 };
 
 [object, uuid(A72203F3-66ED-4A03-9F3C-0BC3BCAE8883), dual, nonextensible, pointer_default(unique)]

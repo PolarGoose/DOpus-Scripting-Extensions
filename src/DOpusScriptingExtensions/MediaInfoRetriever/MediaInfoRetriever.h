@@ -71,7 +71,29 @@ public:
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
+  STDMETHOD(SetLanguage)(BSTR languageName) override try {
+    const auto& languageFileContent = GetLanguageFileContent(languageName);
+    mi.Option(L"Language", languageFileContent);
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
 private:
+  std::wstring GetLanguageFileContent(const std::wstring_view& languageName) {
+    const auto& languageFilePath = boost::dll::this_line_location().parent_path() / L"MediaInfoLanguages" / std::format(L"{}.csv", languageName);
+
+    if(!boost::filesystem::exists(languageFilePath)) {
+      THROW_WEXCEPTION(L"Language '{}' is not supported. The '{}' file doesn't exist", languageName, languageFilePath);
+    }
+
+    std::wifstream file(languageFilePath.c_str(), std::ios::binary);
+    if (!file) {
+      std::error_code ec(errno, std::generic_category());
+      THROW_WEXCEPTION(L"Failed to open language file '{}'. Error message: {}", languageFilePath, ToWide(ec.message()));
+    }
+
+    return (std::wostringstream() << file.rdbuf()).str();
+  }
+
   MediaInfoLib::MediaInfo mi;
 };
 

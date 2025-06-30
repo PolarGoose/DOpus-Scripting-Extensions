@@ -18,6 +18,7 @@
       <File Id="DOpusScriptingExtensions.dll" Source="$(var.DOpusScriptingExtensionsOutputPath)\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
       <File Id="magic.mgc" Source="$(var.DOpusScriptingExtensionsOutputPath)\magic.mgc" />
       <Files Subdirectory="exiftool" Include="$(var.DOpusScriptingExtensionsOutputPath)\exiftool\**" />
+      <Files Subdirectory="MediaInfoLanguages" Include="$(var.DOpusScriptingExtensionsOutputPath)\MediaInfoLanguages\**" />
     </ComponentGroup>
   </Fragment>
 </Wix>
