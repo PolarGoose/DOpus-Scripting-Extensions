@@ -7,7 +7,7 @@ inline std::string ToUtf8(std::wstring_view wideStr) {
   );
 }
 
-inline std::wstring ToWide(std::string_view utf8Str) {
+inline std::wstring ToUtf16(std::string_view utf8Str) {
   return boost::locale::conv::utf_to_utf<wchar_t>(
     utf8Str.data(),
     utf8Str.data() + utf8Str.size()
@@ -19,7 +19,7 @@ inline std::vector<std::string> ToUtf8StringVector(const std::vector<std::wstrin
   return std::vector<std::string>(transformed.begin(), transformed.end());
 }
 
-inline const char* GetData(const boost::asio::streambuf& buf) {
+inline const char* GetDataPointer(const boost::asio::streambuf& buf) {
   return static_cast<const char*>(buf.data().data());
 }
 

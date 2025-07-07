@@ -14,7 +14,7 @@ public:
     uchardet_reset(detector);
     uchardet_handle_data(detector, fileBytes.data(), fileBytes.size());
     uchardet_data_end(detector);
-    return ToWide(uchardet_get_charset(detector));
+    return ToUtf16(uchardet_get_charset(detector));
   }
 
 private:
@@ -28,7 +28,7 @@ private:
     std::ifstream file(filePath, std::ios::binary);
     if (!file) {
       std::error_code ec(errno, std::generic_category());
-      THROW_WEXCEPTION(L"Unable to open file: '{}'. Error message: {}", filePath, ToWide(ec.message()));
+      THROW_WEXCEPTION(L"Unable to open file: '{}'. Error message: {}", filePath, ToUtf16(ec.message()));
     }
 
     std::vector<char> buffer(maxBytesToRead);
@@ -37,7 +37,7 @@ private:
 
     if (file.bad()) {
       std::error_code ec(errno, std::generic_category());
-      THROW_WEXCEPTION(L"Error reading file: '{}'. Error message: {}", filePath, ToWide(ec.message()));
+      THROW_WEXCEPTION(L"Error reading file: '{}'. Error message: {}", filePath, ToUtf16(ec.message()));
     }
 
     if (bytesRead == 0) {

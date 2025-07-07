@@ -23,7 +23,7 @@ CComPtr<QueryInterfaceType> CreateComObject(std::function<void(CoClassType&)> in
   CComObject<CoClassType>* rawObj = nullptr;
   THROW_IF_FAILED_MSG(
     CComObject<CoClassType>::CreateInstance(&rawObj),
-    L"Failed to create a COM object of type '{}'", ToWide(typeid(CoClassType).name()));
+    L"Failed to create a COM object of type '{}'", ToUtf16(typeid(CoClassType).name()));
 
   // Wrap the object in CComPtr to ensure that it is released in case of an exception
   CComPtr<CoClassType> obj(rawObj);
@@ -34,7 +34,7 @@ CComPtr<QueryInterfaceType> CreateComObject(std::function<void(CoClassType&)> in
   if (!res) {
     THROW_HRESULT(
       E_NOINTERFACE,
-      L"Failed to get the interface '{}' from '{}' class", ToWide(typeid(QueryInterfaceType).name()), ToWide(typeid(CoClassType).name()));
+      L"Failed to get the interface '{}' from '{}' class", ToUtf16(typeid(QueryInterfaceType).name()), ToUtf16(typeid(CoClassType).name()));
   }
   
   return res;

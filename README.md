@@ -223,9 +223,14 @@ WScript.Echo("Encoding: " + res.Encoding) // "utf-8"
 * The encoding doesn't show if a file has BOM or not.
 
 ## ExifTool
-This class uses [ExifTool](https://exiftool.org/) to read meta information from files. The ExifTool executable is included in the installation package, so you don't need to install it separately.<br>
+This class uses [ExifTool](https://exiftool.org/) to read metadata from files. The ExifTool executable is included in the installation package, so you don't need to install it separately.<br>
+
+### How it works
+This class starts the ExifTool process only once in the background using `-stay_open true -@ -` command line arguments and communicates with it using stdOut and stdIn.<br>
+It is much faster than running ExifTool for each file separately.<br>
 
 ### Examples
+#### Getting all tags
 ```javascript
 // Create the COM object. The first time the object is created, it starts the ExifTool process in the background.
 var exifTool = new ActiveXObject("DOpusScriptingExtensions.ExifTool")
@@ -280,11 +285,25 @@ for (var tagName in tags) {
 ```
 
 #### Getting only specific tags
-`GetInfoAsJson` method accepts the array of tag names in format `Group0:TagName`. The output will only contain these specific tags. The tag names are passed to the ExifTool executable as `-TAG` command line arguments.
+`GetInfoAsJson` method accepts the array of tag names in the format `Group0:TagName`. The output will only contain these specific tags. The tag names are passed to the ExifTool executable as `-TAG` command line arguments.
 ```javascript
 var jsonString = exifTool.GetInfoAsJson(
   "C:/Windows/SystemResources/Windows.UI.SettingsAppThreshold/SystemSettings/Assets/HDRSample.mkv",
   ["Matroska:TrackType", "Matroska:DocTypeVersion"])
+```
+
+#### Advanced usage: run ExifTool with custom arguments
+This example shows how you can run ExifTool with custom arguments.
+You can also use it to set and modify tags.
+```javascript
+// The command line arguments array should contain one argument per element,
+// not one option per element - some options require additional arguments, and all arguments must be provided as separate elements
+var exifToolStdOut = exifTool.Run("C:/someFile.mkv", ["-xmlFormat", "-long", "-unknown"])
+WScript.Echo(exifToolStdOut) // prints tags as XML
+
+// don't use quotes when setting tag values that contain spaces, otherwise the quotes will be added to the tag value
+exifToolStdOut = exifTool.Run("C:/someFile.png", ["-PNG:Copyright=Some copyright", "-PNG:Comment=Some comment"])
+WScript.Echo(exifToolStdOut) // contains: "1 image files updated"
 ```
 
 ## UCharDet

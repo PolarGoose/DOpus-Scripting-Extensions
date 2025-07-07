@@ -79,8 +79,8 @@ private:
 
     const auto& exitCode = proc.wait();
 
-    return { ToWide({ GetData(outBuffer), outBuffer.size() }),
-             ToWide({ GetData(errBuffer), errBuffer.size() }),
+    return { ToUtf16({ GetDataPointer(outBuffer), outBuffer.size() }),
+             ToUtf16({ GetDataPointer(errBuffer), errBuffer.size() }),
             exitCode };
   }
 };

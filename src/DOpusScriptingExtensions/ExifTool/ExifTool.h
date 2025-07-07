@@ -24,6 +24,12 @@ public:
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 
+  STDMETHOD(Run)(BSTR fileFullName, IDispatch* commandLineArgs, BSTR* result) override try {
+    *result = Copy(
+      exifToolWrapper->Run(fileFullName, ToUtf8StringVector(JsStringArrayToVector(commandLineArgs))));
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
 private:
   ExifToolWrapper* exifToolWrapper;
 };

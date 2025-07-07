@@ -12,7 +12,7 @@ public:
     if (!mimeCStr) {
       THROW_WEXCEPTION(L"Failed to detect type of a file '{}'. Error message: {}", fileFullName, GetError());
     }
-    return ToWide(mimeCStr);
+    return ToUtf16(mimeCStr);
   }
 
   ~LibMagicWrapper() {
@@ -40,7 +40,7 @@ private:
     if (err == nullptr) {
       return L"";
     }
-    return ToWide(magic_error(magicCookie));
+    return ToUtf16(magic_error(magicCookie));
   }
 
   magic_t magicCookie;

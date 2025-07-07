@@ -12,6 +12,7 @@
 #include "FileMimeTypeDetector/FileMimeTypeDetector.h"
 #include "StringFormatter/StringFormatter.h"
 #include "MediaInfoRetriever/MediaInfoRetriever.h"
+#include "ExifTool/ExifToolCommandArgsGenerator.h"
 #include "ExifTool/ExifToolWrapper.h"
 #include "ExifTool/ExifTool.h"
 #include "UCharDet/UCharDetWrapper.h"

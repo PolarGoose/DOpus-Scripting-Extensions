@@ -89,10 +89,10 @@ private:
     std::ifstream file(languageFilePath.c_str());
     if (!file) {
       std::error_code ec(errno, std::generic_category());
-      THROW_WEXCEPTION(L"Failed to open language file '{}'. Error message: {}", languageFilePath, ToWide(ec.message()));
+      THROW_WEXCEPTION(L"Failed to open language file '{}'. Error message: {}", languageFilePath, ToUtf16(ec.message()));
     }
 
-    return ToWide(std::string{ std::istreambuf_iterator<char>(file), {} });
+    return ToUtf16(std::string{ std::istreambuf_iterator<char>(file), {} });
   }
 
   inline static const auto& mediaInfoLanguagesPath = boost::dll::this_line_location().parent_path() / L"MediaInfoLanguages";

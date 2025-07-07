@@ -1,5 +1,7 @@
 #pragma once
 
+// When instance of this class is created it starts ExifTool.exe process in the background mode.
+// In this mode ExifTool accepts commands via stdin and prints results to stdout or stderr in case of an error.
 class ExifToolWrapper : boost::noncopyable {
 public:
   static ExifToolWrapper* GetInstance() {
@@ -28,64 +30,55 @@ public:
   //    },   
   //    ...
   //   }]
-  std::wstring GetTagInfosJson(std::wstring_view filePath, const std::vector<std::string>& tagNames) {
-    if (!std::filesystem::exists(filePath))
-    {
-      THROW_WEXCEPTION(L"File not found '{}'", filePath);
-    }
+  std::wstring GetTagInfosJson(const std::wstring_view filePath, const std::vector<std::string>& tagNames) {
+    ExifToolCommandArgsGenerator argsGenerator(filePath);
+    argsGenerator.AddCommandLineArgs({
+      "-decimal",
+      "-json",
+      "-long",
+      "-unknown",
+      "-groupNames:0:1"
+      });
+    argsGenerator.AddTagNames(tagNames);
+    return Execute(argsGenerator.GenerateExifToolInput());
+  }
 
-    if (std::filesystem::is_directory(filePath))
-    {
-      THROW_WEXCEPTION(L"File is a directory '{}'", filePath);
-    }
-
-    ValidateExifToolTagNames(tagNames);
-
-    ioCtx.restart();
-
-    boost::asio::write(stdInPipe, boost::asio::buffer(
-      ToUtf8(filePath) + "\n-decimal\n-json\n-long\n-groupNames:0:1\n-echo4\n{readyErr}\n" + ToCommandLineArgs(tagNames) + "-execute\n"));
-
-    static const std::string readyStr = "{ready}\r\n";
-    static const std::string readyErrStr = "{readyErr}\r\n";
-    boost::asio::streambuf outBuf, errBuf;
-    boost::asio::async_read_until(stdOutPipe, outBuf, readyStr, [&](auto, std::size_t) { });
-    boost::asio::async_read_until(stdErrPipe, errBuf, readyErrStr, [&](auto, std::size_t) { });
-
-    ioCtx.run();
-
-    const auto& stdErr = ToWide({ GetData(errBuf), errBuf.size() - readyErrStr.size() });
-    if (!stdErr.empty()) {
-      THROW_WEXCEPTION(L"ExifTool.exe failed to get information from the file: '{}'. Error message: {}", filePath, stdErr);
-    }
-
-    return ToWide({ GetData(outBuf), outBuf.size() - readyStr.size() });
+  std::wstring Run(const std::wstring_view filePath, const std::vector<std::string>& commandLineArgs) {
+    ExifToolCommandArgsGenerator argsGenerator(filePath);
+    argsGenerator.AddCommandLineArgs(commandLineArgs);
+    return Execute(argsGenerator.GenerateExifToolInput());
   }
 
 private:
-  ExifToolWrapper() = default;
+  std::wstring Execute(const std::string_view exifToolCommands) {
+    ioCtx.restart();
 
-  std::string ToCommandLineArgs(const std::vector<std::string>& tagNames) {
-    std::string result;
-    for (const auto& tag : tagNames) {
-      result += std::format("-{}\n", tag);
+    boost::asio::write(stdInPipe, boost::asio::buffer(exifToolCommands));
+
+    // After the write is completed, we need to read from stdOut and stdErr in parallel, to avoid ExifTool from deadlocking in case one of the pipes gets full.
+    // When ExifTool is ready, it prints "{ready}\r\n" to stdOut and "{readyErr}\r\n" to stdErr (even if there are no errors).
+    static const std::string readyStr = "{ready}\r\n";
+    static const std::string readyErrStr = "{readyErr}\r\n";
+    boost::asio::streambuf stdOutBuf;
+    boost::asio::streambuf stdErrBuf;
+    boost::asio::async_read_until(stdOutPipe, stdOutBuf, readyStr, [&](auto, std::size_t) {});
+    boost::asio::async_read_until(stdErrPipe, stdErrBuf, readyErrStr, [&](auto, std::size_t) {});
+    ioCtx.run();
+
+    // If there is anything written to stdErr, it means that ExifTool failed to process the file.
+    const auto& lengthOfErrorMessage = stdErrBuf.size() - readyErrStr.size(); // we ignore the "{readyErr}\r\n" part
+    if(lengthOfErrorMessage != 0) {
+      const auto& errorMessage = ToUtf16({ GetDataPointer(stdErrBuf), lengthOfErrorMessage });
+      THROW_WEXCEPTION(L"ExifTool.exe failed to get information using the following parameters:\n{}\n\nError message:\n{}", ToUtf16(exifToolCommands), errorMessage);
     }
-    return result;
-  }
-
-  void ValidateExifToolTagNames(const std::vector<std::string>& tagNames) {
-    // ExifTags must be in the format "Group0:TagName"
-    static const std::regex exifTagFormat(R"(^[A-Za-z0-9_-]+:[A-Za-z0-9_-]+$)");
-
-    for (const auto& tagName : tagNames) {
-      if(!std::regex_match(tagName, exifTagFormat)) {
-        THROW_WEXCEPTION(L"ExifTool tag name '{}' is incorrect. The tag name should be in format 'Group0:TagName', for example 'AIFF:FormatVersionTime'", ToWide(tagName));
-      }
-    }
+    
+    const auto& lengthOfStdOutput = stdOutBuf.size() - readyStr.size(); // we ignore the "{ready}\r\n" part
+    return ToUtf16({ GetDataPointer(stdOutBuf), lengthOfStdOutput });
   }
 
   boost::asio::io_context ioCtx;
-  boost::asio::readable_pipe stdOutPipe{ ioCtx }, stdErrPipe{ ioCtx };
+  boost::asio::readable_pipe stdOutPipe{ ioCtx };
+  boost::asio::readable_pipe stdErrPipe{ ioCtx };
   boost::asio::writable_pipe stdInPipe{ ioCtx };
   boost::process::v2::process proc{
     ioCtx,

@@ -79,6 +79,9 @@
     <ClInclude Include="UCharDet\UCharDetWrapper.h">
       <Filter>UCharDet</Filter>
     </ClInclude>
+    <ClInclude Include="ExifTool\ExifToolCommandArgsGenerator.h">
+      <Filter>ExifTool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />
