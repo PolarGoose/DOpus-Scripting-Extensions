@@ -6,7 +6,6 @@
     <Feature Id="ProductFeature" Title="DOpusScriptingExtensions" Level="1">
       <ComponentGroupRef Id="ProductComponents"/>
     </Feature>
-    <util:CloseApplication Target="dopus.exe" CloseMessage="yes" RebootPrompt="no" />
   </Package>
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
