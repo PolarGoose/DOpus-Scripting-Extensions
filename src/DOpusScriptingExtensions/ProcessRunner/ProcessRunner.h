@@ -29,13 +29,11 @@ private:
   static std::tuple<std::wstring, std::wstring, int> RunProcess(const boost::filesystem::path& exePath,
                                                                 const std::vector<std::string>& args,
                                                                 const boost::filesystem::path& workingDirectory) {
-    if (!boost::filesystem::exists(exePath))
-    {
+    if (!boost::filesystem::exists(exePath)) {
       THROW_WEXCEPTION(L"The executable not found '{}'", exePath);
     }
 
-    if (!boost::process::v2::environment::detail::is_exec_type(exePath.c_str()))
-    {
+    if (!boost::process::v2::environment::detail::is_exec_type(exePath.c_str())) {
       THROW_WEXCEPTION(L"The file '{}' is not executable", exePath);
     }
 
@@ -44,7 +42,7 @@ private:
     boost::asio::readable_pipe stdOutPipe(ctx), stdErrPipe(ctx);
     boost::process::v2::process proc(
       ctx, boost::filesystem::canonical(exePath), args,
-      boost::process::v2::process_stdio{ {}, stdOutPipe, stdErrPipe },
+      boost::process::v2::process_stdio{ nullptr, stdOutPipe, stdErrPipe },
       boost::process::v2::windows::show_window_hide,
       boost::process::process_start_dir(workingDirectory));
 
@@ -56,8 +54,7 @@ private:
           if (!ec) {
             readStdOut();
           }
-        }
-      );
+        });
       };
 
     std::function<void()> readStdErr;
@@ -68,8 +65,7 @@ private:
           if (!ec) {
             readStdErr();
           }
-        }
-      );
+        });
       };
 
     readStdOut();
@@ -81,7 +77,7 @@ private:
 
     return { ToUtf16({ GetDataPointer(outBuffer), outBuffer.size() }),
              ToUtf16({ GetDataPointer(errBuffer), errBuffer.size() }),
-            exitCode };
+             exitCode };
   }
 };
 

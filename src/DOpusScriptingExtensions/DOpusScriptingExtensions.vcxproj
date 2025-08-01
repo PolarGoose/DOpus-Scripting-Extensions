@@ -200,11 +200,11 @@
   </Target>
   <!-- Download ExifTool binaries -->
   <Target Name="DownloadExifTool" AfterTargets="Build" Condition="!Exists('$(BuildFolder)exiftool.zip')">
-    <DownloadFile SourceUrl="https://exiftool.org/exiftool-13.30_64.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
+    <DownloadFile SourceUrl="https://netix.dl.sourceforge.net/project/exiftool/exiftool-13.33_64.zip?viasf=1" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
     <Unzip SourceFiles="$(BuildFolder)exiftool.zip" DestinationFolder="$(BuildFolder)" />
   </Target>
   <Target Name="CopyExifToolToOutputFolder" AfterTargets="DownloadExifTool" Condition="!Exists('$(OutputPath)exiftool')">
-    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.30_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
+    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.33_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
     <Exec Command="ren &quot;$(OutputPath)exiftool\exiftool(-k).exe&quot; &quot;exiftool.exe&quot;" />
   </Target>
   <!-- Download language files for MediaInfoLib -->
