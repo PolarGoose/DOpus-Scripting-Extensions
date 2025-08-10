@@ -1,7 +1,7 @@
 #pragma once
 
 inline boost::filesystem::path ExpandPathWithEnvironmentVariables(const wchar_t* const path) {
-  const auto len = ExpandEnvironmentStrings(path, nullptr, 0);
+  const auto len = ExpandEnvironmentStrings(path, nullptr, 0); // len is the number of TCHARs stored in the destination buffer, including the terminating null character
 
   if (!len) {
     THROW_WEXCEPTION(L"Failed to calculate length for expanding the path '{}'", path);
@@ -13,5 +13,5 @@ inline boost::filesystem::path ExpandPathWithEnvironmentVariables(const wchar_t*
     THROW_WEXCEPTION(L"Failed to expand '{}'", path);
   }
 
-  return boost::filesystem::path{ buffer.get() };
+  return boost::filesystem::path{ buffer.get(), buffer.get() + len - 1 }; // -1 to exclude the terminating null character
 }

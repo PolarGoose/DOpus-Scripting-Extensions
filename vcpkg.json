@@ -2,7 +2,7 @@
   "vcpkg-configuration": {
     "default-registry": {
       "kind": "git",
-      "baseline": "47313591da1d14a8a9b209f4bee39d29acc39b31",
+      "baseline": "ac7af7424cbaf9057cb246b620f455303dccd6ed",
       "repository": "https://github.com/microsoft/vcpkg"
     },
     "registries": [
@@ -24,9 +24,5 @@
     "libmagic",
     "libmediainfo",
     "uchardet"
-  ],
-
-  "overrides": [
-    { "name": "libmediainfo", "version": "25.3" }
   ]
 }

@@ -334,7 +334,7 @@ var content = st.Decode(Blob, encoding);
 
 # How to build
 ## Build requirements
-* Visual Studio 2022 or higher (you need to run it as an admin to build the solution)
+* Visual Studio 2026 or higher (you need to run it as an admin to build the solution)
 * [HeatWave for VS2022](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17) plugin
 
 ## Build instructions
@@ -343,7 +343,6 @@ var content = st.Decode(Blob, encoding);
 ## Notes
 * `vcpkg_overlay_ports\boost-asio` is an original port with the custom `increase_pipe_buffer.diff` patch. This is a workaround for the issue: [[Windows] Setting the capacity of the underline pipe #470
 ](https://github.com/boostorg/process/issues/470)
-* libmediainfo is set to a version `25.3` because of the bug: [[v25.04] MediaInfo::Open hangs on a specific MXF file](https://github.com/MediaArea/MediaInfoLib/issues/2340)
 
 # References
 * Discussion of this project on DOpus forum: [DOpus-Scripting-Extensions project](https://resource.dopus.com/t/dopus-scripting-extensions-project-wild-idea/55000)

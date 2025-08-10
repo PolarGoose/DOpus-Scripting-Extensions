@@ -20,13 +20,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -45,11 +45,13 @@
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
@@ -95,7 +97,7 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\DOpusScriptingExtensions.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib;crypt32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib;crypt32.lib;secur32.lib;Iphlpapi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -112,6 +114,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -135,7 +138,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib;crypt32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);ntdll.lib;crypt32.lib;secur32.lib;Iphlpapi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -157,6 +160,7 @@
     <ClInclude Include="UCharDet\UCharDetWrapper.h" />
     <ClInclude Include="utils\ComUtils.h" />
     <ClInclude Include="Utils\Exceptions.h" />
+    <ClInclude Include="Utils\Logger.h" />
     <ClInclude Include="Utils\StringUtils.h" />
     <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
@@ -200,19 +204,19 @@
   </Target>
   <!-- Download ExifTool binaries -->
   <Target Name="DownloadExifTool" AfterTargets="Build" Condition="!Exists('$(BuildFolder)exiftool.zip')">
-    <DownloadFile SourceUrl="https://netix.dl.sourceforge.net/project/exiftool/exiftool-13.33_64.zip?viasf=1" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
+    <DownloadFile SourceUrl="https://netix.dl.sourceforge.net/project/exiftool/exiftool-13.50_64.zip?viasf=1" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
     <Unzip SourceFiles="$(BuildFolder)exiftool.zip" DestinationFolder="$(BuildFolder)" />
   </Target>
   <Target Name="CopyExifToolToOutputFolder" AfterTargets="DownloadExifTool" Condition="!Exists('$(OutputPath)exiftool')">
-    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.33_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
+    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.50_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
     <Exec Command="ren &quot;$(OutputPath)exiftool\exiftool(-k).exe&quot; &quot;exiftool.exe&quot;" />
   </Target>
   <!-- Download language files for MediaInfoLib -->
   <Target Name="DownloadMediaInfo" AfterTargets="Build" Condition="!Exists('$(BuildFolder)MediaInfo.zip')">
-    <DownloadFile SourceUrl="https://github.com/MediaArea/MediaInfo/archive/refs/tags/v25.04.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="MediaInfo.zip" />
+    <DownloadFile SourceUrl="https://github.com/MediaArea/MediaInfo/archive/refs/tags/v26.01.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="MediaInfo.zip" />
     <Unzip SourceFiles="$(BuildFolder)MediaInfo.zip" DestinationFolder="$(BuildFolder)" />
   </Target>
   <Target Name="CopyMediaInfoLanguagesToOutputFolder" AfterTargets="DownloadMediaInfo" Condition="!Exists('$(OutputPath)MediaInfoLanguages')">
-    <Exec Command="robocopy &quot;$(BuildFolder)MediaInfo-25.04/Source/Resource/Plugin/Language&quot; &quot;$(OutputPath)MediaInfoLanguages&quot; /e &gt; nul" ContinueOnError="True" />
+    <Exec Command="robocopy &quot;$(BuildFolder)MediaInfo-26.01/Source/Resource/Plugin/Language&quot; &quot;$(OutputPath)MediaInfoLanguages&quot; /e &gt; nul" ContinueOnError="True" />
   </Target>
 </Project>
