@@ -82,6 +82,9 @@
     <ClInclude Include="ExifTool\ExifToolCommandArgsGenerator.h">
       <Filter>ExifTool</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Logger.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />

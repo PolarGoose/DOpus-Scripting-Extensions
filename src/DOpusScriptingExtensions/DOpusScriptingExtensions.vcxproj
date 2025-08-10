@@ -157,6 +157,7 @@
     <ClInclude Include="UCharDet\UCharDetWrapper.h" />
     <ClInclude Include="utils\ComUtils.h" />
     <ClInclude Include="Utils\Exceptions.h" />
+    <ClInclude Include="Utils\Logger.h" />
     <ClInclude Include="Utils\StringUtils.h" />
     <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>

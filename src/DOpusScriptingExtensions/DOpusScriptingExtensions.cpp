@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "resource.h"
 #include "DOpusScriptingExtensions_i.h"
+#include "Utils/Logger.h"
 #include "Utils/StringUtils.h"
 #include "Utils/Exceptions.h"
 #include "Utils/ComUtils.h"
