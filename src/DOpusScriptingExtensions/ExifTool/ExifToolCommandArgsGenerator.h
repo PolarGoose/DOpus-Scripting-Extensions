@@ -4,6 +4,8 @@
 // ExifTool requires so that each argument should be separated by a newline character.
 class ExifToolCommandArgsGenerator : boost::noncopyable {
 public:
+  ExifToolCommandArgsGenerator() = default;
+
   ExifToolCommandArgsGenerator(const std::wstring_view filePath) {
     if (!std::filesystem::exists(filePath)) {
       THROW_WEXCEPTION(L"File not found '{}'", filePath);

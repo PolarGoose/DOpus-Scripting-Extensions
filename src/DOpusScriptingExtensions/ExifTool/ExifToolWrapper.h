@@ -49,6 +49,12 @@ public:
     return Execute(argsGenerator.GenerateExifToolInput());
   }
 
+  std::wstring RunArgs(const std::vector<std::string>& commandLineArgs) {
+    ExifToolCommandArgsGenerator argsGenerator;
+    argsGenerator.AddCommandLineArgs(commandLineArgs);
+    return Execute(argsGenerator.GenerateExifToolInput());
+  }
+
 private:
   std::wstring Execute(const std::string_view exifToolCommands) {
     ioCtx.restart();

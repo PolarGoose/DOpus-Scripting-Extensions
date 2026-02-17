@@ -55,7 +55,8 @@ interface IMediaInfoRetriever : IDispatch
 interface IExifTool : IDispatch
 {
   [id(1)] HRESULT GetInfoAsJson([in] BSTR fileFullName, [in, defaultvalue(0)] IDispatch* tagNamesJsArray, [out, retval] BSTR* infoAsJson);
-  [id(2)] HRESULT Run([in] BSTR fileFullName, [in, defaultvalue(0)] IDispatch* commandLineArgs, [out, retval] BSTR* result);
+  [id(2)] HRESULT Run([in] BSTR fileFullName, [in] IDispatch* commandLineArgs, [out, retval] BSTR* result);
+  [id(3)] HRESULT RunArgs([in] IDispatch* commandLineArgs, [out, retval] BSTR* result);
 };
 
 [object, uuid(EA478603-BB0E-4024-9308-FC147D0443F4), dual, nonextensible, pointer_default(unique)]

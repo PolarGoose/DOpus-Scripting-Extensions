@@ -306,6 +306,12 @@ exifToolStdOut = exifTool.Run("C:/someFile.png", ["-PNG:Copyright=Some copyright
 WScript.Echo(exifToolStdOut) // contains: "1 image files updated"
 ```
 
+Run ExifTool without specifying a file name.
+```javascript
+var res = exifTool.RunArgs(["-list"])
+WScript.Echo(res) // prints the list of available tags
+```
+
 ## UCharDet
 Detects the encoding of a text file using [UCharDet](https://www.freedesktop.org/wiki/Software/uchardet/).
 The list of supported encodings is described in the paragraph `Supported Languages/Encodings`.
