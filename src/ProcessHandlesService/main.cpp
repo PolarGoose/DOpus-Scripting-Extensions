@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ProcessHandlesService.pb.h"
 #include "Utils/Logger.h"
 #include "Utils/Exceptions.h"
 #include "Utils/StringUtils.h"
@@ -7,7 +8,7 @@
 #include "Utils/DevicePathToDrivePathConverter.h"
 #include "NtDll.h"
 #include "ProcExp152Driver.h"
-#include "ProcessHandlesProvider.h"
+#include "LockedFilesProvider.h"
 
 static SERVICE_STATUS_HANDLE g_statusHandle = nullptr;
 static SERVICE_STATUS g_status = {};

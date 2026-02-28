@@ -71,6 +71,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LockedFilesProvider.h" />
     <ClInclude Include="ProcExp152Driver.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utils\DevicePathToDrivePathConverter.h" />
@@ -80,14 +81,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-
   <Target Name="PrintVcpkgInstalledDir" BeforeTargets="ClCompile">
     <Message Importance="High" Text="VcpkgInstalledDir=$(VcpkgInstalledDir);VcpkgManifestRoot=$(VcpkgManifestRoot);VcpkgTriplet=$(VcpkgTriplet);VcpkgCurrentInstalledDir=$(VcpkgCurrentInstalledDir)" />
   </Target>
-
   <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies">
     <MakeDir Directories="$(BuildFolder)grpc_generated" />
-    <Exec Command="$(VcpkgManifestRoot)/vcpkg_installed/$(VcpkgTriplet)/$(VcpkgTriplet)/tools/protobuf/protoc --proto_path=$(SolutionDir)src/Shared --cpp_out=$(BuildFolder)grpc_generated $(SolutionDir)src/Shared/ProcessHandlesService.proto" />
+    <Exec Command="$(VcpkgManifestRoot)/vcpkg_installed/$(VcpkgTriplet)/$(VcpkgTriplet)/tools/protobuf/protoc --proto_path=$(ProjectDir) --cpp_out=$(BuildFolder)grpc_generated $(ProjectDir)/ProcessHandlesService.proto" />
     <ItemGroup>
       <ClCompile Include="$(BuildFolder)grpc_generated\ProcessHandlesService.pb.cc">
         <IncludeInUnityFile>false</IncludeInUnityFile>

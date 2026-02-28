@@ -1,17 +1,11 @@
 #pragma once
 
-struct ProcessInfo {
-  ULONG_PTR pid{};
-  std::filesystem::path process_full_name;
-  std::vector<std::filesystem::path> locked_paths;
-};
-
-class LockingInfoProvider final : boost::noncopyable {
+class LockedFilesProvider final : boost::noncopyable {
   ProcExp152Driver _procExp152Driver;
   NtDll _ntdll;
 
 public:
-  std::vector<process_info> get_processes_locking_path(std::filesystem::path p) const {
+   GetAllLockedFiles() const {
     const device_name_to_drive_letter_map& path_conversion_map =
       create_device_name_to_drive_letter_convertion_map();
 
