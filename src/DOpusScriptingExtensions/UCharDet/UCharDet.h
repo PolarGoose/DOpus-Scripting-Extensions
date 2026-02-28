@@ -1,9 +1,9 @@
 #pragma once
 
 class ATL_NO_VTABLE CUCharDet :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<CUCharDet, &CLSID_UCharDet>,
-  public IDispatchImpl<IUCharDet, &IID_IUCharDet, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
+  public ATL::CComObjectRootEx<ATL::CComSingleThreadModel>,
+  public ATL::CComCoClass<CUCharDet, &CLSID_UCharDet>,
+  public ATL::IDispatchImpl<IUCharDet, &IID_IUCharDet, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_UCharDet)

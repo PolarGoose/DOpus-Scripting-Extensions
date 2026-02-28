@@ -7,5 +7,37 @@
     <InstallerVersion>0.0</InstallerVersion>
     <OutDir>$(OutputPath)</OutDir>
     <IntDir>$(BaseIntermediateOutputPath)</IntDir>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+    <IncludePath>$(MSBuildThisFileDirectory)Shared;$(BuildFolder)grpc_generated;$(IncludePath)</IncludePath>
   </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp23</LanguageStandard>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
 </Project>

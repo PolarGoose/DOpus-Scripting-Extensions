@@ -1,9 +1,9 @@
 #pragma once
 
 class ATL_NO_VTABLE CExifTool :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<CExifTool, &CLSID_ExifTool>,
-  public IDispatchImpl<IExifTool, &IID_IExifTool, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
+  public ATL::CComObjectRootEx<ATL::CComSingleThreadModel>,
+  public ATL::CComCoClass<CExifTool, &CLSID_ExifTool>,
+  public ATL::IDispatchImpl<IExifTool, &IID_IExifTool, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_ExifTool)

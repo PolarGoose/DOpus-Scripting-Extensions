@@ -37,12 +37,6 @@
     <ClInclude Include="utils\ComUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Exceptions.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\StringUtils.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="ProcessRunner\ProcessRunner.h">
       <Filter>ProcessRunner</Filter>
     </ClInclude>
@@ -57,9 +51,6 @@
     </ClInclude>
     <ClInclude Include="FileMimeTypeDetector\LibMagicWrapper.h">
       <Filter>FileMimeTypeDetector</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\WinApiUtils.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="StringFormatter\StringFormatter.h">
       <Filter>StringFormatter</Filter>
@@ -81,9 +72,6 @@
     </ClInclude>
     <ClInclude Include="ExifTool\ExifToolCommandArgsGenerator.h">
       <Filter>ExifTool</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Logger.h">
-      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

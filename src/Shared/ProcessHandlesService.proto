@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ProcessHandlesService;
+
+import "google/protobuf/empty.proto";
+
+message PidList {
+  repeated int64 pids = 1;
+}
+
+message LockedFiles {
+  map<string /* file path */, PidList /* list of locking process PIDs */> locked_files = 1;
+  map<int64 /* PID */, string /* process name */> processes = 2;
+}
+
+service GetAllLockedFiles {
+  rpc GetAllLockedFiles(google.protobuf.Empty) returns (LockedFiles);
+}

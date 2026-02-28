@@ -20,14 +20,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -53,29 +49,10 @@
     <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
-  <PropertyGroup Label="Vcpkg">
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <VcpkgUseStatic>true</VcpkgUseStatic>
-  </PropertyGroup>
-  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <VcpkgUseStatic>true</VcpkgUseStatic>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <SDLCheck>true</SDLCheck>
-      <LanguageStandard>stdcpp23</LanguageStandard>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
-      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -102,19 +79,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <SDLCheck>true</SDLCheck>
-      <LanguageStandard>stdcpp23</LanguageStandard>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
-      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -159,10 +125,6 @@
     <ClInclude Include="UCharDet\UCharDet.h" />
     <ClInclude Include="UCharDet\UCharDetWrapper.h" />
     <ClInclude Include="utils\ComUtils.h" />
-    <ClInclude Include="Utils\Exceptions.h" />
-    <ClInclude Include="Utils\Logger.h" />
-    <ClInclude Include="Utils\StringUtils.h" />
-    <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DOpusScriptingExtensions.cpp" />

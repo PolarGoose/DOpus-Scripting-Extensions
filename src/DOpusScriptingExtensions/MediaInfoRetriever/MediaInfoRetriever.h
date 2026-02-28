@@ -1,11 +1,9 @@
 #pragma once
 
-using namespace ATL;
-
 class ATL_NO_VTABLE CMediaInfoRetriever :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<CMediaInfoRetriever, &CLSID_MediaInfoRetriever>,
-  public IDispatchImpl<IMediaInfoRetriever, &IID_IMediaInfoRetriever, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
+  public ATL::CComObjectRootEx<ATL::CComSingleThreadModel>,
+  public ATL::CComCoClass<CMediaInfoRetriever, &CLSID_MediaInfoRetriever>,
+  public ATL::IDispatchImpl<IMediaInfoRetriever, &IID_IMediaInfoRetriever, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_MediaInfoRetriever)

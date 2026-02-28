@@ -1,15 +1,13 @@
 #pragma once
 
-using namespace ATL;
-
-inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view propName) {
+inline ATL::CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view propName) {
   DISPID dispId = 0;
   LPOLESTR lpNames[] = { const_cast<LPOLESTR>(propName.data()) };
   THROW_IF_FAILED_MSG(
     obj.GetIDsOfNames(IID_NULL, lpNames, 1, LOCALE_USER_DEFAULT, &dispId),
     L"iDispatchObj doesn't have a property '{}'", propName);
 
-  CComVariant result;
+  ATL::CComVariant result;
   DISPPARAMS dispParams = { 0 };
   THROW_IF_FAILED_MSG(
     obj.Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &dispParams, &result, NULL, NULL),
@@ -19,18 +17,18 @@ inline CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view prop
 }
 
 template<typename CoClassType, typename QueryInterfaceType>
-CComPtr<QueryInterfaceType> CreateComObject(std::function<void(CoClassType&)> initializer) {
-  CComObject<CoClassType>* rawObj = nullptr;
+ATL::CComPtr<QueryInterfaceType> CreateComObject(std::function<void(CoClassType&)> initializer) {
+  ATL::CComObject<CoClassType>* rawObj = nullptr;
   THROW_IF_FAILED_MSG(
-    CComObject<CoClassType>::CreateInstance(&rawObj),
+    ATL::CComObject<CoClassType>::CreateInstance(&rawObj),
     L"Failed to create a COM object of type '{}'", ToUtf16(typeid(CoClassType).name()));
 
   // Wrap the object in CComPtr to ensure that it is released in case of an exception
-  CComPtr<CoClassType> obj(rawObj);
+  ATL::CComPtr<CoClassType> obj(rawObj);
 
   initializer(*obj);
 
-  CComQIPtr<QueryInterfaceType> res(obj);
+  ATL::CComQIPtr<QueryInterfaceType> res(obj);
   if (!res) {
     THROW_HRESULT(
       E_NOINTERFACE,

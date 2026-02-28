@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Utils\DevicePathToDrivePathConverter.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ScopedHandle.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcExp152Driver.h" />
+    <ClInclude Include="Utils\WinternlExtensions.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{e1ad11f9-4601-48eb-9559-2c152d484b20}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

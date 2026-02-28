@@ -1,10 +1,9 @@
 #pragma once
 
-using namespace ATL;
 class ATL_NO_VTABLE CStringFormatter :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<CStringFormatter, &CLSID_StringFormatter>,
-  public IDispatchImpl<IStringFormatter, &IID_IStringFormatter, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
+  public ATL::CComObjectRootEx<ATL::CComSingleThreadModel>,
+  public ATL::CComCoClass<CStringFormatter, &CLSID_StringFormatter>,
+  public ATL::IDispatchImpl<IStringFormatter, &IID_IStringFormatter, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_StringFormatter)

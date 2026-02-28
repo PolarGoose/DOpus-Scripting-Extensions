@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11512.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DOpusScriptingExtensions", "src\DOpusScriptingExtensions\DOpusScriptingExtensions.vcxproj", "{66064A37-C36F-8579-52ED-11720C4523AA}"
 EndProject
@@ -20,6 +20,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{02EA681E
 		vcpkg.json = vcpkg.json
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProcessHandlesService", "src\ProcessHandlesService\DOpusScriptingExtensions.ProcessHandlesService.vcxproj", "{A3FF3F77-FAFA-46A0-BB08-C020A23A5CB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A3486339-82F3-4028-9953-81634C43DB95}"
+	ProjectSection(SolutionItems) = preProject
+		src\Shared\ProcessHandlesService.proto = src\Shared\ProcessHandlesService.proto
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{6747C6D4-F5DD-4AC9-9546-21D391C5ADE7}"
+	ProjectSection(SolutionItems) = preProject
+		src\Shared\Utils\Exceptions.h = src\Shared\Utils\Exceptions.h
+		src\Shared\Utils\Logger.h = src\Shared\Utils\Logger.h
+		src\Shared\Utils\StringUtils.h = src\Shared\Utils\StringUtils.h
+		src\Shared\Utils\WinApiUtils.h = src\Shared\Utils\WinApiUtils.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,9 +49,17 @@ Global
 		{89C28208-4EE1-444A-B3C1-FC8C41D1C7D5}.Debug|x64.Build.0 = Debug|x64
 		{89C28208-4EE1-444A-B3C1-FC8C41D1C7D5}.Release|x64.ActiveCfg = Release|x64
 		{89C28208-4EE1-444A-B3C1-FC8C41D1C7D5}.Release|x64.Build.0 = Release|x64
+		{A3FF3F77-FAFA-46A0-BB08-C020A23A5CB3}.Debug|x64.ActiveCfg = Debug|x64
+		{A3FF3F77-FAFA-46A0-BB08-C020A23A5CB3}.Debug|x64.Build.0 = Debug|x64
+		{A3FF3F77-FAFA-46A0-BB08-C020A23A5CB3}.Release|x64.ActiveCfg = Release|x64
+		{A3FF3F77-FAFA-46A0-BB08-C020A23A5CB3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A3486339-82F3-4028-9953-81634C43DB95} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6747C6D4-F5DD-4AC9-9546-21D391C5ADE7} = {A3486339-82F3-4028-9953-81634C43DB95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {499071BF-D9EA-44E1-9436-41474094429D}

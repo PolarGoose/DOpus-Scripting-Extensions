@@ -1,11 +1,9 @@
 #pragma once
 
-using namespace ATL;
-
 class ATL_NO_VTABLE CFileMimeTypeDetectorResult :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<CFileMimeTypeDetectorResult, &__uuidof(FileMimeTypeDetectorResult)>,
-  public IDispatchImpl<IFileMimeTypeDetectorResult, &IID_IFileMimeTypeDetectorResult, &LIBID_DOpusScriptingExtensionsLib, 1, 0>
+  public ATL::CComObjectRootEx<ATL::CComSingleThreadModel>,
+  public ATL::CComCoClass<CFileMimeTypeDetectorResult, &__uuidof(FileMimeTypeDetectorResult)>,
+  public ATL::IDispatchImpl<IFileMimeTypeDetectorResult, &IID_IFileMimeTypeDetectorResult, &LIBID_DOpusScriptingExtensionsLib, 1, 0>
 {
 public:
   BEGIN_COM_MAP(CFileMimeTypeDetectorResult)

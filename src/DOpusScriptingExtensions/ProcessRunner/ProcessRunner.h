@@ -1,10 +1,9 @@
 #pragma once
 
-using namespace ATL;
 class ATL_NO_VTABLE CProcessRunner :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<CProcessRunner, &CLSID_ProcessRunner>,
-  public IDispatchImpl<IProcessRunner, &IID_IProcessRunner, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0> {
+  public ATL::CComObjectRootEx<ATL::CComSingleThreadModel>,
+  public ATL::CComCoClass<CProcessRunner, &CLSID_ProcessRunner>,
+  public ATL::IDispatchImpl<IProcessRunner, &IID_IProcessRunner, &LIBID_DOpusScriptingExtensionsLib, /*wMajor =*/ 1, /*wMinor =*/ 0> {
 public:
   DECLARE_REGISTRY_RESOURCEID(IDR_ProcessRunner)
   BEGIN_COM_MAP(CProcessRunner)

@@ -23,6 +23,7 @@
     "boost-dll",
     "libmagic",
     "libmediainfo",
-    "uchardet"
+    "uchardet",
+    "grpc"
   ]
 }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a3ff3f77-fafa-46a0-bb08-c020a23a5cb3}</ProjectGuid>
+    <RootNamespace>DOpusScriptingExtensionsProcessHandlesService</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ProcessHandlesService</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <IncludePath>$(MSBuildProjectDirectory);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ProcExp152Driver.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Utils\DevicePathToDrivePathConverter.h" />
+    <ClInclude Include="Utils\ScopedHandle.h" />
+    <ClInclude Include="Utils\WinternlExtensions.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+
+  <Target Name="PrintVcpkgInstalledDir" BeforeTargets="ClCompile">
+    <Message Importance="High" Text="VcpkgInstalledDir=$(VcpkgInstalledDir);VcpkgManifestRoot=$(VcpkgManifestRoot);VcpkgTriplet=$(VcpkgTriplet);VcpkgCurrentInstalledDir=$(VcpkgCurrentInstalledDir)" />
+  </Target>
+
+  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies">
+    <MakeDir Directories="$(BuildFolder)grpc_generated" />
+    <Exec Command="$(VcpkgManifestRoot)/vcpkg_installed/$(VcpkgTriplet)/$(VcpkgTriplet)/tools/protobuf/protoc --proto_path=$(SolutionDir)src/Shared --cpp_out=$(BuildFolder)grpc_generated $(SolutionDir)src/Shared/ProcessHandlesService.proto" />
+    <ItemGroup>
+      <ClCompile Include="$(BuildFolder)grpc_generated\ProcessHandlesService.pb.cc">
+        <IncludeInUnityFile>false</IncludeInUnityFile>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClCompile>
+      <ClInclude Include="$(BuildFolder)grpc_generated\ProcessHandlesService.pb.h">
+        <IncludeInUnityFile>false</IncludeInUnityFile>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClInclude>
+    </ItemGroup>
+  </Target>
+</Project>
