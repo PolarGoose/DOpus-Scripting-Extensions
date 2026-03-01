@@ -157,6 +157,11 @@
   <ItemGroup>
     <Midl Include="DOpusScriptingExtensions.idl" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProcessHandlesService\DOpusScriptingExtensions.ProcessHandlesService.vcxproj">
+      <Project>{a3ff3f77-fafa-46a0-bb08-c020a23a5cb3}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

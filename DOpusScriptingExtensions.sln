@@ -23,9 +23,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProcessHandlesService", "src\ProcessHandlesService\DOpusScriptingExtensions.ProcessHandlesService.vcxproj", "{A3FF3F77-FAFA-46A0-BB08-C020A23A5CB3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A3486339-82F3-4028-9953-81634C43DB95}"
-	ProjectSection(SolutionItems) = preProject
-		src\Shared\ProcessHandlesService.proto = src\Shared\ProcessHandlesService.proto
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{6747C6D4-F5DD-4AC9-9546-21D391C5ADE7}"
 	ProjectSection(SolutionItems) = preProject

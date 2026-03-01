@@ -73,7 +73,10 @@ public:
     return GetHandleNameOrType(IoctlCommand::GetHandleType, handle_info).value_or(L"");
   }
 
-  ScopedHandle OpenProcessWithDuplicateHandleAccessRight(const ULONGLONG pid) const {
+  // Opens process using permissions:
+  // * GENERIC_ALL for normal processes
+  // * PROCESS_QUERY_LIMITED_INFORMATION for protected processes
+  ScopedHandle OpenProcess(const ULONGLONG pid) const {
     HANDLE openedProcessHandle{};
     DWORD bytesReturned{};
     DeviceIoControl(/* hDevice         */ _driverFile.get(),
@@ -118,5 +121,31 @@ private:
     }
 
     return std::wstring{ handleNameOrType + 2 };
+  }
+
+  inline void EnablePrivilege(std::wstring_view privilege_name) {
+    HANDLE raw_token;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &raw_token)) {
+      THROW_WINAPI_EX(OpenProcessToken);
+    }
+
+    ScopedHandle access_token{ raw_token };
+
+    LUID privilege_id;
+    if (!LookupPrivilegeValue(nullptr, privilege_name.data(), &privilege_id)) {
+      THROW_WINAPI_EX(LookupPrivilegeValue);
+    }
+
+    const LUID_AND_ATTRIBUTES attributes{ .Luid = privilege_id, .Attributes = SE_PRIVILEGE_ENABLED };
+    TOKEN_PRIVILEGES token{ .PrivilegeCount = 1 };
+    token.Privileges[0] = attributes;
+
+    if (!AdjustTokenPrivileges(access_token.get(), FALSE, &token, sizeof(TOKEN_PRIVILEGES), nullptr, nullptr)) {
+      THROW_WINAPI_EX(AdjustTokenPrivileges);
+    }
+
+    if (GetLastError() == ERROR_NOT_ALL_ASSIGNED) {
+      THROW_WINAPI_EX(AdjustTokenPrivileges);
+    }
   }
 };

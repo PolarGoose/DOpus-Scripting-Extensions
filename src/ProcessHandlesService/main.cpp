@@ -1,14 +1,17 @@
 #include "pch.h"
-#include "ProcessHandlesService.pb.h"
+#include <gen/ProcessHandlesService.pb.h>
+#include <gen/ProcessHandlesService.grpc.pb.h>
+#include "Utils/StringUtils.h"
 #include "Utils/Logger.h"
 #include "Utils/Exceptions.h"
-#include "Utils/StringUtils.h"
 #include "Utils/WinApiUtils.h"
 #include "Utils/ScopedHandle.h"
-#include "Utils/DevicePathToDrivePathConverter.h"
+#include "Utils/EnablePrivilege.h"
+#include "DevicePathToDrivePathConverter.h"
 #include "NtDll.h"
 #include "ProcExp152Driver.h"
 #include "LockedFilesProvider.h"
+#include "ProcessHandlesServiceGrpcServer.h"
 
 static SERVICE_STATUS_HANDLE g_statusHandle = nullptr;
 static SERVICE_STATUS g_status = {};
