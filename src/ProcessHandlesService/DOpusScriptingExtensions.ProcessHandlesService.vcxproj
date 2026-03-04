@@ -16,7 +16,7 @@
     <ProjectGuid>{a3ff3f77-fafa-46a0-bb08-c020a23a5cb3}</ProjectGuid>
     <RootNamespace>DOpusScriptingExtensionsProcessHandlesService</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>ProcessHandlesService</ProjectName>
+    <ProjectName>DOpusScriptingExtensions.ProcessHandlesService</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
