@@ -14,6 +14,9 @@ public:
     // Load `PROCEXP152.SYS` driver
     // If it happens the first time, we use `CreateService`.
     // If the service already registered we use `OpenService`
+ 
+    EnablePrivilege(L"SeLoadDriverPrivilege");
+    EnablePrivilege(L"SeDebugPrivilege"); // PROCEXP152.SYS only allows IOCTLs from processes with SeDebugPrivilege
 
     ScopedServiceHandle serviceManager{ OpenSCManager(/* lpMachineName   */ nullptr,
                                                       /* lpDatabaseName  */ nullptr,
@@ -49,9 +52,13 @@ public:
       }
     }
 
-    StartService(/* hService            */ service.get(),
-                 /* dwNumServiceArgs    */ 0,
-                 /* lpServiceArgVectors */ nullptr);
+    if (!StartService(/* hService            */ service.get(),
+                      /* dwNumServiceArgs    */ 0,
+                      /* lpServiceArgVectors */ nullptr)) {
+      if (GetLastError() != ERROR_SERVICE_ALREADY_RUNNING) {
+        THROW_WINAPI_EX(StartService);
+      }
+    }
 
     _driverFile.reset(CreateFile(/* lpFileName            */ std::format(L"\\\\.\\{}", serviceName).c_str(),
                                  /* dwDesiredAccess       */ GENERIC_ALL,
@@ -123,29 +130,39 @@ private:
     return std::wstring{ handleNameOrType + 2 };
   }
 
-  inline void EnablePrivilege(std::wstring_view privilege_name) {
-    HANDLE raw_token;
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &raw_token)) {
+  inline void EnablePrivilege(const wchar_t* privilegeName) {
+    HANDLE rawToken;
+    if (!OpenProcessToken(/* ProcessHandle */ GetCurrentProcess(),
+                          /* DesiredAccess */ TOKEN_ADJUST_PRIVILEGES,
+                          /* TokenHandle   */ &rawToken)) {
       THROW_WINAPI_EX(OpenProcessToken);
     }
 
-    ScopedHandle access_token{ raw_token };
+    ScopedHandle accessToken{ rawToken };
 
-    LUID privilege_id;
-    if (!LookupPrivilegeValue(nullptr, privilege_name.data(), &privilege_id)) {
-      THROW_WINAPI_EX(LookupPrivilegeValue);
+    LUID luid{};
+    if (!LookupPrivilegeValue(/* lpSystemName */ nullptr,
+                              /* lpName       */ privilegeName,
+                              /* lpLuid       */ &luid)) {
+      THROW_WINAPI_EX_MSG(LookupPrivilegeValue, L"Privilege '{}' doesn't exist", privilegeName);
     }
 
-    const LUID_AND_ATTRIBUTES attributes{ .Luid = privilege_id, .Attributes = SE_PRIVILEGE_ENABLED };
-    TOKEN_PRIVILEGES token{ .PrivilegeCount = 1 };
-    token.Privileges[0] = attributes;
+    TOKEN_PRIVILEGES tp{ .PrivilegeCount = 1};
+    tp.Privileges[0].Luid = luid;
+    tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-    if (!AdjustTokenPrivileges(access_token.get(), FALSE, &token, sizeof(TOKEN_PRIVILEGES), nullptr, nullptr)) {
-      THROW_WINAPI_EX(AdjustTokenPrivileges);
+    SetLastError(ERROR_SUCCESS);
+    if (!AdjustTokenPrivileges(/* TokenHandle          */ accessToken.get(),
+                               /* DisableAllPrivileges */ FALSE,
+                               /* NewState             */ &tp,
+                               /* BufferLength         */ 0,
+                               /* PreviousState        */ nullptr,
+                               /* ReturnLength         */ nullptr)) {
+      THROW_WINAPI_EX_MSG(AdjustTokenPrivileges, L"Failed to enable privilege '{}'", privilegeName);
     }
 
     if (GetLastError() == ERROR_NOT_ALL_ASSIGNED) {
-      THROW_WINAPI_EX(AdjustTokenPrivileges);
+      THROW_WINAPI_EX_MSG(AdjustTokenPrivileges, L"Privilege '{}' is not present in the access token (not assigned)", privilegeName);
     }
   }
 };

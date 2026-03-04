@@ -16,7 +16,7 @@ public:
   //     {"\Device\CdRom0\"                                          , 'X } ]
   DevicePathToDrivePathConverter() {
     for (auto driveLetter = L'A'; driveLetter <= L'Z'; driveLetter++) {
-      std::array<wchar_t, 1024> deviceNameBuf;
+      std::array<wchar_t, 10000> deviceNameBuf;
       const wchar_t drive[]{ driveLetter, L':', 0 };
 
       const auto length = QueryDosDevice(/* lpDeviceName */ drive,

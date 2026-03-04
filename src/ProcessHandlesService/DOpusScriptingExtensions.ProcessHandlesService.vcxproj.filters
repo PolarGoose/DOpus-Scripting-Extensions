@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ProcessHandlesServiceGrpcServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -14,6 +13,7 @@
     <ClInclude Include="LockedFilesProvider.h" />
     <ClInclude Include="NtDll.h" />
     <ClInclude Include="DevicePathToDrivePathConverter.h" />
+    <ClInclude Include="ProcessHandlesServiceGrpcServer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">

@@ -24,6 +24,7 @@
     "libmagic",
     "libmediainfo",
     "uchardet",
-    "grpc"
+    "grpc",
+    "abseil"
   ]
 }

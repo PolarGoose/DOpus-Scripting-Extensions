@@ -25,6 +25,11 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+
+      <!-- Disable warnings that comes from grpc generated code:
+           * C4702 unreachable code
+           * C4267 conversion from 'size_t' to 'int', possible loss of data -->
+      <DisableSpecificWarnings>4702;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
 

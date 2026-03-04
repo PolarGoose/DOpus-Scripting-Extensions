@@ -76,7 +76,7 @@ public:
       }
 
       if (status != STATUS_INFO_LENGTH_MISMATCH) {
-        THROW_WINAPI_EX(NtQuerySystemInformation);
+        THROW_WEXCEPTION(L"NtQuerySystemInformation failed with NTSTATUS 0x{:08X}", status);
       }
     }
 

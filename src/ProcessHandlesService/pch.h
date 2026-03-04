@@ -18,6 +18,7 @@
 #include <map>
 #include <generator>
 #include <ranges>
+#include <absl/synchronization/notification.h>
 #include <grpcpp/grpcpp.h>
 #include <google/protobuf/empty.pb.h>
 #include <boost/preprocessor.hpp>
