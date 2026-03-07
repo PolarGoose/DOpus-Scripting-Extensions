@@ -5,7 +5,7 @@
   ToUtf16(__builtin_FUNCTION()), \
   __builtin_LINE())
 
-#ifdef DEBUG
+#ifdef _DEBUG
   #define DEBUG_LOG(...) \
     do { \
       OutputDebugStringW( \

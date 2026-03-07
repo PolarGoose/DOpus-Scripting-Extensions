@@ -36,3 +36,4 @@
 #include <magic.h>
 #include <MediaInfo/MediaInfo.h>
 #include <uchardet/uchardet.h>
+#include <SQLiteCpp/SQLiteCpp.h>

@@ -65,6 +65,19 @@ interface IUCharDet : IDispatch
   [id(1)] HRESULT DetectFileEncoding([in] BSTR fileFullName, [in, defaultvalue(1024)] UINT maxBytesToInspect, [out, retval] BSTR* fileEncoding);
 };
 
+[object, uuid(), dual, nonextensible, pointer_default(unique)]
+interface ILockingProcess : IDispatch
+{
+  [propget, id(1)] HRESULT Pid([out, retval] UINT* val);
+  [propget, id(2)] HRESULT ExecutablePath([out, retval] BSTR* val);
+};
+
+[object, uuid(), dual, nonextensible, pointer_default(unique)]
+interface IFileLockingInfoProvider : IDispatch
+{
+  [id(1)] HRESULT GetLockingProcesses([in] BSTR fileFullName, [out, retval] SAFEARRAY(IUnknown*)* processes);
+};
+
 [uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3), version(1.0)]
 library DOpusScriptingExtensionsLib
 {

@@ -11,7 +11,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgUseStatic>true</VcpkgUseStatic>
-    <IncludePath>$(MSBuildThisFileDirectory)Shared;$(BuildFolder)grpc_generated;$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildThisFileDirectory);$(BuildFolder)grpc_generated;$(IncludePath)</IncludePath>
   </PropertyGroup>
 
   <ItemDefinitionGroup>

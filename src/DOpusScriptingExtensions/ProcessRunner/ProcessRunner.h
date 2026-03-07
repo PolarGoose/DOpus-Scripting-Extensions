@@ -14,9 +14,9 @@ public:
 
   STDMETHOD(Run)(BSTR executablePath, IDispatch* commandLineArgumentsJsArray, BSTR workingDirectory, IProcessRunnerResult** result) override try {
     auto [stdOut, stdErr, exitCode] = RunProcess(
-      ExpandPathWithEnvironmentVariables(executablePath),
+      ExpandPathWithEnvironmentVariables(executablePath).wstring(),
       ToUtf8StringVector(JsStringArrayToVector(commandLineArgumentsJsArray)),
-      ExpandPathWithEnvironmentVariables(workingDirectory));
+      ExpandPathWithEnvironmentVariables(workingDirectory).wstring());
     *result = CreateComObject<CProcessRunnerResult, IProcessRunnerResult>(
       [&](auto& obj) {
         obj.Init(std::move(stdOut), std::move(stdErr), exitCode);

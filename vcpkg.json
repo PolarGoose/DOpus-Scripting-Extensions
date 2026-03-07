@@ -25,6 +25,7 @@
     "libmediainfo",
     "uchardet",
     "grpc",
-    "abseil"
+    "abseil",
+    "sqlitecpp"
   ]
 }
