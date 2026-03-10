@@ -1,5 +1,10 @@
 #pragma once
 
+#include "Shared/Utils/Exceptions.h"
+#include "Shared/Utils/WinApiUtils.h"
+#include "ProcessHandlesService/Utils/ScopedHandle.h"
+#include "ProcessHandlesService/NtDll.h"
+
 class ProcExp152Driver : boost::noncopyable {
 private:
   ScopedHandle _driverFile;
@@ -73,11 +78,11 @@ public:
   }
 
   std::optional<std::wstring> GetHandleName(const SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX& handle_info) const {
-    return GetHandleNameOrType(IoctlCommand::GetHandleName, handle_info);
+    return GetHandleNameOrType<IoctlCommand::GetHandleName>(handle_info);
   }
 
   std::wstring GetHandleType(const SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX& handle_info) const {
-    return GetHandleNameOrType(IoctlCommand::GetHandleType, handle_info).value_or(L"");
+    return GetHandleNameOrType<IoctlCommand::GetHandleType>(handle_info).value_or(L"");
   }
 
   // Opens process using permissions:
@@ -98,7 +103,8 @@ public:
   }
 
 private:
-  std::optional<std::wstring> GetHandleNameOrType(const IoctlCommand getNameOrTypeIoControlCode, const SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX& handleInfo) const {
+  template<IoctlCommand getNameOrTypeIoControlCode>
+  std::optional<std::wstring> GetHandleNameOrType(const SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX& handleInfo) const {
     struct PROCEXP_DATA_EXCHANGE {
       ULONGLONG Pid;
       void* ObjectAddress;
@@ -111,7 +117,7 @@ private:
                                 .Size = 0,
                                 .Handle = handleInfo.HandleValue };
 
-    wchar_t handleNameOrType[40 * 1000];
+    wchar_t handleNameOrType[getNameOrTypeIoControlCode == IoctlCommand::GetHandleName ? 40 * 1000 : 50];
     DWORD bytesReturned{};
     const auto res = DeviceIoControl(/* hDevice         */ _driverFile.get(),
                                      /* dwIoControlCode */ (DWORD)getNameOrTypeIoControlCode,
@@ -127,7 +133,10 @@ private:
       return {};
     }
 
-    return std::wstring{ handleNameOrType + 2 };
+    // Example of the data that is returned from `DeviceIoControl`:
+    //   wchar_t a[] = { L'\0', L'\0', L'P', L'r', L'o', L'c', L'e', L's', L's', L'\0', L'\0', L'\0' };
+    // Thus, the actual string we need starts at index 2 and ends 3 elements before the end.
+    return std::wstring{ handleNameOrType + 2, (bytesReturned / 2) - 5 };
   }
 
   inline void EnablePrivilege(const wchar_t* privilegeName) {

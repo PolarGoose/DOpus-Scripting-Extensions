@@ -26,6 +26,7 @@
     "uchardet",
     "grpc",
     "abseil",
-    "sqlitecpp"
+    "sqlitecpp",
+    "doctest"
   ]
 }

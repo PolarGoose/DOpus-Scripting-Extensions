@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Shared/Utils/Exceptions.h"
+
 struct SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX {
   // Pointer to the handle in the kernel virtual address space.
   void* Object;

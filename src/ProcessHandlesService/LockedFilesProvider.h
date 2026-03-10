@@ -1,5 +1,11 @@
 #pragma once
 
+#include <gen/ProcessHandlesService.pb.h>
+#include "Shared/Utils/StringUtils.h"
+#include "ProcessHandlesService/ProcExp152Driver.h"
+#include "ProcessHandlesService/NtDll.h"
+#include "ProcessHandlesService/DevicePathToDrivePathConverter.h"
+
 class LockedFilesProvider final : boost::noncopyable {
   ProcExp152Driver _procExp152Driver;
   NtDll _ntdll;
@@ -10,7 +16,7 @@ public:
 
     for (const auto& handle : GetAllHandles()) {
       try {
-        auto handleType = _procExp152Driver.GetHandleType(handle);
+        const auto& handleType = _procExp152Driver.GetHandleType(handle);
         if (handleType != L"File") {
           continue;
         }
@@ -30,9 +36,9 @@ public:
         if (std::filesystem::is_directory(path.value(), ec) && !path.value().ends_with(L'\\')) {
           path.value() += L"\\";
         }
-
+     
         (*out.mutable_locked_files())[ToUtf8(path.value())].add_pids(handle.UniqueProcessId);
-
+        
         if ((*out.mutable_processes()).contains(handle.UniqueProcessId)) {
           continue;
         }
@@ -44,15 +50,15 @@ public:
 
         (*out.mutable_processes())[handle.UniqueProcessId] = ToUtf8(processFullName.value_or(L""));
       }
-      catch (...) {
-        /* ignore exceptions for an individual handle */
+      catch (std::exception&) {
+        
       }
     }
   }
 
 private:
   std::generator<SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX> GetAllHandles() const {
-    const auto allHandles = _ntdll.QuerySystemHandleInformation();
+    const auto& allHandles = _ntdll.QuerySystemHandleInformation();
     for (ULONG_PTR i = 0; i < allHandles->NumberOfHandles; i++) {
       co_yield allHandles->Handles[i];
     }

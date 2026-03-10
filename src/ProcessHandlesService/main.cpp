@@ -1,16 +1,4 @@
 #include "pch.h"
-#include <gen/ProcessHandlesService.pb.h>
-#include <gen/ProcessHandlesService.grpc.pb.h>
-#include "Shared/Utils/StringUtils.h"
-#include "Shared/Utils/Logger.h"
-#include "Shared/Utils/Exceptions.h"
-#include "Shared/Utils/WinApiUtils.h"
-#include "Shared/Utils/GrpcUdsSockFile.h"
-#include "ProcessHandlesService/Utils/ScopedHandle.h"
-#include "ProcessHandlesService/DevicePathToDrivePathConverter.h"
-#include "ProcessHandlesService/NtDll.h"
-#include "ProcessHandlesService/ProcExp152Driver.h"
-#include "ProcessHandlesService/LockedFilesProvider.h"
 #include "ProcessHandlesService/ProcessHandlesServiceGrpcServer.h"
 
 static const auto& g_serviceName = L"DOpusScriptingExtensions.ProcessHandlesService";

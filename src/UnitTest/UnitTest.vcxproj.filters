@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="LockedFilesProviderTest.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.grpc.pb.cc">
+      <Filter>gen</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.pb.cc">
+      <Filter>gen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.grpc.pb.h">
+      <Filter>gen</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.pb.h">
+      <Filter>gen</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="gen">
+      <UniqueIdentifier>{f93e0dad-9a65-4171-b2e0-b83fe950033e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

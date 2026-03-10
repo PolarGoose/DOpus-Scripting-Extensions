@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Shared/Utils/Exceptions.h"
+
 inline std::filesystem::path ExpandPathWithEnvironmentVariables(const wchar_t* const path) {
   const auto len = ExpandEnvironmentStrings(path, nullptr, 0); // len is the number of TCHARs stored in the destination buffer, including the terminating null character
 

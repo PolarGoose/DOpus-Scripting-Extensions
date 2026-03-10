@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Shared/Utils/Logger.h"
+
 #define CATCH_ALL_EXCEPTIONS() \
   catch (const HResultException& ex) { \
     ATL::AtlReportError(GetObjectCLSID(), ex.LMessage(), __uuidof(IUnknown), ex.HResult()); \

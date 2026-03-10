@@ -1,5 +1,9 @@
 #pragma once
 
+#include <gen/ProcessHandlesService.pb.h>
+#include <gen/ProcessHandlesService.grpc.pb.h>
+#include "ProcessHandlesService/LockedFilesProvider.h"
+
 class ProcessHandlesServiceGrpc final : public ProcessHandlesService::ProcessHandlesServiceGrpc::Service {
   LockedFilesProvider _lockedFilesProvider;
 
