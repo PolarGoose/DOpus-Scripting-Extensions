@@ -65,7 +65,7 @@ public:
     const size_t gb = mb * 1024;
 
     for (size_t bufSize = 32 * mb; bufSize <= gb; bufSize *= 2) {
-      auto buf = std::make_unique<std::byte[]>(bufSize);
+      auto buf = std::make_unique_for_overwrite<std::byte[]>(bufSize);
 
       ULONG returnedLength;
       const auto& status = ntQuerySystemInformation_func(/* SystemInformationClass  */ SystemExtendedHandleInformation,

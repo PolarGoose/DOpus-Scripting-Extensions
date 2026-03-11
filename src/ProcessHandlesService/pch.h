@@ -8,6 +8,7 @@
 #include <winternl.h>
 #include <wtypes.h>
 #include <comdef.h>
+#include <Psapi.h>
 #include <string>
 #include <thread>
 #include <sstream>

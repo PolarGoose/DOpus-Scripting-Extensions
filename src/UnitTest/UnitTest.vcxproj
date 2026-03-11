@@ -37,6 +37,11 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProcessHandlesService\DOpusScriptingExtensions.ProcessHandlesService.vcxproj">
+      <Project>{a3ff3f77-fafa-46a0-bb08-c020a23a5cb3}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

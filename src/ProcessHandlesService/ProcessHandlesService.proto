@@ -4,15 +4,19 @@ package ProcessHandlesService;
 
 import "google/protobuf/empty.proto";
 
-message PidList {
-  repeated int64 pids = 1;
+message ProcessInfo {
+  uint64 process_id = 1;
+  optional string executable_full_name = 2;
+  optional string domain_name = 3;
+  optional string user_name = 4;
+  repeated string locked_files = 5;
+  repeated string modules = 6;
 }
 
-message LockedFilesAndProcessInfos {
-  map<string /* filePath */, PidList /* listOfLockingProcessPids */> locked_files = 1;
-  map<int64 /* PID */, string /* processName */> processes = 2;
+message LockingProcessInfos {
+  map<uint64 /* PID */, ProcessInfo /* processInfo */> process_infos = 1;
 }
 
 service ProcessHandlesServiceGrpc {
-  rpc GetAllLockedFiles(google.protobuf.Empty) returns (LockedFilesAndProcessInfos);
+  rpc GetLockingProcessInfos(google.protobuf.Empty) returns (LockingProcessInfos);
 }

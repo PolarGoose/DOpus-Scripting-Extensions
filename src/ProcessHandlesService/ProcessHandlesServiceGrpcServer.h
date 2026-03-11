@@ -8,11 +8,11 @@ class ProcessHandlesServiceGrpc final : public ProcessHandlesService::ProcessHan
   LockedFilesProvider _lockedFilesProvider;
 
 public:
-  grpc::Status GetAllLockedFiles(grpc::ServerContext* /* context */,
-                                 const google::protobuf::Empty* /* request */,
-                                 ProcessHandlesService::LockedFilesAndProcessInfos* response) override {
+  grpc::Status GetLockingProcessInfos(grpc::ServerContext* /* context */,
+                                      const google::protobuf::Empty* /* request */,
+                                      ProcessHandlesService::LockingProcessInfos* response) override {
     try {
-      _lockedFilesProvider.GetAllLockedFiles(*response);
+      _lockedFilesProvider.GetLockingProcessInfos(*response);
       return grpc::Status::OK;
     }
     catch (const std::exception& ex) {
