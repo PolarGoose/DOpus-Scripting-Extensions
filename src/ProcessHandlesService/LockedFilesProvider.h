@@ -16,11 +16,8 @@ public:
 
     std::optional<USHORT> fileObjectTypeIndex;
     auto processInfos = out.mutable_process_infos();
-    const auto& allHandles = _ntdll.QuerySystemHandleInformation();
-    for (ULONG_PTR i = 0; i < allHandles->NumberOfHandles; i++) {
+    for (const auto& handle : GetAllHandles()) {
       try {
-        const auto& handle = allHandles->Handles[i];
-
         if (!processInfos->contains(handle.UniqueProcessId)) {
           processInfos->emplace(handle.UniqueProcessId, GetProcessInfo(handle.UniqueProcessId));
         }
@@ -59,6 +56,13 @@ public:
   }
 
 private:
+  std::generator<SYSTEM_HANDLE_TABLE_ENTRY_INFO_EX> GetAllHandles() const {
+    const auto& allHandles = _ntdll.QuerySystemHandleInformation();
+    for (ULONG_PTR i = 0; i < allHandles->NumberOfHandles; i++) {
+      co_yield allHandles->Handles[i];
+    }
+  }
+
   static std::generator<std::wstring> GetProcessModules(const HANDLE openedProcess) {
     for (const auto& moduleHandle : GetProcessModuleHandles(openedProcess)) {
       if (auto name = GetProcessModuleName(openedProcess, moduleHandle)) {
