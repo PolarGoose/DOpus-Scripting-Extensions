@@ -22,7 +22,7 @@ public:
         const auto& handle = allHandles->Handles[i];
 
         if (!processInfos->contains(handle.UniqueProcessId)) {
-          processInfos->insert({ handle.UniqueProcessId, GetProcessInfo(handle.UniqueProcessId) });
+          processInfos->emplace(handle.UniqueProcessId, GetProcessInfo(handle.UniqueProcessId));
         }
 
         if(fileObjectTypeIndex && handle.ObjectTypeIndex != *fileObjectTypeIndex) {
@@ -61,9 +61,8 @@ public:
 private:
   static std::generator<std::wstring> GetProcessModules(const HANDLE openedProcess) {
     for (const auto& moduleHandle : GetProcessModuleHandles(openedProcess)) {
-      const auto& name = GetProcessModuleName(openedProcess, moduleHandle);
-      if(name) {
-        co_yield *name;
+      if (auto name = GetProcessModuleName(openedProcess, moduleHandle)) {
+        co_yield std::move(*name);
       }
     }
   }
@@ -101,7 +100,10 @@ private:
       auto buffer = std::make_unique_for_overwrite<wchar_t[]>(capacity);
       DWORD size = capacity;
 
-      if (!QueryFullProcessImageNameW(openedProcess, 0, buffer.get(), &size)) {
+      if (!QueryFullProcessImageNameW(/* hProcess  */ openedProcess,
+                                      /* dwFlags   */ 0,
+                                      /* lpExeName */ buffer.get(),
+                                      /* lpdwSize  */ &size)) {
         if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
           return std::nullopt;
         }
@@ -113,7 +115,7 @@ private:
   }
 
   static std::optional<std::pair<std::wstring, std::wstring>> GetUserAndDomainName(const HANDLE openedProcess) {
-    HANDLE token{ nullptr };
+    HANDLE token;
     if (!OpenProcessToken(/* ProcessHandle */ openedProcess,
                           /* DesiredAccess */ TOKEN_QUERY,
                           /* TokenHandle   */ &token)) {

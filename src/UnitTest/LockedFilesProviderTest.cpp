@@ -10,6 +10,7 @@ TEST_CASE("collects only file handles with a resolvable path") {
   lockedFilesProvider.GetLockingProcessInfos(result);
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count();
   std::cout << std::format("Time taken: {}ms\n", duration);
+  std::cout << "LockingProcessInfos:\n" << result.DebugString() << '\n';
 
   REQUIRE(result.process_infos().size() > 0);
 }
