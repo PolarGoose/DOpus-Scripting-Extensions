@@ -2,7 +2,7 @@
   "vcpkg-configuration": {
     "default-registry": {
       "kind": "git",
-      "baseline": "ac7af7424cbaf9057cb246b620f455303dccd6ed",
+      "baseline": "dd306f32e07d87fdb16837af64f33b6b415c770a",
       "repository": "https://github.com/microsoft/vcpkg"
     },
     "registries": [
@@ -13,8 +13,11 @@
       }
     ],
     "overlay-ports": [
-      "./vcpkg_overlay_ports"
-     ]
+      "vcpkg/overlay_ports"
+    ],
+    "overlay-triplets": [
+      "vcpkg/overlay_triplets"
+    ]
   },
 
   "dependencies": [
@@ -26,7 +29,6 @@
     "uchardet",
     "grpc",
     "abseil",
-    "sqlitecpp",
     "doctest"
   ]
 }

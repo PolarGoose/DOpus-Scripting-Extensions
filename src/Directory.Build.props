@@ -11,6 +11,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgUseStatic>true</VcpkgUseStatic>
+    <VcpkgInstalledDir>$(BuildFolder)vcpkg_installed\$(VcpkgTriplet)</VcpkgInstalledDir>
     <IncludePath>$(MSBuildThisFileDirectory);$(BuildFolder)grpc_generated;$(IncludePath)</IncludePath>
   </PropertyGroup>
 
