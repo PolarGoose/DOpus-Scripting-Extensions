@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ProcessHandlesService/ProcessHandlesServiceGrpcServer.h"
+#include "ProcessHandlesService/ProcessHandlesServiceGrpcImpl.h"
 
 static const auto& g_serviceName = L"DOpusScriptingExtensions.ProcessHandlesService";
 static absl::Notification g_stopEvent;
@@ -39,7 +39,7 @@ static void WINAPI ServiceMain(const DWORD /* argc */, LPWSTR* /* argv */) {
 
 int main() {
   grpc::ServerBuilder builder;
-  ProcessHandlesServiceGrpc processHandlesServiceGrpc;
+  ProcessHandlesServiceGrpcImpl processHandlesServiceGrpc;
   builder.AddListeningPort("127.0.0.1:43786", grpc::InsecureServerCredentials());
   builder.RegisterService(&processHandlesServiceGrpc);
   const auto grpcServer = builder.BuildAndStart();

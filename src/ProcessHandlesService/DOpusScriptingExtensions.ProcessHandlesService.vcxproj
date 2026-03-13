@@ -48,6 +48,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(OutputPath)Shared.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -61,6 +62,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(OutputPath)Shared.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -69,7 +71,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClInclude Include="ProcessHandlesServiceGrpcServer.h" />
+    <ClInclude Include="ProcessHandlesServiceGrpcImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DevicePathToDrivePathConverter.h" />
@@ -80,31 +82,11 @@
     <ClInclude Include="Utils\ScopedHandle.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ProcessHandlesService.proto" />
+    <ProjectReference Include="..\Shared\Shared.vcxproj">
+      <Project>{476ac9a0-8d26-4c05-8232-5d61787c9bef}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies">
-    <MakeDir Directories="$(BuildFolder)grpc_generated/gen" />
-    <Exec Command="&quot;$(VcpkgManifestRoot)/vcpkg_installed/$(VcpkgTriplet)/$(VcpkgTriplet)/tools/protobuf/protoc&quot; --plugin=protoc-gen-grpc=&quot;$(VcpkgManifestRoot)/vcpkg_installed/$(VcpkgTriplet)/vcpkg/pkgs/grpc_x64-windows/tools/grpc/grpc_cpp_plugin.exe&quot; --proto_path=&quot;$(ProjectDir)/&quot; --cpp_out=&quot;$(BuildFolder)grpc_generated/gen&quot; --grpc_out=&quot;$(BuildFolder)grpc_generated/gen&quot; &quot;$(ProjectDir)ProcessHandlesService.proto&quot;" LogStandardErrorAsError="true" />
-    <ItemGroup>
-      <ClCompile Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.pb.cc">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClCompile>
-      <ClCompile Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.grpc.pb.cc">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClCompile>
-      <ClInclude Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.pb.h">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClInclude>
-      <ClInclude Include="$(BuildFolder)grpc_generated/gen/ProcessHandlesService.grpc.pb.h">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClInclude>
-    </ItemGroup>
-  </Target>
 </Project>

@@ -11,36 +11,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LockedFilesProviderTest.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClInclude Include="Utils\Exceptions.h" />
+    <ClInclude Include="Utils\Logger.h" />
+    <ClInclude Include="Utils\StringUtils.h" />
+    <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ProcessHandlesService\DOpusScriptingExtensions.ProcessHandlesService.vcxproj">
-      <Project>{a3ff3f77-fafa-46a0-bb08-c020a23a5cb3}</Project>
-    </ProjectReference>
+    <None Include="ProcessHandlesService.proto" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{A8E7502F-54A3-41E8-B1C8-B32466D256C4}</ProjectGuid>
-    <RootNamespace>DOpusScriptingExtensionsProcessHandlesService</RootNamespace>
+    <ProjectGuid>{476AC9A0-8D26-4C05-8232-5D61787C9BEF}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>UnitTest</ProjectName>
+    <ProjectName>Shared</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -55,6 +47,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- Disable warnings that comes from grpc generated code:
+           * C4702 unreachable code
+           * C4267 conversion from 'size_t' to 'int', possible loss of data -->
+      <DisableSpecificWarnings>4702;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -64,7 +64,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OutputPath)Shared.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -78,10 +77,31 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OutputPath)Shared.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies" Inputs="$(ProjectDir)ProcessHandlesService.proto" Outputs="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h">
+    <MakeDir Directories="$(BuildFolder)grpc_generated/grpc_generated" />
+    <Exec Command="&quot;$(BuildFolder)/vcpkg_installed/$(VcpkgTriplet)/tools/protobuf/protoc&quot; --plugin=protoc-gen-grpc=&quot;$(BuildFolder)/vcpkg_installed/vcpkg/pkgs/grpc_x64-windows/tools/grpc/grpc_cpp_plugin.exe&quot; --proto_path=&quot;$(ProjectDir)/&quot; --cpp_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; --grpc_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; &quot;$(ProjectDir)ProcessHandlesService.proto&quot;" LogStandardErrorAsError="true" />
+    <ItemGroup>
+      <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc">
+        <IncludeInUnityFile>false</IncludeInUnityFile>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClCompile>
+      <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc">
+        <IncludeInUnityFile>false</IncludeInUnityFile>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClCompile>
+      <ClInclude Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h">
+        <IncludeInUnityFile>false</IncludeInUnityFile>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClInclude>
+      <ClInclude Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h">
+        <IncludeInUnityFile>false</IncludeInUnityFile>
+        <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      </ClInclude>
+    </ItemGroup>
+  </Target>
 </Project>

@@ -3,15 +3,19 @@
 #include "Shared/Utils/Exceptions.h"
 
 inline std::filesystem::path ExpandPathWithEnvironmentVariables(const wchar_t* const path) {
-  const auto len = ExpandEnvironmentStrings(path, nullptr, 0); // len is the number of TCHARs stored in the destination buffer, including the terminating null character
+  // len is the number of TCHARs stored in the destination buffer, including the terminating null character
+  const auto len = ExpandEnvironmentStrings(/* lpSrc */ path,
+                                            /* lpDst */ nullptr,
+                                            /* nSize */ 0);
 
   if (!len) {
     THROW_WEXCEPTION(L"Failed to calculate length for expanding the path '{}'", path);
   }
 
-  const auto buffer = std::make_unique<wchar_t[]>(len);
-
-  if (!ExpandEnvironmentStrings(path, buffer.get(), len)) {
+  const auto buffer = std::make_unique_for_overwrite<wchar_t[]>(len);
+  if (!ExpandEnvironmentStrings(/* lpSrc */ path,
+                                /* lpDst */ buffer.get(),
+                                /* nSize */ len)) {
     THROW_WEXCEPTION(L"Failed to expand '{}'", path);
   }
 

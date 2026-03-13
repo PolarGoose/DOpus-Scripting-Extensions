@@ -4,13 +4,24 @@ inline ATL::CComVariant GetPropertyValue(IDispatch& obj, const std::wstring_view
   DISPID dispId = 0;
   LPOLESTR lpNames[] = { const_cast<LPOLESTR>(propName.data()) };
   THROW_IF_FAILED_MSG(
-    obj.GetIDsOfNames(IID_NULL, lpNames, 1, LOCALE_USER_DEFAULT, &dispId),
+    obj.GetIDsOfNames(/* riid      */ IID_NULL,
+                      /* rgszNames */ lpNames,
+                      /* cNames    */ 1,
+                      /* lcid      */ LOCALE_USER_DEFAULT,
+                      /* rgDispId  */ &dispId),
     L"iDispatchObj doesn't have a property '{}'", propName);
 
   ATL::CComVariant result;
   DISPPARAMS dispParams = { 0 };
   THROW_IF_FAILED_MSG(
-    obj.Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &dispParams, &result, NULL, NULL),
+    obj.Invoke(/* dispIdMember */ dispId,
+               /* riid         */ IID_NULL,
+               /* lcid         */ LOCALE_USER_DEFAULT,
+               /* wFlags       */ DISPATCH_PROPERTYGET,
+               /* pDispParams  */ &dispParams,
+               /* pVarResult   */ &result,
+               /* pExcepInfo   */ NULL,
+               /* puArgErr     */ NULL),
     L"Failed to get the value of the property '{}'", propName);
 
   return result;

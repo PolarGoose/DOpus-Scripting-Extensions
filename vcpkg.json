@@ -14,9 +14,6 @@
     ],
     "overlay-ports": [
       "vcpkg/overlay_ports"
-    ],
-    "overlay-triplets": [
-      "vcpkg/overlay_triplets"
     ]
   },
 

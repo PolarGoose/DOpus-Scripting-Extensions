@@ -59,10 +59,10 @@ public:
   }
 
   auto QuerySystemHandleInformation() const {
-    const NTSTATUS STATUS_INFO_LENGTH_MISMATCH = 0xC0000004L; // Copied from ntstatus.h because "um/winnt.h" conflicts with general inclusion of "ntstatus.h"
-    const auto SystemExtendedHandleInformation = static_cast<SYSTEM_INFORMATION_CLASS>(64);
-    const size_t mb = 1024 * 1024;
-    const size_t gb = mb * 1024;
+    constexpr NTSTATUS STATUS_INFO_LENGTH_MISMATCH = 0xC0000004L; // Copied from ntstatus.h because "um/winnt.h" conflicts with general inclusion of "ntstatus.h"
+    constexpr auto SystemExtendedHandleInformation = static_cast<SYSTEM_INFORMATION_CLASS>(64);
+    constexpr size_t mb = 1024 * 1024;
+    constexpr size_t gb = mb * 1024;
 
     for (size_t bufSize = 32 * mb; bufSize <= gb; bufSize *= 2) {
       auto buf = std::make_unique_for_overwrite<std::byte[]>(bufSize);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gen/ProcessHandlesService.pb.h>
+#include <grpc_generated/ProcessHandlesService.pb.h>
 #include "Shared/Utils/StringUtils.h"
 #include "ProcessHandlesService/ProcExp152Driver.h"
 #include "ProcessHandlesService/NtDll.h"

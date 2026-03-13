@@ -1,6 +1,5 @@
 /build/
 .idea/
-/vcpkg_installed/
 /.vs/
 *.vcxproj.user
 /src/DOpusScriptingExtensions/DOpusScriptingExtensions_i.c

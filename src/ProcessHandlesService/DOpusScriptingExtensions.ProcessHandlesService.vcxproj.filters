@@ -13,14 +13,11 @@
     <ClInclude Include="LockedFilesProvider.h" />
     <ClInclude Include="NtDll.h" />
     <ClInclude Include="DevicePathToDrivePathConverter.h" />
-    <ClInclude Include="ProcessHandlesServiceGrpcServer.h" />
+    <ClInclude Include="ProcessHandlesServiceGrpcImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
       <UniqueIdentifier>{e1ad11f9-4601-48eb-9559-2c152d484b20}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ProcessHandlesService.proto" />
   </ItemGroup>
 </Project>

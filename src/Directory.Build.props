@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\'))</ProjectRoot>
     <BuildFolder>$(ProjectRoot)build\</BuildFolder>
-    <OutputPath>$(BuildFolder)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>$(BuildFolder)$(Platform)\$(Configuration)\</OutputPath>
     <BaseIntermediateOutputPath>$(BuildFolder)obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</BaseIntermediateOutputPath>
     <InstallerVersion>0.0</InstallerVersion>
     <OutDir>$(OutputPath)</OutDir>
@@ -13,10 +13,6 @@
     <VcpkgUseStatic>true</VcpkgUseStatic>
     <VcpkgInstalledDir>$(BuildFolder)vcpkg_installed\$(VcpkgTriplet)</VcpkgInstalledDir>
     <IncludePath>$(MSBuildThisFileDirectory);$(BuildFolder)grpc_generated;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
@@ -30,25 +26,26 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
 
       <!-- Disable warnings that comes from grpc generated code:
-           * C4702 unreachable code
-           * C4267 conversion from 'size_t' to 'int', possible loss of data -->
-      <DisableSpecificWarnings>4702;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+             * C4702 unreachable code
+           Reason: workaround for a bug https://developercommunity.visualstudio.com/t/error:-C4702-with-external:w0/1696694
+      -->
+      <DisableSpecificWarnings>4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
 
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>
-        _DISABLE_VECTOR_ANNOTATION;_DISABLE_STRING_ANNOTATION;%(PreprocessorDefinitions)
-      </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
 
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
