@@ -17,7 +17,22 @@
     <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ProcessHandlesService.proto" />
+    <None Include="DownloadDependencies.ps1" />
+    <CustomBuild Include="ProcessHandlesService.proto">
+      <FileType>Document</FileType>
+      <Command>&quot;$(BuildFolder)/vcpkg_installed/$(VcpkgTriplet)/tools/protobuf/protoc&quot; --plugin=protoc-gen-grpc=&quot;$(BuildFolder)/vcpkg_installed/vcpkg/pkgs/grpc_x64-windows/tools/grpc/grpc_cpp_plugin.exe&quot; --proto_path=&quot;$(ProjectDir)/&quot; --cpp_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; --grpc_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; &quot;$(ProjectDir)ProcessHandlesService.proto&quot;</Command>
+      <Outputs>$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h</Outputs>
+    </CustomBuild>
+    <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc">
+      <IncludeInUnityFile>false</IncludeInUnityFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClInclude Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h" />
+    <ClInclude Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
@@ -80,28 +95,4 @@
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
-  <Target Name="ProtoCompile" BeforeTargets="PrepareForBuild" DependsOnTargets="VcpkgInstallManifestDependencies" Inputs="$(ProjectDir)ProcessHandlesService.proto" Outputs="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h">
-    <MakeDir Directories="$(BuildFolder)grpc_generated/grpc_generated" />
-    <Exec Command="&quot;$(BuildFolder)/vcpkg_installed/$(VcpkgTriplet)/tools/protobuf/protoc&quot; --plugin=protoc-gen-grpc=&quot;$(BuildFolder)/vcpkg_installed/vcpkg/pkgs/grpc_x64-windows/tools/grpc/grpc_cpp_plugin.exe&quot; --proto_path=&quot;$(ProjectDir)/&quot; --cpp_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; --grpc_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; &quot;$(ProjectDir)ProcessHandlesService.proto&quot;" LogStandardErrorAsError="true" />
-    <ItemGroup>
-      <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClCompile>
-      <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClCompile>
-      <ClInclude Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClInclude>
-      <ClInclude Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h">
-        <IncludeInUnityFile>false</IncludeInUnityFile>
-        <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      </ClInclude>
-    </ItemGroup>
-  </Target>
 </Project>
