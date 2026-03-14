@@ -12,7 +12,7 @@
     <ClInclude Include="Utils\Exceptions.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Logger.h">
+    <ClInclude Include="Utils\LineInfo.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Utils\StringUtils.h">

@@ -1,10 +1,11 @@
 ﻿<Project Sdk="WixToolset.Sdk/6.0.0">
   <PropertyGroup>
-    <DefineConstants>InstallerVersion=$(InstallerVersion);DOpusScriptingExtensionsOutputPath=$(OutputPath)..\DOpusScriptingExtensions</DefineConstants>
+    <DefineConstants>InstallerVersion=$(InstallerVersion)</DefineConstants>
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.Util.wixext" Version="6.0.1" />
     <ProjectReference Include="..\DOpusScriptingExtensions\DOpusScriptingExtensions.vcxproj" />
+    <ProjectReference Include="..\ProcessHandlesService\DOpusScriptingExtensions.ProcessHandlesService.vcxproj" />
   </ItemGroup>
 </Project>

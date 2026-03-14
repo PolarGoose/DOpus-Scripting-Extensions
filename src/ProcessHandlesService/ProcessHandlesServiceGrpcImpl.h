@@ -11,10 +11,14 @@ public:
                                       const google::protobuf::Empty* /* request */,
                                       ProcessHandlesService::LockingProcessInfos* response) override {
     try {
+      spdlog::stopwatch sw;
+      SPDLOG_INFO("GetLockingProcessInfos Start");
       _lockedFilesProvider.GetLockingProcessInfos(*response);
+      SPDLOG_INFO("GetLockingProcessInfos Finished. Took {} seconds", sw);
       return grpc::Status::OK;
     }
     catch (const std::exception& ex) {
+      SPDLOG_ERROR("GetLockingProcessInfos Failed: {}", ex.what());
       return grpc::Status(grpc::StatusCode::INTERNAL, ex.what());
     }
   }

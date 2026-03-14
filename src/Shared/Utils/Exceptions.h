@@ -1,15 +1,11 @@
 #pragma once
 
-#include "Shared/Utils/Logger.h"
+#include "Shared/Utils/LineInfo.h"
 
 #define CATCH_ALL_EXCEPTIONS() \
   catch (const HResultException& ex) { \
     ATL::AtlReportError(GetObjectCLSID(), ex.LMessage(), __uuidof(IUnknown), ex.HResult()); \
     return ex.HResult(); \
-  } \
-  catch (const WException& ex) { \
-    ATL::AtlReportError(GetObjectCLSID(), ex.LMessage(), __uuidof(IUnknown), E_FAIL); \
-    return E_FAIL; \
   } \
   catch (const std::exception& ex) { \
     ATL::AtlReportError(GetObjectCLSID(), ex.what(), __uuidof(IUnknown), E_FAIL); \
@@ -44,13 +40,7 @@
 class WException : public std::exception {
 public:
   WException(const std::wstring_view msg, const std::wstring_view lineInfo)
-    : msg(std::format(L"{}: {}", lineInfo, msg)) {
-  }
-
-  auto LMessage() const { return msg.data(); }
-
-private:
-  std::wstring msg;
+    : std::exception(ToUtf8(std::format(L"{}: {}", lineInfo, msg)).c_str()) { }
 };
 
 class HResultException : public WException {

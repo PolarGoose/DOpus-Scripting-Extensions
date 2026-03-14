@@ -161,25 +161,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <!-- Copy magic.mgc file that is needed for LibMagic -->
-  <Target Name="CopyMagicMgcFileToOutputFolder" AfterTargets="Build" Condition="!Exists('$(OutputPath)/magic.mgc')">
-    <Copy SourceFiles="$(ProjectRoot)/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libmagic_x64-windows/share/libmagic/misc/magic.mgc" DestinationFolder="$(OutputPath)" />
-  </Target>
-  <!-- Download ExifTool binaries -->
-  <Target Name="DownloadExifTool" AfterTargets="Build" Condition="!Exists('$(BuildFolder)exiftool.zip')">
-    <DownloadFile SourceUrl="https://netix.dl.sourceforge.net/project/exiftool/exiftool-13.50_64.zip?viasf=1" DestinationFolder="$(BuildFolder)" DestinationFileName="exiftool.zip" />
-    <Unzip SourceFiles="$(BuildFolder)exiftool.zip" DestinationFolder="$(BuildFolder)" />
-  </Target>
-  <Target Name="CopyExifToolToOutputFolder" AfterTargets="DownloadExifTool" Condition="!Exists('$(OutputPath)exiftool')">
-    <Exec Command="robocopy &quot;$(BuildFolder)exiftool-13.50_64&quot; &quot;$(OutputPath)exiftool&quot; /e &gt; nul" ContinueOnError="True" />
-    <Exec Command="ren &quot;$(OutputPath)exiftool\exiftool(-k).exe&quot; &quot;exiftool.exe&quot;" />
-  </Target>
-  <!-- Download language files for MediaInfoLib -->
-  <Target Name="DownloadMediaInfo" AfterTargets="Build" Condition="!Exists('$(BuildFolder)MediaInfo.zip')">
-    <DownloadFile SourceUrl="https://github.com/MediaArea/MediaInfo/archive/refs/tags/v26.01.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="MediaInfo.zip" />
-    <Unzip SourceFiles="$(BuildFolder)MediaInfo.zip" DestinationFolder="$(BuildFolder)" />
-  </Target>
-  <Target Name="CopyMediaInfoLanguagesToOutputFolder" AfterTargets="DownloadMediaInfo" Condition="!Exists('$(OutputPath)MediaInfoLanguages')">
-    <Exec Command="robocopy &quot;$(BuildFolder)MediaInfo-26.01/Source/Resource/Plugin/Language&quot; &quot;$(OutputPath)MediaInfoLanguages&quot; /e &gt; nul" ContinueOnError="True" />
-  </Target>
 </Project>

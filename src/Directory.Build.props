@@ -27,6 +27,7 @@
       <LanguageStandard>stdcpp23</LanguageStandard>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
       <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
 
       <!-- Disable warnings that comes from grpc generated code:
              * C4702 unreachable code

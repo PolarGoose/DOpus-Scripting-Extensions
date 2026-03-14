@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\Exceptions.h" />
-    <ClInclude Include="Utils\Logger.h" />
+    <ClInclude Include="Utils\LineInfo.h" />
     <ClInclude Include="Utils\StringUtils.h" />
     <ClInclude Include="Utils\WinApiUtils.h" />
   </ItemGroup>
@@ -20,7 +20,7 @@
     <None Include="DownloadDependencies.ps1" />
     <CustomBuild Include="ProcessHandlesService.proto">
       <FileType>Document</FileType>
-      <Command>&quot;$(BuildFolder)/vcpkg_installed/$(VcpkgTriplet)/tools/protobuf/protoc&quot; --plugin=protoc-gen-grpc=&quot;$(BuildFolder)/vcpkg_installed/vcpkg/pkgs/grpc_x64-windows/tools/grpc/grpc_cpp_plugin.exe&quot; --proto_path=&quot;$(ProjectDir)/&quot; --cpp_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; --grpc_out=&quot;$(BuildFolder)grpc_generated/grpc_generated&quot; &quot;$(ProjectDir)ProcessHandlesService.proto&quot;</Command>
+      <Command>"$(BuildFolder)/vcpkg_installed/$(VcpkgTriplet)/tools/protobuf/protoc" --plugin=protoc-gen-grpc="$(BuildFolder)/vcpkg_installed/vcpkg/pkgs/grpc_x64-windows/tools/grpc/grpc_cpp_plugin.exe" --proto_path="$(ProjectDir)/" --cpp_out="$(BuildFolder)grpc_generated/grpc_generated" --grpc_out="$(BuildFolder)grpc_generated/grpc_generated" "$(ProjectDir)ProcessHandlesService.proto"</Command>
       <Outputs>$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.cc;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.h;$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.grpc.pb.h</Outputs>
     </CustomBuild>
     <ClCompile Include="$(BuildFolder)grpc_generated/grpc_generated/ProcessHandlesService.pb.cc">
@@ -95,4 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="DownloadDependenciesIfMissing" BeforeTargets="PreBuildEvent">
+    <Exec Condition="!Exists('$(OutputPath)PROCEXP152.SYS.x64')" Command="powershell -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)DownloadDependencies.ps1&quot; -BuildDir &quot;$(BuildFolder)/&quot; -OutputDir &quot;$(OutputPath)/&quot;" />
+  </Target>
 </Project>

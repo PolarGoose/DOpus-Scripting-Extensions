@@ -5,19 +5,30 @@
     <MediaTemplate EmbedCab="yes"/>
     <Feature Id="ProductFeature" Title="DOpusScriptingExtensions" Level="1">
       <ComponentGroupRef Id="ProductComponents"/>
+      <ComponentRef Id="PROCEXP152Component"/>
+      <ComponentRef Id="CleanupLogs"/>
     </Feature>
   </Package>
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="DOpusScriptingExtensions"/>
     </StandardDirectory>
+    <StandardDirectory Id="System64Folder">
+      <Directory Id="DRIVERSFOLDER" Name="drivers"/>
+    </StandardDirectory>
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <File Id="DOpusScriptingExtensions.dll" Source="$(var.DOpusScriptingExtensionsOutputPath)\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
-      <File Id="magic.mgc" Source="$(var.DOpusScriptingExtensionsOutputPath)\magic.mgc" />
-      <Files Subdirectory="exiftool" Include="$(var.DOpusScriptingExtensionsOutputPath)\exiftool\**" />
-      <Files Subdirectory="MediaInfoLanguages" Include="$(var.DOpusScriptingExtensionsOutputPath)\MediaInfoLanguages\**" />
+      <File Id="DOpusScriptingExtensions.dll" Source="DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
+      <File Id="magic.mgc" Source="magic.mgc" />
+      <Files Subdirectory="exiftool" Include="exiftool\**" />
+      <Files Subdirectory="MediaInfoLanguages" Include="MediaInfoLanguages\**" />
     </ComponentGroup>
+    <Component Id="CleanupLogs" Directory="INSTALLFOLDER">
+      <RemoveFile Id="RemoveRuntimeLog" Name="MyApp.log" On="uninstall" />
+    </Component>
+    <Component Id="PROCEXP152Component" Directory="DRIVERSFOLDER" Permanent="yes">
+      <File Id="PROCEXP152.SYS" Source="PROCEXP152.SYS" KeyPath="yes" />
+    </Component>
   </Fragment>
 </Wix>
