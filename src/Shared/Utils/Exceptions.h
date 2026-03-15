@@ -4,7 +4,7 @@
 
 #define CATCH_ALL_EXCEPTIONS() \
   catch (const HResultException& ex) { \
-    ATL::AtlReportError(GetObjectCLSID(), ex.LMessage(), __uuidof(IUnknown), ex.HResult()); \
+    ATL::AtlReportError(GetObjectCLSID(), ex.what(), __uuidof(IUnknown), ex.HResult()); \
     return ex.HResult(); \
   } \
   catch (const std::exception& ex) { \

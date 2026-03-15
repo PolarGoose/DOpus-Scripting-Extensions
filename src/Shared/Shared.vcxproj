@@ -96,6 +96,6 @@
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="DownloadDependenciesIfMissing" BeforeTargets="PreBuildEvent">
-    <Exec Condition="!Exists('$(OutputPath)PROCEXP152.SYS.x64')" Command="powershell -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)DownloadDependencies.ps1&quot; -BuildDir &quot;$(BuildFolder)/&quot; -OutputDir &quot;$(OutputPath)/&quot;" />
+    <Exec Condition="!Exists('$(OutputPath)MediaInfoLanguages')" Command="powershell -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)DownloadDependencies.ps1&quot; -BuildDir &quot;$(BuildFolder)/&quot; -OutputDir &quot;$(OutputPath)/&quot;" />
   </Target>
 </Project>

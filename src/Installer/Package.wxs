@@ -4,9 +4,9 @@
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
     <MediaTemplate EmbedCab="yes"/>
     <Feature Id="ProductFeature" Title="DOpusScriptingExtensions" Level="1">
-      <ComponentGroupRef Id="ProductComponents"/>
-      <ComponentRef Id="PROCEXP152Component"/>
-      <ComponentRef Id="CleanupLogs"/>
+      <ComponentGroupRef Id="ProcessHandlesService_ComponentGroup"/>
+      <ComponentRef Id="ProcessHandlesService_Component"/>
+      <ComponentRef Id="PROCEXP152_Component"/>
     </Feature>
   </Package>
   <Fragment>
@@ -18,16 +18,31 @@
     </StandardDirectory>
   </Fragment>
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+    <ComponentGroup Id="ProcessHandlesService_ComponentGroup" Directory="INSTALLFOLDER">
       <File Id="DOpusScriptingExtensions.dll" Source="DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
       <File Id="magic.mgc" Source="magic.mgc" />
       <Files Subdirectory="exiftool" Include="exiftool\**" />
       <Files Subdirectory="MediaInfoLanguages" Include="MediaInfoLanguages\**" />
     </ComponentGroup>
-    <Component Id="CleanupLogs" Directory="INSTALLFOLDER">
-      <RemoveFile Id="RemoveRuntimeLog" Name="MyApp.log" On="uninstall" />
+    <Component Id="ProcessHandlesService_Component" Directory="INSTALLFOLDER" Guid="C436DF92-EB2B-4B55-B07E-A2645B359A65">
+      <RemoveFile Id="ProcessHandlesService.log.txt" Name="ProcessHandlesService.log.txt" On="uninstall" />
+      <RemoveFile Id="ProcessHandlesService.log.1.txt" Name="ProcessHandlesService.log.1.txt" On="uninstall" />
+      <File Id="DOpusScriptingExtensions.ProcessHandlesService.exe" Source="DOpusScriptingExtensions.ProcessHandlesService.exe" KeyPath="yes"/>
+      <ServiceInstall Id="DOpusScriptingExtensions.ProcessHandlesService.exe ServiceInstall"
+                      Name="DOpusScriptingExtensions.ProcessHandlesService"
+                      DisplayName="DOpusScriptingExtensions ProcessHandlesService"
+                      Description="Provides information about process handles"
+                      Type="ownProcess"
+                      Start="auto"
+                      ErrorControl="normal" />
+      <ServiceControl Id="DOpusScriptingExtensions.ProcessHandlesService.exe ServiceControl"
+                      Name="DOpusScriptingExtensions.ProcessHandlesService"
+                      Start="install"
+                      Stop="both"
+                      Remove="uninstall"
+                      Wait="yes" />
     </Component>
-    <Component Id="PROCEXP152Component" Directory="DRIVERSFOLDER" Permanent="yes">
+    <Component Id="PROCEXP152_Component" Directory="DRIVERSFOLDER" Permanent="yes">
       <File Id="PROCEXP152.SYS" Source="PROCEXP152.SYS" KeyPath="yes" />
     </Component>
   </Fragment>

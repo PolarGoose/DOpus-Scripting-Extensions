@@ -59,7 +59,7 @@ Start-Sleep -Seconds 2
 Remove-Item -Path $BuildDir/PROCEXP152.SYS.x64 -Force -ErrorAction SilentlyContinue > $null
 Rename-Item $BuildDir/handle64_103_BINRES.bin -NewName PROCEXP152.SYS.x64
 
-Copy-Item -Path $BuildDir/PROCEXP152.SYS.x64 -Destination $OutputDir/PROCEXP152.SYS.x64 -Force
+Copy-Item -Path $BuildDir/PROCEXP152.SYS.x64 -Destination $OutputDir/PROCEXP152.SYS -Force
 
 Write-Host "Copy magic.mgc file that is needed for LibMagic"
 Copy-Item -Path $BuildDir/vcpkg_installed/vcpkg/pkgs/libmagic_x64-windows/tools/libmagic/share/misc/magic.mgc -Destination $OutputDir/magic.mgc -Force

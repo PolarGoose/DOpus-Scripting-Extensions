@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "DOpusScriptingExtensions/resource.h"
 #include "DOpusScriptingExtensions/DOpusScriptingExtensions_i.h"
-#include "Shared/Utils/Logger.h"
 #include "Shared/Utils/StringUtils.h"
 #include "Shared/Utils/Exceptions.h"
 #include "Shared/Utils/WinApiUtils.h"
