@@ -44,7 +44,7 @@ static void WINAPI ServiceMain(const DWORD /* argc */, LPWSTR* /* argv */) {
 int main() {
   spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e][%s(%#)][thread %t] %v");
   spdlog::set_default_logger(spdlog::rotating_logger_mt(/* logger_name   */ "ProcessHandlesService logger",
-                                                        /* filename      */ (boost::dll::this_line_location() / "ProcessHandlesService.log.txt").string(),
+                                                        /* filename      */ (boost::dll::this_line_location().parent_path() / "DOpusScriptingExtensions.ProcessHandlesService.log.txt").string(),
                                                         /* max_file_size */ 1024 * 1024, /* 1 MiB */
                                                         /* max_files     */ 2));
   SPDLOG_INFO("Start GRPC server on port 43786");

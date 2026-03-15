@@ -25,8 +25,8 @@
       <Files Subdirectory="MediaInfoLanguages" Include="MediaInfoLanguages\**" />
     </ComponentGroup>
     <Component Id="ProcessHandlesService_Component" Directory="INSTALLFOLDER" Guid="C436DF92-EB2B-4B55-B07E-A2645B359A65">
-      <RemoveFile Id="ProcessHandlesService.log.txt" Name="ProcessHandlesService.log.txt" On="uninstall" />
-      <RemoveFile Id="ProcessHandlesService.log.1.txt" Name="ProcessHandlesService.log.1.txt" On="uninstall" />
+      <RemoveFile Id="DOpusScriptingExtensions.ProcessHandlesService.log.txt" Name="DOpusScriptingExtensions.ProcessHandlesService.log.txt" On="uninstall" />
+      <RemoveFile Id="DOpusScriptingExtensions.ProcessHandlesService.log.1.txt" Name="DOpusScriptingExtensions.ProcessHandlesService.log.1.txt" On="uninstall" />
       <File Id="DOpusScriptingExtensions.ProcessHandlesService.exe" Source="DOpusScriptingExtensions.ProcessHandlesService.exe" KeyPath="yes"/>
       <ServiceInstall Id="DOpusScriptingExtensions.ProcessHandlesService.exe ServiceInstall"
                       Name="DOpusScriptingExtensions.ProcessHandlesService"
