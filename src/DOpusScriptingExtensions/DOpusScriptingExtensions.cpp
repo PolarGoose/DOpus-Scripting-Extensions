@@ -1,23 +1,22 @@
-#include "pch.h"
-#include "resource.h"
-#include "DOpusScriptingExtensions_i.h"
-#include "Utils/Logger.h"
-#include "Utils/StringUtils.h"
-#include "Utils/Exceptions.h"
-#include "Utils/ComUtils.h"
-#include "Utils/WinApiUtils.h"
-#include "ProcessRunner/ProcessRunnerResult.h"
-#include "ProcessRunner/ProcessRunner.h"
-#include "FileMimeTypeDetector/LibMagicWrapper.h"
-#include "FileMimeTypeDetector/FileMimeTypeDetectorResult.h"
-#include "FileMimeTypeDetector/FileMimeTypeDetector.h"
-#include "StringFormatter/StringFormatter.h"
-#include "MediaInfoRetriever/MediaInfoRetriever.h"
-#include "ExifTool/ExifToolCommandArgsGenerator.h"
-#include "ExifTool/ExifToolWrapper.h"
-#include "ExifTool/ExifTool.h"
-#include "UCharDet/UCharDetWrapper.h"
-#include "UCharDet/UCharDet.h"
+#include <midl_generated/DOpusScriptingExtensions_i.h>
+#include "DOpusScriptingExtensions/resource.h"
+#include "DOpusScriptingExtensions/Utils/Logger.h"
+#include "DOpusScriptingExtensions/Utils/StringUtils.h"
+#include "DOpusScriptingExtensions/Utils/Exceptions.h"
+#include "DOpusScriptingExtensions/Utils/ComUtils.h"
+#include "DOpusScriptingExtensions/Utils/WinApiUtils.h"
+#include "DOpusScriptingExtensions/ProcessRunner/ProcessRunnerResult.h"
+#include "DOpusScriptingExtensions/ProcessRunner/ProcessRunner.h"
+#include "DOpusScriptingExtensions/FileMimeTypeDetector/LibMagicWrapper.h"
+#include "DOpusScriptingExtensions/FileMimeTypeDetector/FileMimeTypeDetectorResult.h"
+#include "DOpusScriptingExtensions/FileMimeTypeDetector/FileMimeTypeDetector.h"
+#include "DOpusScriptingExtensions/StringFormatter/StringFormatter.h"
+#include "DOpusScriptingExtensions/MediaInfoRetriever/MediaInfoRetriever.h"
+#include "DOpusScriptingExtensions/ExifTool/ExifToolCommandArgsGenerator.h"
+#include "DOpusScriptingExtensions/ExifTool/ExifToolWrapper.h"
+#include "DOpusScriptingExtensions/ExifTool/ExifTool.h"
+#include "DOpusScriptingExtensions/UCharDet/UCharDetWrapper.h"
+#include "DOpusScriptingExtensions/UCharDet/UCharDet.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>
 {
@@ -48,7 +47,6 @@ STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID
 }
 
 // DllRegisterServer - Adds entries to the system registry.
-_Use_decl_annotations_
 STDAPI DllRegisterServer(void)
 {
 	// registers object, typelib and all interfaces in typelib
@@ -57,7 +55,6 @@ STDAPI DllRegisterServer(void)
 }
 
 // DllUnregisterServer - Removes entries from the system registry.
-_Use_decl_annotations_
 STDAPI DllUnregisterServer(void)
 {
 	HRESULT hr = _AtlModule.DllUnregisterServer();
@@ -65,7 +62,7 @@ STDAPI DllUnregisterServer(void)
 }
 
 // DllInstall - Adds/Removes entries to the system registry per user per machine.
-STDAPI DllInstall(BOOL bInstall, _In_opt_  LPCWSTR pszCmdLine)
+STDAPI DllInstall(BOOL bInstall, _In_opt_ LPCWSTR pszCmdLine)
 {
 	HRESULT hr = E_FAIL;
 	static const wchar_t szUserSwitch[] = L"user";
@@ -93,5 +90,3 @@ STDAPI DllInstall(BOOL bInstall, _In_opt_  LPCWSTR pszCmdLine)
 
 	return hr;
 }
-
-

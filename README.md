@@ -340,14 +340,14 @@ var content = st.Decode(Blob, encoding);
 
 # How to build
 ## Build requirements
-* Visual Studio 2026 or higher (you need to run it as an admin to build the solution)
+* Visual Studio 2026 or higher
 * [HeatWave for VS2022](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17) plugin
 
 ## Build instructions
 * Run `build.ps1` script as an admin.
 
 ## Notes
-* `vcpkg_overlay_ports\boost-asio` is an original port with the custom `increase_pipe_buffer.diff` patch. This is a workaround for the issue: [[Windows] Setting the capacity of the underline pipe #470
+* `vcpkg/overlay_ports/boost-asio` is an original port with the custom `increase_pipe_buffer.diff` patch. This is a workaround for the issue: [[Windows] Setting the capacity of the underline pipe #470
 ](https://github.com/boostorg/process/issues/470)
 
 # References

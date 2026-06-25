@@ -1,10 +1,9 @@
-﻿<Project Sdk="WixToolset.Sdk/6.0.0">
+<Project Sdk="WixToolset.Sdk/6.0.0">
   <PropertyGroup>
-    <DefineConstants>InstallerVersion=$(InstallerVersion);DOpusScriptingExtensionsOutputPath=$(OutputPath)..\DOpusScriptingExtensions</DefineConstants>
+    <DefineConstants>InstallerVersion=$(InstallerVersion);CMAKE_CURRENT_BINARY_DIR=$(CMAKE_CURRENT_BINARY_DIR);MagicMgcFile=$(MagicMgcFile)</DefineConstants>
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.Util.wixext" Version="6.0.1" />
-    <ProjectReference Include="..\DOpusScriptingExtensions\DOpusScriptingExtensions.vcxproj" />
   </ItemGroup>
 </Project>

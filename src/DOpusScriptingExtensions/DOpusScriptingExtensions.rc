@@ -123,7 +123,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "DOpusScriptingExtensions.tlb"
+1 TYPELIB "midl_generated/DOpusScriptingExtensions.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

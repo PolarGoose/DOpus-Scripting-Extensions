@@ -16,31 +16,6 @@ Function CheckReturnCodeOfPreviousCommand($msg) {
   }
 }
 
-Function FindMsBuild() {
-  $vswhereCommand = Get-Command -Name "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-
-  $msbuild = `
-    & $vswhereCommand `
-      -latest `
-      -requires Microsoft.Component.MSBuild `
-      -find MSBuild\**\Bin\MSBuild.exe `
-      | select-object -first 1
-
-  if(!$msbuild)
-  {
-    Error "Can't find MsBuild"
-  }
-
-  Info "MsBuild found: `n $msbuild"
-  return $msbuild
-}
-
-Function FindVcPkg() {
-  $vswhereCommand = Get-Command -Name "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-  $installationPath = & $vswhereCommand -prerelease -latest -property installationPath
-  return "$installationPath/VC/vcpkg/vcpkg.exe"
-}
-
 Function GetInstallerVersion() {
   $gitCommand = Get-Command -Name git
 
@@ -58,32 +33,59 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $root = Resolve-Path $PSScriptRoot
-$buildDir = "$root/build"
-$installerVersion = GetInstallerVersion
-$msbuild = FindMsBuild
-$vcPkg = FindVcPkg
+$buildDir = "$root/build/x64-Release"
+$vcpkgInstallDir = "$root/build/vi"
+$version = GetInstallerVersion
 
-Info "InstallerVersion: '$installerVersion'"
+Info "InstallerVersion: '$version'"
 
-Info "Integrate VcPkg"
-& $vcPkg integrate install
+Info "Find Visual Studio installation path"
+$vswhereCommand = Get-Command -Name "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+$installationPath = & $vswhereCommand -prerelease -latest -property installationPath
 
-Info "Build project"
-& $msbuild `
-    /nologo `
-    /restore `
-    /verbosity:minimal `
-    /property:Configuration=Release `
-    /property:DebugType=None `
-    /property:InstallerVersion=$installerVersion `
-    $root/DOpusScriptingExtensions.sln
-CheckReturnCodeOfPreviousCommand "build failed"
+Info "Open Visual Studio 2022 Developer PowerShell"
+& "$installationPath\Common7\Tools\Launch-VsDevShell.ps1" -SkipAutomaticLocation -Arch amd64
+
+Info "Cmake generate cache"
+cmake `
+  -S $root `
+  -B $buildDir `
+  -G Ninja `
+  -D CMAKE_BUILD_TYPE=Release `
+  -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+  -D VCPKG_TARGET_TRIPLET=x64-windows-static `
+  -D VCPKG_INSTALLED_DIR="$vcpkgInstallDir" `
+  -D INSTALLER_VERSION=$version
+CheckReturnCodeOfPreviousCommand "cmake cache failed"
+
+Info "Cmake build"
+cmake --build $buildDir
+CheckReturnCodeOfPreviousCommand "cmake build failed"
+
+Info "Uninstall the existing 'DOpusScriptingExtensions'"
+Info "Search if 'DOpusScriptingExtensions' is installed"
+$app = Get-CimInstance Win32_Product -Filter "Name = 'DOpusScriptingExtensions'"
+if ($app) {
+  Info "Uninstall existing 'DOpusScriptingExtensions' installation"
+  Invoke-CimMethod -InputObject $app -MethodName Uninstall
+}
+
+$installerPath = Resolve-Path "$buildDir/Installer.msi"
+Info "Install $installerPath"
+$msiexecProcess = Start-Process -FilePath "msiexec.exe" `
+                                -ArgumentList @("/i", $installerPath,
+                                                "/norestart",
+                                                "/L*v", "$buildDir/Installer.log") `
+                                -Wait `
+                                -PassThru
+if ($msiexecProcess.ExitCode -ne 0) {
+  Error "installation failed"
+}
 
 Info "Run tests"
-cscript $root/src/test/test.js
+cscript "$root/src/Test/test.js"
 CheckReturnCodeOfPreviousCommand "tests failed"
 
-Info "Copy installer to the Publish directory and create zip archive"
-New-Item -Force -ItemType "directory" $buildDir/Publish > $null
-Copy-Item -Force -Path $buildDir/x64/Release/Installer/Installer.msi -Destination $buildDir/Publish/DOpusScriptingExtensions.msi > $null
-Compress-Archive -Force -Path $buildDir/Publish/DOpusScriptingExtensions.msi -DestinationPath $buildDir/Publish/DOpusScriptingExtensions.msi.zip
+Info "Create installer zip archive"
+Copy-Item -Force -Path $buildDir/Installer.msi -Destination $buildDir/DOpusScriptingExtensions.msi > $null
+Compress-Archive -Force -Path $buildDir/DOpusScriptingExtensions.msi -DestinationPath $buildDir/DOpusScriptingExtensions.msi.zip

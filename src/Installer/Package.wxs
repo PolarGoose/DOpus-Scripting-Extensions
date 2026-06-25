@@ -2,7 +2,7 @@
      xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
   <Package Name="DOpusScriptingExtensions" Manufacturer="PolarGoose" Version="$(var.InstallerVersion)" UpgradeCode="5eb26a67-df9f-4c8e-8286-820db391f3dc">
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
-    <MediaTemplate EmbedCab="yes"/>
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>
     <Feature Id="ProductFeature" Title="DOpusScriptingExtensions" Level="1">
       <ComponentGroupRef Id="ProductComponents"/>
     </Feature>
@@ -14,10 +14,10 @@
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <File Id="DOpusScriptingExtensions.dll" Source="$(var.DOpusScriptingExtensionsOutputPath)\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
-      <File Id="magic.mgc" Source="$(var.DOpusScriptingExtensionsOutputPath)\magic.mgc" />
-      <Files Subdirectory="exiftool" Include="$(var.DOpusScriptingExtensionsOutputPath)\exiftool\**" />
-      <Files Subdirectory="MediaInfoLanguages" Include="$(var.DOpusScriptingExtensionsOutputPath)\MediaInfoLanguages\**" />
+      <File Id="Id1" Source="$(var.CMAKE_CURRENT_BINARY_DIR)\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
+      <File Id="Id2" Source="$(var.MagicMgcFile)" />
+      <Files Subdirectory="exiftool" Include="$(var.CMAKE_CURRENT_BINARY_DIR)\exiftool-src\**" />
+      <Files Subdirectory="MediaInfoLanguages" Include="$(var.CMAKE_CURRENT_BINARY_DIR)\mediainfo-src\Source\Resource\Plugin\Language\**" />
     </ComponentGroup>
   </Fragment>
 </Wix>
