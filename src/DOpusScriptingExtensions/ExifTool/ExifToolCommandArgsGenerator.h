@@ -7,14 +7,6 @@ public:
   ExifToolCommandArgsGenerator() = default;
 
   ExifToolCommandArgsGenerator(const std::wstring_view filePath) {
-    if (!std::filesystem::exists(filePath)) {
-      THROW_WEXCEPTION(L"File not found '{}'", filePath);
-    }
-
-    if (std::filesystem::is_directory(filePath)) {
-      THROW_WEXCEPTION(L"File is a directory '{}'", filePath);
-    }
-
     commandLineArgs = ToUtf8(filePath) + "\n";
   }
 
