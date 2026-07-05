@@ -19,11 +19,13 @@ public:
   } CATCH_ALL_EXCEPTIONS()
 
   STDMETHOD(DetectMimeType)(BSTR fileFullName, IFileMimeTypeDetectorResult** res) override try {
-    if (!std::filesystem::exists(fileFullName))
+    const auto& extendedFileFullName = ExtendPathWithLongPathPrefix(std::wstring_view{ fileFullName });
+
+    if (!std::filesystem::exists(extendedFileFullName))
     {
-      THROW_WEXCEPTION(L"The file not found '{}'", fileFullName);
+      THROW_WEXCEPTION(L"The file not found '{}'", extendedFileFullName);
     }
-    const auto& mimeTypeAndEncoding = magicCookie->DetectFileType(fileFullName);
+    const auto& mimeTypeAndEncoding = magicCookie->DetectFileType(extendedFileFullName);
     const auto& [mimeType, encoding] = ParseMimeTypeAndEncoding(mimeTypeAndEncoding);
     *res = CreateComObject<CFileMimeTypeDetectorResult, IFileMimeTypeDetectorResult>(
       [&](auto& pObj) {

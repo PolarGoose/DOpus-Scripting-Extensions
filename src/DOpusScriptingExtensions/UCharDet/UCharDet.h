@@ -19,9 +19,11 @@ public:
   } CATCH_ALL_EXCEPTIONS()
 
   STDMETHOD(DetectFileEncoding)(BSTR fileFullName, UINT maxBytesToInspect, BSTR* fileEncoding) override try {
+    const auto& extendedFileFullName = ExtendPathWithLongPathPrefix(std::wstring_view{ fileFullName });
+
     *fileEncoding = Copy(
       uCharDet->DetectFileEncoding(
-        std::filesystem::path(fileFullName), maxBytesToInspect));
+        std::filesystem::path(extendedFileFullName), maxBytesToInspect));
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
 

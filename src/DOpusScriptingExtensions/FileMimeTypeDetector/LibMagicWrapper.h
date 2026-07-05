@@ -45,5 +45,3 @@ private:
 
   magic_t magicCookie;
 };
-
-

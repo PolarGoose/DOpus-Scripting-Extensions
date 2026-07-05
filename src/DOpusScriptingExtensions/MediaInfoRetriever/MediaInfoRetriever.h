@@ -14,12 +14,14 @@ public:
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
   STDMETHOD(Open)(BSTR mediaFileFullName) override try {
-    if (!std::filesystem::exists(mediaFileFullName)) {
-      THROW_WEXCEPTION(L"File '{}' does not exist", mediaFileFullName);
+    const auto& extendedMediaFileFullName = ExtendPathWithLongPathPrefix(std::wstring_view{ mediaFileFullName });
+
+    if (!std::filesystem::exists(extendedMediaFileFullName)) {
+      THROW_WEXCEPTION(L"File '{}' does not exist", extendedMediaFileFullName);
     }
 
-    if (mi.Open(mediaFileFullName) == 0) {
-      THROW_WEXCEPTION(L"Failed to open a file '{}'", mediaFileFullName);
+    if (mi.Open(extendedMediaFileFullName.c_str()) == 0) {
+      THROW_WEXCEPTION(L"Failed to open a file '{}'", extendedMediaFileFullName);
     }
 
     return S_OK;
@@ -98,5 +100,3 @@ private:
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(MediaInfoRetriever), CMediaInfoRetriever)
-
-
