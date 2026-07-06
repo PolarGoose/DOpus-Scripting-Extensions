@@ -65,6 +65,23 @@ interface IUCharDet : IDispatch
   [id(1)] HRESULT DetectFileEncoding([in] BSTR fileFullName, [in, defaultvalue(1024)] UINT maxBytesToInspect, [out, retval] BSTR* fileEncoding);
 };
 
+[object, uuid(05CDC097-49DD-49AD-AC32-955C6AAA0947), dual, nonextensible, pointer_default(unique)]
+interface ITrId2TypeInformation : IDispatch
+{
+  [propget, id(1)] HRESULT Name([out, retval] BSTR* val);
+  [propget, id(2)] HRESULT Description([out, retval] BSTR* val);
+  [propget, id(3)] HRESULT Url([out, retval] BSTR* val);
+  [propget, id(4)] HRESULT FileNameExtensions([out, retval] SAFEARRAY(VARIANT)* val);
+  [propget, id(5)] HRESULT MimeType([out, retval] BSTR* val);
+  [propget, id(6)] HRESULT Probability([out, retval] double* val);
+};
+
+[object, uuid(5E9807EE-F9B4-4CDA-B066-A104E754A23E), dual, nonextensible, pointer_default(unique)]
+interface ITrId2FileTypeDetector : IDispatch
+{
+  [id(1)] HRESULT DetectFileType([in] BSTR fileFullName, [in] UINT numberOfCandidates, [out, retval] SAFEARRAY(VARIANT)* fileTypeGuesses);
+};
+
 [uuid(010ccc04-f6ea-46e5-854d-67d1fb42c7f3), version(1.0)]
 library DOpusScriptingExtensionsLib
 {
@@ -117,6 +134,16 @@ library DOpusScriptingExtensionsLib
   {
     [default] interface IUCharDet;
   };
-};
 
-import "shobjidl.idl";
+  [uuid(A8DCAD14-E8EC-424A-AEB8-BFAFFBC1DB3A)]
+  coclass TrId2TypeInformation
+  {
+    [default] interface ITrId2TypeInformation;
+  };
+
+  [uuid(B0EFC4B5-B74B-40C4-84F0-EBA5B8964637)]
+  coclass TrId2FileTypeDetector
+  {
+    [default] interface ITrId2FileTypeDetector;
+  };
+};

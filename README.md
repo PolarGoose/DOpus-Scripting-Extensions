@@ -17,6 +17,7 @@ A COM DLL that extends JScript functionality for [Directory Opus](https://www.gp
 * [FileMimeTypeDetector](#FileMimeTypeDetector)
 * [ExifTool](#ExifTool)
 * [UCharDet](#UCharDet)
+* [TrId2FileTypeDetector](#TrId2FileTypeDetector)
 
 ## ProcessRunner
 This is an alternative to [WScript.shell Run](https://ss64.com/vb/run.html) method. It allows to get `StdOut` and `StdErr` of a process without creating a temporary file.<br>
@@ -336,6 +337,36 @@ var st = DOpus.Create.StringTools;
 var file = DOpus.FSUtil.OpenFile(file)
 var Blob = file.read()
 var content = st.Decode(Blob, encoding);
+```
+
+## TrId2FileTypeDetector
+Uses `TrId2Lib` from [TrId2-file-type-identifier](https://github.com/Papyrus7914/TrId2-file-type-identifier) project.<br>
+`TrId2FileTypeDetector` allows you to detect the file type based on its content.<br>
+The file detection database is already included. No extra configuration is needed.
+
+### Example
+```javascript
+// Acquire the COM object. It is recommended to acquire it only once and reuse it for performance reasons.
+var trId2FileTypeDetector = new ActiveXObject("DOpusScriptingExtensions.TrId2FileTypeDetector");
+
+// Get file type candidates.
+// Note: `DetectFileType` returns SafeArray. You need to convert it to `VBArray` to be able to use it from JavaScript like it is shown below.
+// `number of candidates` is the maximum amount of candidates to return. Sometimes the file type is clear, and you only get 1 candidate.
+// However, sometimes the file type is more ambiguous, and you get multiple candidates.
+var res = new VBArray(trId2FileTypeDetector.DetectFileType("C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe", /* number of candidates */ 5)).toArray()
+
+// Print all candidates
+for (var i = 0; i < res.length; i++) {
+  WScript.Echo(res[i].Name);
+  WScript.Echo(res[i].Url);
+  WScript.Echo(res[i].Probability); // how good is the match
+    
+  // `FileNameExtensions` is a SafeArray. You need to convert it to `VBArray`.
+  var fileNameExtensions = new VBArray(res[i].FileNameExtensions).toArray()
+  for (var j = 0; j < fileNameExtensions.length; j++) {
+    WScript.Echo(fileNameExtensions[j]);
+  }
+}
 ```
 
 # How to build

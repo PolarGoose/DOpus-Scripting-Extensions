@@ -1,0 +1,26 @@
+HKCR
+{
+    DOpusScriptingExtensions.TrId2FileTypeDetector.1 = s 'TrId2FileTypeDetector class'
+    {
+        CLSID = s '{B0EFC4B5-B74B-40C4-84F0-EBA5B8964637}'
+    }
+    DOpusScriptingExtensions.TrId2FileTypeDetector = s 'TrId2FileTypeDetector class'
+    {
+        CurVer = s 'DOpusScriptingExtensions.TrId2FileTypeDetector.1'
+    }
+    NoRemove CLSID
+    {
+        ForceRemove {B0EFC4B5-B74B-40C4-84F0-EBA5B8964637} = s 'TrId2FileTypeDetector class'
+        {
+            ProgID = s 'DOpusScriptingExtensions.TrId2FileTypeDetector.1'
+            VersionIndependentProgID = s 'DOpusScriptingExtensions.TrId2FileTypeDetector'
+            ForceRemove Programmable
+            InprocServer32 = s '%MODULE%'
+            {
+                val ThreadingModel = s 'Apartment'
+            }
+            TypeLib = s '{010ccc04-f6ea-46e5-854d-67d1fb42c7f3}'
+            Version = s '1.0'
+        }
+    }
+}

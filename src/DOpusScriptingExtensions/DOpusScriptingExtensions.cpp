@@ -17,6 +17,8 @@
 #include "DOpusScriptingExtensions/ExifTool/ExifTool.h"
 #include "DOpusScriptingExtensions/UCharDet/UCharDetWrapper.h"
 #include "DOpusScriptingExtensions/UCharDet/UCharDet.h"
+#include "DOpusScriptingExtensions/TrId2FileTypeDetector/TrId2TypeInformation.h"
+#include "DOpusScriptingExtensions/TrId2FileTypeDetector/TrId2FileTypeDetector.h"
 
 class CDOpusScriptingExtensionsModule : public ATL::CAtlDllModuleT<CDOpusScriptingExtensionsModule>
 {

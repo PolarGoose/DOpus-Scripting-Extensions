@@ -102,6 +102,7 @@ IDR_StringFormatter          REGISTRY "StringFormatter/StringFormatter.rgs"
 IDR_MediaInfoRetriever       REGISTRY "MediaInfoRetriever/MediaInfoRetriever.rgs"
 IDR_ExifTool                 REGISTRY "ExifTool/ExifTool.rgs"
 IDR_UCharDet                 REGISTRY "UCharDet/UCharDet.rgs"
+IDR_TrId2FileTypeDetector    REGISTRY "TrId2FileTypeDetector/TrId2FileTypeDetector.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //

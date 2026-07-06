@@ -14,6 +14,11 @@ find_package(uchardet CONFIG REQUIRED)
 find_program(MIDL_EXECUTABLE midl REQUIRED)
 find_program(MSBUILD_EXECUTABLE msbuild REQUIRED)
 
+FetchContent_Populate(cmake_template GIT_REPOSITORY https://github.com/cpp-best-practices/cmake_template
+                                     GIT_TAG a3971f5b4588a5f57a44317a0f7e29827add13f1)
+include(${cmake_template_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
+
+FetchContent_Populate(trid2lib URL "https://github.com/Papyrus7914/TrId2-file-type-identifier/releases/download/v1.0/TrId2Lib.zip")
 FetchContent_Populate(exiftool URL "https://downloads.sourceforge.net/project/exiftool/exiftool-13.59_64.zip")
 FetchContent_Populate(mediainfo URL "https://github.com/MediaArea/MediaInfo/archive/refs/tags/v26.05.zip")
 file(RENAME "${exiftool_SOURCE_DIR}/exiftool(-k).exe" "${exiftool_SOURCE_DIR}/exiftool.exe" RESULT ignore_result)
@@ -39,10 +44,12 @@ target_compile_options(midl_generated PRIVATE /W0)
 file(GLOB_RECURSE source_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/*.h"
                                                  "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/*.cpp"
                                                  "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/*.rgs"
-                                                 "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/*.rc")
+                                                 "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/*.rc"
+                                                 "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/*.def")
 
-add_library(DOpusScriptingExtensions SHARED "${source_files}" "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/DOpusScriptingExtensions.def")
-target_include_directories(DOpusScriptingExtensions PRIVATE "${midl_generated_dir}/.." "src")
+add_library(DOpusScriptingExtensions SHARED "${source_files}")
+target_include_directories(DOpusScriptingExtensions PRIVATE "src")
+target_include_directories(DOpusScriptingExtensions SYSTEM PRIVATE "${midl_generated_dir}/.." "${trid2lib_SOURCE_DIR}")
 target_precompile_headers(DOpusScriptingExtensions PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/pch.h")
 target_compile_definitions(DOpusScriptingExtensions PRIVATE UNICODE
                                                             _WINDLL
@@ -56,12 +63,11 @@ target_compile_definitions(DOpusScriptingExtensions PRIVATE UNICODE
                                                             ATL_NO_ASSERT_ON_DESTROY_NONEXISTENT_WINDOW
                                                             $<$<CONFIG:Debug>:DEBUG>)
 target_compile_options(DOpusScriptingExtensions PRIVATE /utf-8
-                                                        /external:anglebrackets
-                                                        /external:W0
                                                         /WX
                                                         /W4
                                                         /analyze
-                                                        /analyze:external-)
+                                                        /analyze:external-
+                                                        /bigobj)
 target_link_libraries(DOpusScriptingExtensions PRIVATE midl_generated
                                                        Boost::dll
                                                        Boost::filesystem
@@ -75,6 +81,9 @@ target_link_libraries(DOpusScriptingExtensions PRIVATE midl_generated
                                                        secur32
                                                        iphlpapi
                                                        rpcrt4)
+add_library(DOpusScriptingExtensions_warnings INTERFACE)
+myproject_set_project_warnings(DOpusScriptingExtensions_warnings ON "" "" "" "")
+target_link_libraries(DOpusScriptingExtensions PUBLIC DOpusScriptingExtensions_warnings)
 
 add_custom_target(installer ALL USES_TERMINAL COMMENT "Build installer" VERBATIM
   COMMAND
