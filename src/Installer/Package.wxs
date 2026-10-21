@@ -18,6 +18,7 @@
       <File Id="Id2" Source="$(var.MagicMgcFile)" />
       <Files Subdirectory="exiftool" Include="$(var.CMAKE_CURRENT_BINARY_DIR)\exiftool-src\**" />
       <Files Subdirectory="MediaInfoLanguages" Include="$(var.CMAKE_CURRENT_BINARY_DIR)\mediainfo-src\Source\Resource\Plugin\Language\**" />
+      <File Id="Id3" Source="$(var.CMAKE_CURRENT_BINARY_DIR)\trid2lib_release_package-src\TrId2Database.json" />
     </ComponentGroup>
   </Fragment>
 </Wix>

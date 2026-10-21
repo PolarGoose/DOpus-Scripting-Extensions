@@ -1,4 +1,16 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 4.2)
+
+find_package(Git REQUIRED)
+set(vcpkg_dir "${CMAKE_CURRENT_LIST_DIR}/build/vcpkg")
+if(NOT EXISTS "${vcpkg_dir}/vcpkg.exe")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/build")
+  execute_process(COMMAND "${GIT_EXECUTABLE}" clone --depth 1 https://github.com/microsoft/vcpkg.git "${vcpkg_dir}" COMMAND_ERROR_IS_FATAL ANY)
+  execute_process(COMMAND "${vcpkg_dir}/bootstrap-vcpkg.bat" -disableMetrics WORKING_DIRECTORY "${vcpkg_dir}" COMMAND_ERROR_IS_FATAL ANY)
+endif()
+set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
+set(VCPKG_INSTALLED_DIR "${CMAKE_CURRENT_LIST_DIR}/build/vi" CACHE PATH "")
+set(CMAKE_TOOLCHAIN_FILE "${vcpkg_dir}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "")
+
 project(DOpusScriptingExtensions LANGUAGES C CXX RC)
 include(FetchContent)
 set(INSTALLER_VERSION "0.0" CACHE STRING "DOpusScriptingExtensions installer version")
@@ -10,17 +22,23 @@ find_package(Boost CONFIG REQUIRED COMPONENTS dll filesystem locale process)
 find_package(unofficial-libmagic CONFIG REQUIRED)
 find_package(MediaInfoLib CONFIG REQUIRED)
 find_package(uchardet CONFIG REQUIRED)
+find_package(simdjson CONFIG REQUIRED)
 
 find_program(MIDL_EXECUTABLE midl REQUIRED)
 find_program(MSBUILD_EXECUTABLE msbuild REQUIRED)
 
 FetchContent_Populate(cmake_template GIT_REPOSITORY https://github.com/cpp-best-practices/cmake_template
-                                     GIT_TAG a3971f5b4588a5f57a44317a0f7e29827add13f1)
+                                     GIT_TAG b86318abbf55a657a11a0cf2acce69f221841b22)
 include(${cmake_template_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
 
-FetchContent_Populate(trid2lib URL "https://github.com/Papyrus7914/TrId2-file-type-identifier/releases/download/v1.0/TrId2Lib.zip")
-FetchContent_Populate(exiftool URL "https://downloads.sourceforge.net/project/exiftool/exiftool-13.59_64.zip")
-FetchContent_Populate(mediainfo URL "https://github.com/MediaArea/MediaInfo/archive/refs/tags/v26.05.zip")
+FetchContent_Populate(trid2lib GIT_REPOSITORY https://github.com/Papyrus7914/TrId2-file-type-identifier
+                               GIT_TAG v2.0
+                               GIT_SHALLOW TRUE)
+FetchContent_Populate(trid2lib_release_package URL https://github.com/Papyrus7914/TrId2-file-type-identifier/releases/download/v2.0/TrId2Console-windows-x64.zip)
+FetchContent_Populate(exiftool URL https://downloads.sourceforge.net/project/exiftool/exiftool-13.59_64.zip)
+FetchContent_Populate(mediainfo GIT_REPOSITORY https://github.com/mediaarea/mediainfo
+                                GIT_TAG v26.10
+                                GIT_SHALLOW TRUE)
 file(RENAME "${exiftool_SOURCE_DIR}/exiftool(-k).exe" "${exiftool_SOURCE_DIR}/exiftool.exe" RESULT ignore_result)
 
 set(midl_generated_dir "${CMAKE_CURRENT_BINARY_DIR}/midl_generated/midl_generated")
@@ -49,7 +67,7 @@ file(GLOB_RECURSE source_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/sr
 
 add_library(DOpusScriptingExtensions SHARED "${source_files}")
 target_include_directories(DOpusScriptingExtensions PRIVATE "src")
-target_include_directories(DOpusScriptingExtensions SYSTEM PRIVATE "${midl_generated_dir}/.." "${trid2lib_SOURCE_DIR}")
+target_include_directories(DOpusScriptingExtensions SYSTEM PRIVATE "${midl_generated_dir}/.." "${trid2lib_SOURCE_DIR}/src")
 target_precompile_headers(DOpusScriptingExtensions PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/DOpusScriptingExtensions/pch.h")
 target_compile_definitions(DOpusScriptingExtensions PRIVATE UNICODE
                                                             _WINDLL
@@ -67,7 +85,7 @@ target_compile_options(DOpusScriptingExtensions PRIVATE /utf-8
                                                         /W4
                                                         /analyze
                                                         /analyze:external-
-                                                        /bigobj)
+                                                        /wd4702)
 target_link_libraries(DOpusScriptingExtensions PRIVATE midl_generated
                                                        Boost::dll
                                                        Boost::filesystem
@@ -76,6 +94,7 @@ target_link_libraries(DOpusScriptingExtensions PRIVATE midl_generated
                                                        unofficial::libmagic::libmagic
                                                        mediainfo
                                                        uchardet::libuchardet
+                                                       simdjson::simdjson
                                                        ntdll
                                                        crypt32
                                                        secur32

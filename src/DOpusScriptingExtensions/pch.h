@@ -28,4 +28,4 @@
 #include <magic.h>
 #include <MediaInfo/MediaInfo.h>
 #include <uchardet/uchardet.h>
-#include <TrId2FileTypeDetector.h>
+#include <TrId2Lib/TrId2FileTypeDetector.h>

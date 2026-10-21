@@ -51,9 +51,6 @@ cmake -S $root `
       -B $buildDir `
       -G Ninja `
       -D CMAKE_BUILD_TYPE=Release `
-      -D CMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
-      -D VCPKG_TARGET_TRIPLET=x64-windows-static `
-      -D VCPKG_INSTALLED_DIR="$vcpkgInstallDir" `
       -D INSTALLER_VERSION=$version
 CheckReturnCodeOfPreviousCommand "cmake cache failed"
 

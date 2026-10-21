@@ -13,9 +13,15 @@ public:
   END_COM_MAP()
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
+  HRESULT FinalConstruct() try {
+    static TrId2Lib::FileTypeDetector detectorSingleton{ (boost::dll::this_line_location().parent_path() / L"TrId2Database.json").wstring() };
+    detector = &detectorSingleton;
+    return S_OK;
+  } CATCH_ALL_EXCEPTIONS()
+
   STDMETHOD(DetectFileType)(const BSTR fileFullName, const UINT numberOfCandidates, SAFEARRAY **fileTypeGuesses) override try {
     const auto extendedFileFullName = ExtendPathWithLongPathPrefix(std::wstring_view{ fileFullName });
-    const auto candidates = TrId2Lib::detectFileType(extendedFileFullName, numberOfCandidates);
+    const auto candidates = detector->detectFileType(extendedFileFullName, numberOfCandidates);
 
     ATL::CComSafeArray<VARIANT> fileTypeGuessesSafeArray;
     THROW_IF_FAILED_MSG(fileTypeGuessesSafeArray.Create(static_cast<ULONG>(candidates.size())), L"Failed to allocate a SafeArray");
@@ -31,6 +37,9 @@ public:
     *fileTypeGuesses = fileTypeGuessesSafeArray.Detach();
     return S_OK;
   } CATCH_ALL_EXCEPTIONS()
+
+private:
+  TrId2Lib::FileTypeDetector* detector{ nullptr };
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(TrId2FileTypeDetector), CTrId2FileTypeDetector)
