@@ -15,6 +15,9 @@
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <File Id="Id1" Source="$(var.CMAKE_CURRENT_BINARY_DIR)\DOpusScriptingExtensions.dll" KeyPath="yes" SelfRegCost="0"/>
+      <Files Include="$(var.CMAKE_CURRENT_BINARY_DIR)\*.dll">
+        <Exclude Files="$(var.CMAKE_CURRENT_BINARY_DIR)\DOpusScriptingExtensions.dll" />
+      </Files>
       <File Id="Id2" Source="$(var.MagicMgcFile)" />
       <Files Subdirectory="exiftool" Include="$(var.CMAKE_CURRENT_BINARY_DIR)\exiftool-src\**" />
       <Files Subdirectory="MediaInfoLanguages" Include="$(var.CMAKE_CURRENT_BINARY_DIR)\mediainfo-src\Source\Resource\Plugin\Language\**" />

@@ -7,15 +7,16 @@ if(NOT EXISTS "${vcpkg_dir}/vcpkg.exe")
   execute_process(COMMAND "${GIT_EXECUTABLE}" clone --depth 1 https://github.com/microsoft/vcpkg.git "${vcpkg_dir}" COMMAND_ERROR_IS_FATAL ANY)
   execute_process(COMMAND "${vcpkg_dir}/bootstrap-vcpkg.bat" -disableMetrics WORKING_DIRECTORY "${vcpkg_dir}" COMMAND_ERROR_IS_FATAL ANY)
 endif()
-set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
+set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")
 set(VCPKG_INSTALLED_DIR "${CMAKE_CURRENT_LIST_DIR}/build/vi" CACHE PATH "")
 set(CMAKE_TOOLCHAIN_FILE "${vcpkg_dir}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "")
+set(VCPKG_APPLOCAL_DEPS ON)
 
 project(DOpusScriptingExtensions LANGUAGES C CXX RC)
 include(FetchContent)
 set(INSTALLER_VERSION "0.0" CACHE STRING "DOpusScriptingExtensions installer version")
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 find_package(Boost CONFIG REQUIRED COMPONENTS dll filesystem locale process)
@@ -35,7 +36,7 @@ FetchContent_Populate(trid2lib GIT_REPOSITORY https://github.com/Papyrus7914/TrI
                                GIT_TAG v2.0
                                GIT_SHALLOW TRUE)
 FetchContent_Populate(trid2lib_release_package URL https://github.com/Papyrus7914/TrId2-file-type-identifier/releases/download/v2.0/TrId2Console-windows-x64.zip)
-FetchContent_Populate(exiftool URL https://downloads.sourceforge.net/project/exiftool/exiftool-13.59_64.zip)
+FetchContent_Populate(exiftool URL https://downloads.sourceforge.net/project/exiftool/exiftool-13.63_64.zip)
 FetchContent_Populate(mediainfo GIT_REPOSITORY https://github.com/mediaarea/mediainfo
                                 GIT_TAG v26.10
                                 GIT_SHALLOW TRUE)

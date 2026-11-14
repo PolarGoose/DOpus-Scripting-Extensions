@@ -26,6 +26,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
 #include <magic.h>
-#include <MediaInfo/MediaInfo.h>
+#include <MediaInfoDLL/MediaInfoDLL_Static.h>
 #include <uchardet/uchardet.h>
 #include <TrId2Lib/TrId2FileTypeDetector.h>

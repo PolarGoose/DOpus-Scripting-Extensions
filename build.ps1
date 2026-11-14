@@ -5,8 +5,7 @@ Function Info($msg) {
 }
 
 Function Error($msg) {
-  Write-Host `n`n
-  Write-Error $msg
+  Write-Host -ForegroundColor Red "`n`nERROR: $msg"
   exit 1
 }
 
@@ -17,15 +16,12 @@ Function CheckReturnCodeOfPreviousCommand($msg) {
 }
 
 Function GetInstallerVersion() {
-  $gitCommand = Get-Command -Name git
-
-  try { $tag = & $gitCommand describe --exact-match --tags HEAD 2> $null } catch { }
+  try { $commitTag = git describe --exact-match --tags HEAD 2> $null } catch { }
   if(-Not $?) {
     Info "The commit is not tagged. Use 'v0.0' as a tag instead"
-    $tag = "v0.0"
+    $commitTag = "v0.0"
   }
-
-  return $tag.Substring(1)
+  return "$($commitTag.Substring(1))"
 }
 
 Set-StrictMode -Version Latest
@@ -84,4 +80,4 @@ CheckReturnCodeOfPreviousCommand "tests failed"
 
 Info "Create installer zip archive"
 Copy-Item -Force -Path $buildDir/Installer.msi -Destination $buildDir/DOpusScriptingExtensions.msi > $null
-Compress-Archive -Force -Path $buildDir/DOpusScriptingExtensions.msi -DestinationPath $buildDir/DOpusScriptingExtensions.msi.zip
+Compress-Archive -Force -Path $buildDir/DOpusScriptingExtensions.msi -DestinationPath $buildDir/DOpusScriptingExtensions.zip

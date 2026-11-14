@@ -7,7 +7,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\build\\${name}",
       "installRoot": "${projectDir}\\build\\install\\${name}",
-      "cmakeCommandArgs": "-D VCPKG_TARGET_TRIPLET=x64-windows-static -D VCPKG_INSTALLED_DIR=${projectDir}\\build\\vi",
+      "cmakeCommandArgs": "-D VCPKG_TARGET_TRIPLET=x64-windows -D VCPKG_INSTALLED_DIR=${projectDir}\\build\\vi",
       "buildCommandArgs": "",
       "ctestCommandArgs": ""
     }

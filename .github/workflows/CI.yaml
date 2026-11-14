@@ -2,9 +2,9 @@ on: push
 
 jobs:
   build:
-    runs-on: windows-2025-VS2026
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: New-Item -ItemType Junction -Path C:\r -Target "${{ github.workspace }}"
       - shell: pwsh
         working-directory: C:\r
@@ -13,8 +13,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           draft: true
-          files: C:/r/build/x64-Release/DOpusScriptingExtensions.msi.zip
+          files: C:/r/build/x64-Release/DOpusScriptingExtensions.zip
       - uses: actions/upload-artifact@v7
         with:
           name: Build artifacts
-          path: C:/r/build/x64-Release/DOpusScriptingExtensions.msi.zip
+          path: C:/r/build/x64-Release/DOpusScriptingExtensions.zip
