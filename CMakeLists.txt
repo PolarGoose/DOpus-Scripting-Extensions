@@ -17,7 +17,6 @@ include(FetchContent)
 set(INSTALLER_VERSION "0.0" CACHE STRING "DOpusScriptingExtensions installer version")
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 find_package(Boost CONFIG REQUIRED COMPONENTS dll filesystem locale process)
 find_package(unofficial-libmagic CONFIG REQUIRED)
@@ -33,9 +32,9 @@ FetchContent_Populate(cmake_template GIT_REPOSITORY https://github.com/cpp-best-
 include(${cmake_template_SOURCE_DIR}/cmake/CompilerWarnings.cmake)
 
 FetchContent_Populate(trid2lib GIT_REPOSITORY https://github.com/Papyrus7914/TrId2-file-type-identifier
-                               GIT_TAG v2.0
+                               GIT_TAG v3.0
                                GIT_SHALLOW TRUE)
-FetchContent_Populate(trid2lib_release_package URL https://github.com/Papyrus7914/TrId2-file-type-identifier/releases/download/v2.0/TrId2Console-windows-x64.zip)
+FetchContent_Populate(trid2lib_release_package URL https://github.com/Papyrus7914/TrId2-file-type-identifier/releases/download/v3.0/TrId2Console-windows-x64.zip)
 FetchContent_Populate(exiftool URL https://downloads.sourceforge.net/project/exiftool/exiftool-13.63_64.zip)
 FetchContent_Populate(mediainfo GIT_REPOSITORY https://github.com/mediaarea/mediainfo
                                 GIT_TAG v26.10
